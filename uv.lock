@@ -963,7 +963,7 @@ wheels = [
 
 [[package]]
 name = "imgl"
-version = "0.6.1"
+version = "0.7.1"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },
@@ -987,26 +987,34 @@ diagnose = [
 full = [
     { name = "costs" },
     { name = "goal" },
+    { name = "litellm" },
     { name = "mss" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pfix" },
     { name = "pytest" },
+    { name = "python-dotenv" },
+]
+llm = [
+    { name = "litellm" },
+    { name = "python-dotenv" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "costs", marker = "extra == 'dev'", specifier = ">=0.1.20" },
     { name = "goal", marker = "extra == 'dev'", specifier = ">=2.1.0" },
-    { name = "imgl", extras = ["capture", "diagnose", "dev"], marker = "extra == 'full'" },
+    { name = "imgl", extras = ["capture", "diagnose", "dev", "llm"], marker = "extra == 'full'" },
+    { name = "litellm", marker = "extra == 'llm'", specifier = ">=1.30" },
     { name = "mss", marker = "extra == 'capture'", specifier = ">=9.0" },
     { name = "numpy", marker = "extra == 'diagnose'", specifier = ">=1.24" },
     { name = "pfix", marker = "extra == 'dev'", specifier = ">=0.1.60" },
     { name = "pillow", specifier = ">=10.0" },
     { name = "pytesseract", specifier = ">=0.3.10" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "python-dotenv", marker = "extra == 'llm'", specifier = ">=1.0" },
 ]
-provides-extras = ["capture", "diagnose", "full", "dev"]
+provides-extras = ["capture", "diagnose", "llm", "full", "dev"]
 
 [[package]]
 name = "importlib-metadata"

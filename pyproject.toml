@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imgl"
-version = "0.6.1"
+version = "0.7.1"
 description = "Image to Layout — screenshot OCR and semantic UI reconstruction"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -38,8 +38,12 @@ capture = [
 diagnose = [
     "numpy>=1.24",
 ]
+llm = [
+    "litellm>=1.30",
+    "python-dotenv>=1.0",
+]
 full = [
-    "imgl[capture,diagnose,dev]",
+    "imgl[capture,diagnose,dev,llm]",
 ]
 dev = [
     "pytest>=8.0",

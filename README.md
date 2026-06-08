@@ -3,10 +3,10 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.6.1-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.04-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.7.1-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$2.05-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $0.0368 (1 commits)
+- 🤖 **LLM usage:** $2.0516 (2 commits)
 - 👤 **Human dev:** ~$200 (2.0h @ $100/h, 30min dedup)
 
 Generated on 2026-06-08 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
@@ -84,11 +84,45 @@ imgl svg screen.png --mode wireframe -o screen.svg
 imgl vql screen.png -o layout.vql.json --with-grid
 ```
 
+### Interactive shell (pick action from catalog)
+
+```bash
+imgl interact /tmp/screen.png -o layout.vql.json
+# numer opcji, NL: "kliknij Save", "mapa", "lista", "quit"
+# obraz z numerami jak w shellu:
+imgl annotate screen.png --open
+imgl interact screen.png --annotate --open
+# lepsza lista (filtr szumu OCR):
+imgl interact screen.png
+# vision LLM (wymaga OPENROUTER_API_KEY + pip install -e ".[llm]"):
+imgl interact screen.png --llm --annotate --open
+# opcjonalnie wykonaj na pulpicie:
+imgl interact /tmp/screen.png --execute   # wymaga xdotool lub ydotool
+```
+
+URI DSL (`vql://window/imgl?action=...`):
+
+| action | opis |
+|--------|------|
+| `analyze` | OCR + layout → VQL JSON (domyślne) |
+| `list` | lista elementów interaktywnych |
+| `annotate` | PNG ze zrzutu + numerowane ramki |
+| `click` | `text=`, `element_id=`, `window=` |
+| `type` | `value=`, `label=`, `text=` |
+
 Via `uri2vql` (when installed):
 
 ```bash
 uri2vql query 'vql://window/imgl?image=/tmp/screen.png&file=layout.vql.json&lang=eng'
+uri2vql query 'vql://window/imgl?image=/tmp/screen.png&file=layout.vql.json&action=list'
+uri2vql query 'vql://window/imgl?image=/tmp/screen.png&file=layout.vql.json&action=click&text=Save'
 # For Polish+English OCR in URI use encoded plus: lang=eng%2Bpol
+```
+
+NL → URI (`nlp2uri` / `imgl` built-in):
+
+```bash
+# w shellu imgl interact: "kliknij Save", "wpisz test w search", "2", "lista"
 ```
 
 ### HTML / SVG export

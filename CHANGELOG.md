@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `imgl annotate` — PNG overlay with catalog numbers on screenshot
+- `imgl interact --annotate --open` — generate and open numbered map
+- Shell command / URI `action=annotate` (`mapa`, `obraz`, `numeracja`)
+
+### Fixed
+- Action coordinates now map back to full screenshot resolution after OCR downscale
+- Default `max_dim=2560` for faster Tesseract on 4K/8K captures
+- Scene cache (`layout.imgl.json`) — `uri2vql` list/click/type skips re-OCR when cache matches
+- Diagnose vql-fallback returns a short summary instead of empty text
+
+## [0.7.1] - 2026-06-08
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+
+### Test
+- Update tests/test_annotate.py
+- Update tests/test_catalog_filter.py
+- Update tests/test_catalog_interact.py
+- Update tests/test_imgl.py
+- Update tests/test_llm_catalog.py
+- Update tests/test_scene_cache.py
+- Update tests/test_window_scope.py
+
+### Other
+- Update .ai/mcp/mcp.json
+- Update .idea/pyLspTools.xml
+- Update VERSION
+- Update imgl/__init__.py
+- Update imgl/catalog.py
+- Update imgl/catalog_filter.py
+- Update imgl/cli.py
+- Update imgl/config.py
+- Update imgl/coords.py
+- Update imgl/diagnose.py
+- ... and 22 more files
+
+## [0.7.0] - 2026-06-08
+
+### Added
+- `imgl interact` — interactive shell listing windows/buttons/inputs with mouse/keyboard options
+- `imgl/catalog.py` — numbered option catalog with positions and action URIs
+- `imgl/uri.py` — `vql://window/imgl?action=list|click|type|analyze` DSL builders
+- `imgl/nlp2uri.py` — NL → URI (`kliknij Save`, `wpisz tekst w pole`, numer opcji)
+- `uri2vql` handlers for `action=list|click|type` on `window/imgl`
+- Optional `--execute` via xdotool/ydotool
+
 ### Fixed
 - OCR `lang=eng+pol` in URI query strings (`+` decoded as space) — normalize to `eng+pol`
 - Tesseract fallback to `eng` when compound language pack missing

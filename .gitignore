@@ -1,4 +1,5 @@
 # Byte-compiled / optimized / DLL files
+.idea/pyLspTools.xml
 .env.example
 .idea/imgl.iml
 .idea/inspectionProfiles/Project_Default.xml

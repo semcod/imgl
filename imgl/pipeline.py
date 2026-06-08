@@ -13,6 +13,7 @@ from imgl.detect.rectangles import detect_input_frames
 from imgl.layout import build_windows, extract_window_titles
 from imgl.ocr import get_ocr_backend
 from imgl.preprocess import ImageSource, preprocess
+from imgl.coords import scale_scene_to_screen
 from imgl.types import Scene
 
 ImageInput = Union[str, Path, bytes]
@@ -72,7 +73,7 @@ def analyze(
     element_count = sum(len(window.elements) for window in windows) + len(orphan_elements)
     roles = _count_roles(windows, orphan_elements)
 
-    return Scene(
+    scene = Scene(
         width=prepared.width,
         height=prepared.height,
         source_image=prepared.source_path,
@@ -89,6 +90,7 @@ def analyze(
             **(_content_metadata(content_diag) if content_diag else {}),
         },
     )
+    return scale_scene_to_screen(scene, scale=prepared.scale)
 
 
 def _content_metadata(diag: dict) -> dict:

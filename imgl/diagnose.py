@@ -151,7 +151,14 @@ def _diagnose_fallback(path: Path) -> dict[str, Any]:
                 "send_to_llm": not is_blank,
                 "recommendation": "skip" if is_blank else "send",
             },
-            "text": "Pusty zrzut (all black)" if is_blank else "",
+            "text": (
+                "Pusty zrzut (all black)"
+                if is_blank
+                else (
+                    f"Obraz {stats.get('width')}×{stats.get('height')} px, "
+                    f"~{unique} kolorów (vql stats)."
+                )
+            ),
             "scene_class": "empty_dark_screen" if is_blank else "general",
             "worth_analyzing": not is_blank,
             "recommendation": "skip_blank_capture" if is_blank else "proceed_with_layout",

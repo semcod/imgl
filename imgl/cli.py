@@ -15,7 +15,17 @@ from imgl.config import ImglConfig
 from imgl.diagnose import BlankImageError, diagnose_content, worth_analyzing
 from imgl.export import scene_to_html, scene_to_json, scene_to_svg, scene_to_vql_json, write_vql_program
 from imgl.paths import resolve_image_path
+from imgl.catalog import build_interactive_catalog
+from imgl.export import (
+    default_annotated_path,
+    open_image,
+    write_annotated_image,
+    write_window_preview_images,
+)
+from imgl.window_scope import apply_discovered_windows, discover_windows, export_window_crop, format_window_picker, summarize_windows
+from imgl.interact import run_interactive_shell
 from imgl.pipeline import analyze
+from imgl.scene_cache import load_or_analyze, save_scene_cache
 
 
 def _add_common_args(parser: argparse.ArgumentParser) -> None:
@@ -35,6 +45,12 @@ def _add_common_args(parser: argparse.ArgumentParser) -> None:
         "--allow-blank",
         action="store_true",
         help="Analyze even when img2nl reports empty/blank screen",
+    )
+    parser.add_argument(
+        "--max-dim",
+        type=int,
+        default=None,
+        help="Max image dimension for OCR (default: 2560, lower=faster)",
     )
 
 
@@ -155,6 +171,133 @@ def build_parser() -> argparse.ArgumentParser:
         help="Write JSON output to file (default: stdout)",
     )
 
+    interact_parser = subparsers.add_parser(
+        "interact",
+        help="Interactive shell: list UI elements and pick actions via NL/URI",
+    )
+    interact_parser.add_argument("image", type=Path, help="Path to screenshot image")
+    interact_parser.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        default=Path("layout.vql.json"),
+        help="VQL program path (default: layout.vql.json)",
+    )
+    interact_parser.add_argument(
+        "--lang",
+        default="eng+pol",
+        help="OCR language(s), e.g. eng+pol (default: eng+pol)",
+    )
+    interact_parser.add_argument(
+        "--allow-blank",
+        action="store_true",
+        help="Analyze even when img2nl reports empty/blank screen",
+    )
+    interact_parser.add_argument(
+        "--execute",
+        action="store_true",
+        help="Execute click/type on desktop (requires xdotool or ydotool)",
+    )
+    interact_parser.add_argument(
+        "--llm",
+        action="store_true",
+        help="Use vision LLM catalog (requires OPENROUTER_API_KEY, pip install litellm)",
+    )
+    interact_parser.add_argument(
+        "--no-filter",
+        action="store_true",
+        help="Show all OCR/heuristic detections (no noise filter)",
+    )
+    interact_parser.add_argument(
+        "--annotate",
+        action="store_true",
+        help="Generate numbered overlay image on start (screen.numbered.png)",
+    )
+    interact_parser.add_argument(
+        "--open",
+        action="store_true",
+        help="Open numbered overlay in default image viewer",
+    )
+    interact_parser.add_argument(
+        "--annotated-output",
+        type=Path,
+        help="Path for numbered overlay PNG (default: <image>.numbered.png)",
+    )
+    interact_parser.add_argument(
+        "--window",
+        help="Analyze only this window id/title (e.g. region-left, region-right)",
+    )
+
+    windows_parser = subparsers.add_parser(
+        "windows",
+        help="Discover windows on screenshot and export per-window crops",
+    )
+    windows_parser.add_argument("image", type=Path, help="Path to screenshot image")
+    windows_parser.add_argument(
+        "--lang",
+        default="eng+pol",
+        help="OCR language(s), e.g. eng+pol (default: eng+pol)",
+    )
+    windows_parser.add_argument(
+        "-o",
+        "--output-dir",
+        type=Path,
+        help="Directory for window crops (default: next to image)",
+    )
+    windows_parser.add_argument(
+        "--export-crops",
+        action="store_true",
+        help="Write per-window PNG crops",
+    )
+    windows_parser.add_argument(
+        "--annotate",
+        action="store_true",
+        help="Write numbered preview PNG per window",
+    )
+    windows_parser.add_argument(
+        "--open",
+        action="store_true",
+        help="Open preview images in default viewer",
+    )
+    windows_parser.add_argument(
+        "--allow-blank",
+        action="store_true",
+        help="Analyze even when img2nl reports empty/blank screen",
+    )
+
+    annotate_parser = subparsers.add_parser(
+        "annotate",
+        help="Draw numbered overlay on screenshot matching interact catalog",
+    )
+    annotate_parser.add_argument("image", type=Path, help="Path to screenshot image")
+    annotate_parser.add_argument(
+        "--lang",
+        default="eng+pol",
+        help="OCR language(s), e.g. eng+pol (default: eng+pol)",
+    )
+    annotate_parser.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        help="Output PNG path (default: <image>.numbered.png)",
+    )
+    annotate_parser.add_argument(
+        "--allow-blank",
+        action="store_true",
+        help="Analyze even when img2nl reports empty/blank screen",
+    )
+    annotate_parser.add_argument(
+        "--max-dim",
+        type=int,
+        default=None,
+        help="Max image dimension for OCR (default: 2560, lower=faster)",
+    )
+    annotate_parser.add_argument(
+        "--open",
+        action="store_true",
+        help="Open result in default image viewer",
+    )
+
     return parser
 
 
@@ -192,6 +335,93 @@ def main(argv: list[str] | None = None) -> int:
         }
         _write_output(json.dumps(payload, indent=2, ensure_ascii=False), args.output)
         return 0 if payload["ok"] else 1
+
+    if args.command == "interact":
+        try:
+            image_path = resolve_image_path(args.image)
+        except FileNotFoundError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        blank_exit = _check_blank_before_analyze(
+            image_path,
+            allow_blank=args.allow_blank,
+            locale=config.diagnose_locale,
+        )
+        if blank_exit is not None:
+            return blank_exit
+        config = _apply_config_overrides(config, args)
+        return run_interactive_shell(
+            image_path,
+            vql_file=args.output,
+            lang=args.lang,
+            config=config,
+            execute=args.execute,
+            use_llm=args.llm,
+            no_filter=args.no_filter,
+            annotate=args.annotate,
+            open_annotated=args.open,
+            annotated_output=args.annotated_output,
+            window=args.window,
+        )
+
+    if args.command == "windows":
+        try:
+            image_path = resolve_image_path(args.image)
+        except FileNotFoundError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        blank_exit = _check_blank_before_analyze(
+            image_path,
+            allow_blank=args.allow_blank,
+            locale=config.diagnose_locale,
+        )
+        if blank_exit is not None:
+            return blank_exit
+        scene = load_or_analyze(
+            image_path,
+            vql_file=Path("layout.vql.json"),
+            lang=args.lang,
+            config=config,
+        )
+        scene = apply_discovered_windows(scene)
+        summaries = summarize_windows(scene, image_path=str(image_path))
+        print(format_window_picker(summaries, scene=scene))
+        out_dir = args.output_dir or image_path.parent
+        paths: list[Path] = []
+        if args.export_crops:
+            for item in summaries:
+                path = export_window_crop(image_path, item.window, output_dir=out_dir)
+                paths.append(path)
+                print(f"crop: {path}", file=sys.stderr)
+        if args.annotate:
+            preview_paths = write_window_preview_images(
+                scene,
+                discover_windows(scene),
+                out_dir,
+                source_image=image_path,
+            )
+            paths.extend(preview_paths)
+            for path in preview_paths:
+                print(f"preview: {path}", file=sys.stderr)
+        if args.open:
+            for path in paths:
+                open_image(path)
+        payload = {
+            "window_count": len(summaries),
+            "windows": [
+                {
+                    "index": item.index,
+                    "id": item.window.id,
+                    "title": item.label,
+                    "bbox": item.bbox.to_dict(),
+                    "interactive_count": item.interactive_count,
+                    "element_count": item.element_count,
+                }
+                for item in summaries
+            ],
+        }
+        print(json.dumps(payload, indent=2, ensure_ascii=False))
+        return 0
 
     if args.command == "capture":
         try:
@@ -245,7 +475,15 @@ def _check_blank_before_analyze(
     return None
 
 
+def _apply_config_overrides(config: ImglConfig, args) -> ImglConfig:
+    max_dim = getattr(args, "max_dim", None)
+    if max_dim is not None:
+        config.max_dim = max_dim
+    return config
+
+
 def _run_image_command(args, image_path: Path, config: ImglConfig) -> int:
+    config = _apply_config_overrides(config, args)
     blank_exit = _check_blank_before_analyze(
         image_path,
         allow_blank=getattr(args, "allow_blank", False),
@@ -289,6 +527,31 @@ def _run_image_command(args, image_path: Path, config: ImglConfig) -> int:
                 scene_to_vql_json(scene, include_grid=args.with_grid, grid=args.grid),
                 None,
             )
+        return 0
+
+    if args.command == "annotate":
+        vql_out = Path("layout.vql.json")
+        png_out = args.output or default_annotated_path(image_path)
+        scene = load_or_analyze(
+            image_path,
+            vql_file=vql_out,
+            lang=args.lang,
+            config=config,
+        )
+        write_vql_program(scene, vql_out)
+        save_scene_cache(scene, vql_out)
+        catalog = build_interactive_catalog(
+            scene,
+            image_path=str(image_path),
+            vql_file=str(vql_out),
+            lang=args.lang,
+        )
+        path = write_annotated_image(scene, catalog, png_out, source_image=image_path)
+        print(f"Wrote {path}", file=sys.stderr)
+        print(str(path))
+        if args.open:
+            if not open_image(path):
+                print("Could not open viewer (install xdg-open).", file=sys.stderr)
         return 0
 
     if args.command == "find":

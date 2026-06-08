@@ -8,7 +8,7 @@ from dataclasses import dataclass
 @dataclass
 class ImglConfig:
     lang: str = "eng+pol"
-    max_dim: int = 4000
+    max_dim: int = 2560
     ocr_backend: str = "tesseract"
     min_ocr_confidence: float = 30.0
     use_img2vql: bool = True
@@ -17,3 +17,7 @@ class ImglConfig:
     check_content: bool = True
     skip_blank: bool = False
     diagnose_locale: str = "pl"
+    catalog_filter: bool = True
+    use_llm_catalog: bool = False
+    llm_vision_model: str = "openrouter/google/gemini-2.5-flash"
+    catalog_max_items: int = 40

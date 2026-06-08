@@ -5,7 +5,7 @@ Convert screenshots into semantic UI models (JSON/HTML/SVG) with OCR text
 and element bounding boxes.
 """
 
-__version__ = "0.6.1"
+__version__ = "0.7.1"
 __author__ = "Tom Sapletta"
 __email__ = "tom@sapletta.com"
 
