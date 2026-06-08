@@ -1,16 +1,6 @@
-"""
-Main entry point for the imgl package.
-"""
+"""Main entry point: python -m imgl"""
 
-from .core import ImageGenerator
-
-
-def main():
-    """Main function for CLI usage."""
-    print("imgl - Image Generation Library")
-    print("Version: 0.1.0")
-    print("This package is under development.")
-
+from imgl.cli import main
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
