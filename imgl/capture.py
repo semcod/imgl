@@ -27,9 +27,19 @@ def _finalize_capture(path: Path, meta: dict[str, object]) -> None:
     from imgl.capture_provenance import save_capture_meta
     from imgl.freshness import mark_capture_fresh
 
+    enriched = dict(meta)
+    if not enriched.get("display"):
+        display = os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")
+        if display:
+            enriched["display"] = display
+    if not enriched.get("session_type"):
+        session_type = os.environ.get("XDG_SESSION_TYPE")
+        if session_type:
+            enriched["session_type"] = session_type
+
     mark_capture_fresh(path)
-    save_capture_meta(path, meta)
-    _last_capture_meta = dict(meta)
+    save_capture_meta(path, enriched)
+    _last_capture_meta = enriched
 
 
 def last_capture_meta() -> dict[str, object]:

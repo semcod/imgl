@@ -185,3 +185,16 @@ def test_clear_vql_cache_keeps_capture_meta(tmp_path: Path) -> None:
     removed = clear_vql_cache(png)
     assert any("screen.vql.json" in p for p in removed)
     assert load_capture_meta(png)["method"] == "mirror"
+
+
+def test_finalize_capture_enriches_display(monkeypatch, tmp_path: Path) -> None:
+    from imgl.capture import _finalize_capture
+
+    monkeypatch.setenv("DISPLAY", ":1")
+    monkeypatch.setenv("XDG_SESSION_TYPE", "wayland")
+    png = tmp_path / "screen.png"
+    png.write_bytes(b"\x89PNG\r\n\x1a\n" + b"x" * 64)
+    _finalize_capture(png, {"method": "portal-interactive"})
+    meta = load_capture_meta(png)
+    assert meta["display"] == ":1"
+    assert meta["session_type"] == "wayland"

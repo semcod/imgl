@@ -133,6 +133,12 @@ def validate_vql_export(program: dict[str, Any]) -> list[str]:
         report = validate_program(model)
         if not report.passed:
             issues.extend(str(item) for item in report.issues)
+        try:
+            from vql import validate_program_metadata
+
+            issues.extend(validate_program_metadata(program.get("metadata")))
+        except ImportError:
+            pass
     except Exception as exc:
         issues.append(str(exc))
     return issues

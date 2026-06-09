@@ -147,7 +147,9 @@ Pętla agenta: **nowy capture po każdej akcji** — [workflows/multi-step-agent
 
 ## Walidacja (oqlos/vql)
 
-Po zapisie `write_vql_program` opcjonalnie waliduje program przez `VQLProgram.validate()` (gdy pakiet `vql` zainstalowany):
+Po zapisie `write_vql_program` opcjonalnie waliduje program przez `VQLProgram.validate()` oraz `validate_program_metadata()` (gdy pakiet `vql` zainstalowany):
+
+Schema metadanych imgl: `oqlos/vql` → `src/vql/schema/program_metadata_imgl.json` (`capture`, `window_os`).
 
 ```bash
 pip install -e ~/github/oqlos/vql
