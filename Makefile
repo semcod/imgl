@@ -30,7 +30,7 @@ help:
 	@echo "  make install-full        + web"
 	@echo ""
 	@echo "Workflow:"
-	@echo "  make capture-interactive   vdisplay mirror → $(IMGL_IMAGE) (bez dialogu GNOME)"
+	@echo "  make capture-interactive   portal GNOME → $(IMGL_IMAGE) (Wayland; wybierz region)"
 	@echo "  make doctor-full           autodiagnostyka (markdown)"
 	@echo "  make execute-llm PROMPT='wpisz test w Chat input'"
 	@echo "  make shot PROMPT='wpisz test w Chat input'"
