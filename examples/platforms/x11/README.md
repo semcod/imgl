@@ -18,11 +18,11 @@ sudo apt install tesseract-ocr tesseract-ocr-pol xdotool
 ## Capture
 
 ```bash
-# mss — zwykle wystarczy
-imgl capture -o screen.png
+# mss / vdisplay — zwykle wystarczy
+imgl capture -o screen.png --verify
 
-# lub portal jeśli masz vql
-imgl capture --interactive -o screen.png
+# portal GNOME (gdy mirror nie działa)
+imgl capture --portal -o screen.png
 ```
 
 ## Pełny workflow

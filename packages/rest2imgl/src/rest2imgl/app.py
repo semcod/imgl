@@ -19,6 +19,14 @@ class NlBody(BaseModel):
     image: str = "screen.png"
     window: str | None = None
     execute: bool = True
+    with_diagnostics: bool = True
+    use_llm: bool | None = None
+    locale: str = "pl"
+
+
+class DoctorBody(BaseModel):
+    image: str = "screen.png"
+    locale: str = "pl"
 
 
 def create_app() -> FastAPI:
@@ -31,6 +39,8 @@ def create_app() -> FastAPI:
             "health": "/health",
             "dsl": "POST /v1/dsl",
             "nl": "POST /v1/nl",
+            "nl_diag": "POST /v1/nl/diag",
+            "doctor": "POST /v1/doctor",
             "web_ui": "imgl serve --port 8008",
         }
 
@@ -65,13 +75,49 @@ def create_app() -> FastAPI:
             image=body.image,
             window=body.window,
             execute=body.execute,
+            use_llm=body.use_llm,
         )
         return JSONResponse(
             {
-                "dsl": to_dsl(body.prompt, image=body.image, window=body.window, execute=body.execute),
+                "dsl": to_dsl(
+                    body.prompt,
+                    image=body.image,
+                    window=body.window,
+                    execute=body.execute,
+                    use_llm=body.use_llm,
+                ),
                 "result": result.to_dict(),
             }
         )
+
+    @app.post("/v1/nl/diag")
+    def post_nl_diag(body: NlBody) -> JSONResponse:
+        from nlp2imgl.control import apply_nl_with_diag
+
+        payload = apply_nl_with_diag(
+            body.prompt,
+            image=body.image,
+            window=body.window,
+            execute=body.execute,
+            with_diagnostics=body.with_diagnostics,
+            use_llm=body.use_llm,
+            locale=body.locale,
+        )
+        payload["dsl"] = to_dsl(
+            body.prompt,
+            image=body.image,
+            window=body.window,
+            execute=body.execute,
+            use_llm=body.use_llm,
+        )
+        return JSONResponse(payload)
+
+    @app.post("/v1/doctor")
+    def post_doctor(body: DoctorBody) -> JSONResponse:
+        from nlp2imgl.control import doctor_capture
+
+        capture = doctor_capture(body.image, locale=body.locale)
+        return JSONResponse({"capture": capture, "verdict": capture.get("verdict")})
 
     return app
 

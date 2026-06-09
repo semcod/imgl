@@ -17,7 +17,10 @@ from imgl.window_scope import (
     format_window_picker,
     get_discovered_window,
     is_monolithic_scene,
+    pick_focus_window,
     scene_for_window,
+    scope_to_focus_window,
+    should_scope_window,
     summarize_windows,
 )
 
@@ -177,3 +180,41 @@ def test_format_window_picker_lists_regions():
     text = format_window_picker(summaries, scene=scene)
     assert "Wykryte okna" in text
     assert "region-left" in text or "region-right" in text
+
+
+def test_single_monitor_region_bottom_alias():
+    scene = Scene(
+        width=2560,
+        height=1600,
+        windows=[
+            Window(
+                id="window_0",
+                bbox=BBox(x=0, y=0, w=2560, h=1600),
+                title="Desktop",
+                z=1,
+                elements=[],
+            )
+        ],
+    )
+    assert get_discovered_window(scene, "region-bottom") is scene.windows[0]
+
+
+def test_pick_focus_window_prefers_interactive_region():
+    scene = apply_discovered_windows(_wide_scene())
+    summaries = summarize_windows(scene)
+    picked = pick_focus_window(summaries)
+    assert picked is not None
+    assert picked.window.id in {"region-left", "region-right"}
+
+
+def test_scope_to_focus_window_exports_crop(tmp_path: Path):
+    image = tmp_path / "desktop.png"
+    Image.new("RGB", (1200, 800), color=(30, 30, 30)).save(image)
+    scene = apply_discovered_windows(_wide_scene())
+    scene.source_image = str(image)
+    scoped = scope_to_focus_window(image, scene, output_path=tmp_path / "scoped.png")
+    assert scoped is not None
+    out, summary = scoped
+    assert out.is_file()
+    assert summary.interactive_count >= 1
+    assert should_scope_window(scene, summary) is True

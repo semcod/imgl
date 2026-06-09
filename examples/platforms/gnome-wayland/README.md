@@ -6,7 +6,9 @@ Typowa konfiguracja na Ubuntu/Fedora z sesją Wayland. To środowisko, w którym
 
 | Objaw | Przyczyna | Rozwiązanie |
 |-------|-----------|-------------|
-| Czarny zrzut z `mss` | Brak dostępu do framebuffera | `imgl capture --interactive` (portal) |
+| `Driver-level capture failed` | Brak grupy `video` | `sudo usermod -aG video $USER` + re-login |
+| Czarny zrzut z `mss` | Brak dostępu do framebuffera | `imgl capture --portal` lub auto fallback |
+| Dialog GNOME przy capture | Portal fallback po nieudanym mirror | Wybierz region — normalne zachowanie |
 | `xdotool` nie klika we właściwe miejsce | Ograniczenia Wayland | X11 sesja, lub `ydotool` (uinput) |
 | Logi Chrome przy `--open` | Przeglądarka otwiera PNG | Normalne — ignoruj Vulkan/GCM |
 | Wysoki pionowy zrzut (2700×4800) | Scalenie monitorów / długi scroll | `window_scope` dzieli na `region-top` / `region-bottom` |
@@ -14,23 +16,36 @@ Typowa konfiguracja na Ubuntu/Fedora z sesją Wayland. To środowisko, w którym
 ## Instalacja
 
 ```bash
-pip install -e ".[capture,llm]"
-pip install -e ~/github/oqlos/vql    # portal capture backends
+make install-dev    # imgl[capture] + vdisplay z ~/github/wronai/vdisplay
 
 sudo apt install tesseract-ocr tesseract-ocr-pol
 sudo apt install xdotool             # opcjonalnie --execute
 ```
 
+Driver-level mirror (bez portalu):
+
+```bash
+sudo usermod -aG video $USER
+# wyloguj i zaloguj ponownie
+```
+
 ## Capture
 
 ```bash
-# Portal — pojawi się zgoda GNOME na nagrywanie ekranu
-imgl capture --interactive -o screen.png
+# Zalecane — mirror bez dialogu; na Wayland auto fallback do portalu GNOME
+make capture-interactive
+# lub:
+imgl capture -o screen.png --verify
+
+# Wymuszenie portalu (region picker)
+imgl capture --portal -o screen.png
 
 # Sprawdź czy zrzut ma treść (nie jest czarny)
 imgl diagnose screen.png
 # oczekuj: "worth_analyzing": true
 ```
+
+Szczegóły backendów i zmiennych środowiskowych: [docs/capture.md](../../../docs/capture.md).
 
 Jeśli `diagnose` zwraca blank — nie analizuj. Zrób nowy capture lub użyj `--allow-blank` tylko do testów.
 
@@ -70,7 +85,10 @@ quit
 ## Wykonanie akcji (ostrożnie)
 
 ```bash
+make install-control   # nlp2imgl / dsl2imgl
 # Wymaga zgodności zrzutu z aktualnym pulpitem
+make execute-llm PROMPT='wpisz test w Chat input'
+# lub interaktywnie:
 imgl interact screen.png --window region-top --execute
 ```
 

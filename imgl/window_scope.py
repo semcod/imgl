@@ -5,7 +5,7 @@ from __future__ import annotations
 import statistics
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
 from PIL import Image
 
@@ -111,6 +111,129 @@ def summarize_windows(
     return summaries
 
 
+def pick_focus_window(
+    summaries: list[WindowSummary],
+    *,
+    window_index: int | None = None,
+    window_id: str | None = None,
+) -> WindowSummary | None:
+    """Pick the most relevant window region for OCR/adopt (most interactive UI)."""
+    if not summaries:
+        return None
+
+    if window_id:
+        ref = str(window_id).strip().casefold()
+        for item in summaries:
+            if item.window.id.casefold() == ref:
+                return item
+            title = (item.window.title or "").casefold()
+            if title and title == ref:
+                return item
+        return None
+
+    if window_index is not None:
+        if 1 <= window_index <= len(summaries):
+            return summaries[window_index - 1]
+        return None
+
+    if len(summaries) == 1:
+        return summaries[0]
+
+    return max(
+        summaries,
+        key=lambda item: (
+            item.interactive_count,
+            item.element_count,
+            item.window.bbox.w * item.window.bbox.h,
+        ),
+    )
+
+
+def should_scope_window(scene: Scene, summary: WindowSummary) -> bool:
+    """Return True when cropping to the window likely reduces OCR noise."""
+    windows = discover_windows(scene)
+    if len(windows) > 1:
+        return True
+    total = max(1, scene.width * scene.height)
+    area = summary.window.bbox.w * summary.window.bbox.h
+    return area / total < 0.92
+
+
+def scope_to_focus_window(
+    image_path: str | Path,
+    scene: Scene,
+    *,
+    window_index: int | None = None,
+    window_id: str | None = None,
+    output_path: str | Path | None = None,
+) -> tuple[Path, WindowSummary] | None:
+    """Crop screenshot to a discovered window region."""
+    summaries = summarize_windows(scene, image_path=str(image_path))
+    picked = pick_focus_window(
+        summaries,
+        window_index=window_index,
+        window_id=window_id,
+    )
+    if picked is None or not should_scope_window(scene, picked):
+        return None
+
+    source = Path(resolve_image_path(image_path))
+    if output_path:
+        out = Path(output_path).expanduser()
+        out.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        safe_id = _safe_filename(picked.window.id)
+        out = source.with_name(f"{source.stem}.{safe_id}{source.suffix or '.png'}")
+
+    crop_window_image(source, picked.window).save(out, format="PNG")
+    return out.resolve(), picked
+
+
+def scope_image_to_focus_window(
+    image_path: str | Path,
+    *,
+    lang: str = "eng+pol",
+    window_index: int | None = None,
+    window_id: str | None = None,
+    output_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Analyze screenshot, pick focus window, export crop PNG."""
+    from imgl.config import ImglConfig
+    from imgl.pipeline import analyze
+
+    cfg = ImglConfig()
+    cfg.lang = lang
+    scene = analyze(image_path, config=cfg)
+    scene = apply_discovered_windows(scene)
+    scoped = scope_to_focus_window(
+        image_path,
+        scene,
+        window_index=window_index,
+        window_id=window_id,
+        output_path=output_path,
+    )
+    if scoped is None:
+        return {
+            "ok": False,
+            "skipped": True,
+            "reason": "scope_not_needed",
+            "source_image": str(Path(image_path).expanduser()),
+        }
+
+    out, summary = scoped
+    return {
+        "ok": True,
+        "skipped": False,
+        "path": str(out),
+        "source_image": str(Path(image_path).expanduser()),
+        "window_id": summary.window.id,
+        "window_title": summary.window.title,
+        "interactive_count": summary.interactive_count,
+        "element_count": summary.element_count,
+        "window_count": len(discover_windows(scene)),
+    }
+
+
 def format_window_picker(summaries: list[WindowSummary], *, scene: Scene) -> str:
     if not summaries:
         return "Brak wykrytych okien."
@@ -141,6 +264,18 @@ def format_window_picker(summaries: list[WindowSummary], *, scene: Scene) -> str
     return "\n".join(lines)
 
 
+_SINGLE_WINDOW_ALIASES = frozenset(
+    {
+        "window_0",
+        "region-top",
+        "region-bottom",
+        "region-left",
+        "region-right",
+        "region-middle",
+    }
+)
+
+
 def get_discovered_window(scene: Scene, window_ref: str | int) -> Window | None:
     windows = discover_windows(scene)
     if isinstance(window_ref, int):
@@ -155,6 +290,9 @@ def get_discovered_window(scene: Scene, window_ref: str | int) -> Window | None:
         title = (window.title or "").casefold()
         if title and title == ref:
             return window
+    # Jedno okno (np. 2560×1600): region-bottom/top to alias window_0
+    if len(windows) == 1 and ref in _SINGLE_WINDOW_ALIASES:
+        return windows[0]
     return None
 
 

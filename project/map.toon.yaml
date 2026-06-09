@@ -1,0 +1,800 @@
+# imgl | 113f 13391L | python:99,shell:13,less:1 | 2026-06-09
+# stats: 463 func | 38 cls | 113 mod | CC̄=5.1 | critical:53 | cycles:0
+# alerts[5]: CC main=44; CC parse_line=44; CC run_interactive_shell=43; CC envelope_to_dict=42; CC _set_body=31
+# hotspots[5]: main fan=41; create_app fan=38; run_interactive_shell fan=32; _run_image_command fan=28; _detect_buttons fan=24
+# evolution: baseline
+# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
+M[113]:
+  app.doql.less,212
+  examples/scripts/demo-agent-loop.sh,38
+  examples/scripts/demo-github.sh,22
+  examples/scripts/demo-nlp2uri.py,80
+  examples/scripts/demo-windows.sh,23
+  imgl/__init__.py,52
+  imgl/__main__.py,7
+  imgl/actions.py,272
+  imgl/autodiag.py,407
+  imgl/capture.py,212
+  imgl/catalog.py,351
+  imgl/catalog_filter.py,139
+  imgl/classify/__init__.py,6
+  imgl/classify/gui_heuristics.py,262
+  imgl/cli.py,718
+  imgl/config.py,24
+  imgl/coords.py,71
+  imgl/detect/__init__.py,12
+  imgl/detect/img2vql_bridge.py,65
+  imgl/detect/local.py,279
+  imgl/detect/rectangles.py,97
+  imgl/diagnose.py,248
+  imgl/execute.py,163
+  imgl/export/__init__.py,31
+  imgl/export/_escape.py,20
+  imgl/export/annotate_export.py,300
+  imgl/export/html_export.py,150
+  imgl/export/json_export.py,23
+  imgl/export/svg_export.py,138
+  imgl/export/vql_adapter.py,245
+  imgl/freshness.py,152
+  imgl/geometry.py,38
+  imgl/interact.py,561
+  imgl/layout.py,109
+  imgl/llm_catalog.py,521
+  imgl/nlp2uri.py,283
+  imgl/ocr/__init__.py,13
+  imgl/ocr/base.py,15
+  imgl/ocr/lang.py,33
+  imgl/ocr/tesseract.py,95
+  imgl/paths.py,42
+  imgl/pipeline.py,117
+  imgl/preprocess.py,64
+  imgl/scene_cache.py,64
+  imgl/types.py,171
+  imgl/uri.py,119
+  imgl/vdisplay_bridge.py,254
+  imgl/web/__init__.py,11
+  imgl/web/agent.py,153
+  imgl/web/app.py,287
+  imgl/web/session.py,453
+  imgl/web/thumbs.py,56
+  imgl/window_scope.py,576
+  packages/cli2imgl/src/cli2imgl/cli.py,35
+  packages/dsl2imgl/scripts/generate-proto.sh,7
+  packages/dsl2imgl/src/dsl2imgl/__init__.py,7
+  packages/dsl2imgl/src/dsl2imgl/bus.py,111
+  packages/dsl2imgl/src/dsl2imgl/cli.py,47
+  packages/dsl2imgl/src/dsl2imgl/codec.py,58
+  packages/dsl2imgl/src/dsl2imgl/engine.py,6
+  packages/dsl2imgl/src/dsl2imgl/events.py,169
+  packages/dsl2imgl/src/dsl2imgl/grammar.py,138
+  packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py,2
+  packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py,221
+  packages/dsl2imgl/src/dsl2imgl/pb_codec.py,241
+  packages/dsl2imgl/src/dsl2imgl/result.py,35
+  packages/dsl2imgl/src/dsl2imgl/schema_registry.py,45
+  packages/dsl2imgl/src/dsl2imgl/v1/__init__.py,2
+  packages/dsl2imgl/src/dsl2imgl/v1/command_pb2.py,57
+  packages/dsl2imgl/src/dsl2imgl/v1/result_pb2.py,40
+  packages/dsl2imgl/tests/test_dsl2imgl.py,38
+  packages/dsl2imgl/tests/test_dsl2imgl_phase4.py,71
+  packages/mcp2imgl/src/mcp2imgl/cli.py,23
+  packages/mcp2imgl/src/mcp2imgl/server.py,36
+  packages/nlp2imgl/src/nlp2imgl/__init__.py,5
+  packages/nlp2imgl/src/nlp2imgl/cli.py,92
+  packages/nlp2imgl/src/nlp2imgl/control.py,151
+  packages/nlp2imgl/src/nlp2imgl/to_dsl.py,94
+  packages/rest2imgl/src/rest2imgl/app.py,126
+  packages/rest2imgl/src/rest2imgl/cli.py,27
+  packages/uri2imgl/src/uri2imgl/__init__.py,4
+  packages/uri2imgl/src/uri2imgl/cli.py,37
+  packages/uri2imgl/src/uri2imgl/decode.py,36
+  project.sh,59
+  tests/test_actions.py,140
+  tests/test_annotate.py,59
+  tests/test_autodiag.py,91
+  tests/test_capture_paths.py,105
+  tests/test_catalog_filter.py,73
+  tests/test_catalog_interact.py,200
+  tests/test_diagnose.py,147
+  tests/test_execute_key.py,17
+  tests/test_export.py,218
+  tests/test_imgl.py,202
+  tests/test_layout_classify.py,176
+  tests/test_llm_catalog.py,127
+  tests/test_nlp2imgl_control.py,36
+  tests/test_nlp2imgl_llm.py,29
+  tests/test_nlp2uri_fixes.py,63
+  tests/test_ocr_lang.py,17
+  tests/test_scene_cache.py,90
+  tests/test_vdisplay_bridge.py,51
+  tests/test_vql_export.py,106
+  tests/test_web.py,121
+  tests/test_window_scope.py,198
+  tree.sh,2
+D:
+  examples/scripts/demo-nlp2uri.py:
+    e: main
+    main()
+  imgl/__init__.py:
+  imgl/__main__.py:
+  imgl/actions.py:
+    e: actions,_format_query,_text_matches,_iter_elements,_window_matches,_find_label_for_input,ActionTarget,TypeAction,SceneActions,ElementNotFoundError
+    ActionTarget: center(0),click_coords(0),to_click_action(0)  # A resolved UI element that can be clicked or typed into.
+    TypeAction: coords(0),to_dict(0)  # Type text into an input field.
+    SceneActions: find(1),find_one(1),click(1),type_into(1),list_actions(0)  # Find and interact with elements in a Scene.
+    ElementNotFoundError:  # Raised when no element matches the query.
+    actions(scene)
+    _format_query(element_type)
+    _text_matches(value;query)
+    _iter_elements(scene)
+    _window_matches(window;query)
+    _find_label_for_input(scene;input_element;window)
+  imgl/autodiag.py:
+    e: img2nl_root,img2nl_available,diagnose_capture,build_operation_step,_compact_result,build_execute_report,pick_output_format,render_report,_flag_enabled,should_block_blank_capture,should_block_stale_capture,diagnostics_enabled,_render_markdown,_overall_verdict,_actionable_hints,_compact_features,_scene_class,_parse_coords,_coords_from_action,_parse_typed_text,_parse_keys
+    img2nl_root()
+    img2nl_available()
+    diagnose_capture(image_path)
+    build_operation_step(result)
+    _compact_result(result)
+    build_execute_report()
+    pick_output_format(payload;requested)
+    render_report(payload;fmt)
+    _flag_enabled()
+    should_block_blank_capture(capture)
+    should_block_stale_capture(capture)
+    diagnostics_enabled()
+    _render_markdown(report)
+    _overall_verdict(capture;operation)
+    _actionable_hints(report)
+    _compact_features(features)
+    _scene_class(diag)
+    _parse_coords(message)
+    _coords_from_action(action)
+    _parse_typed_text(message)
+    _parse_keys(message)
+  imgl/capture.py:
+    e: default_capture_path,_is_wayland,capture_screen,_try_vql_capture,_native_backends,_run_command,_capture_with_grim,_capture_with_gnome_screenshot,_capture_with_scrot,_capture_with_portal,_capture_with_mss,_is_blank_image,capture_status_message,CaptureError,BlankCaptureError
+    CaptureError:  # Raised when screen capture fails.
+    BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
+    default_capture_path(out)
+    _is_wayland()
+    capture_screen(out)
+    _try_vql_capture(path)
+    _native_backends()
+    _run_command(cmd;path)
+    _capture_with_grim(path)
+    _capture_with_gnome_screenshot(path)
+    _capture_with_scrot(path)
+    _capture_with_portal(path)
+    _capture_with_mss(path)
+    _is_blank_image(path)
+    capture_status_message(path)
+  imgl/catalog.py:
+    e: build_interactive_catalog,format_catalog_table,_window_option,_element_option,_infer_input_label,_find_window,_iter_interactive_elements,_truncate,InteractiveOption
+    InteractiveOption: to_dict(0)  # One selectable UI target with mouse/keyboard affordances.
+    build_interactive_catalog(scene)
+    format_catalog_table(options)
+    _window_option(index;window)
+    _element_option(index;element)
+    _infer_input_label(element;window)
+    _find_window(scene;window_id)
+    _iter_interactive_elements(scene)
+    _truncate(value;max_len)
+  imgl/catalog_filter.py:
+    e: filter_catalog,_renumber,_replace_index_in_uri,_keep_element,_element_score,_window_score
+    filter_catalog(options)
+    _renumber(options)
+    _replace_index_in_uri(uri;_index)
+    _keep_element(option)
+    _element_score(option)
+    _window_score(option)
+  imgl/classify/__init__.py:
+  imgl/classify/gui_heuristics.py:
+    e: classify_scene_elements,_normalize_confidence,_word_count,_text_or_label,_label_candidates,_match_ocr_to_bbox,_nearest_label,_ocr_inside_frame,_build_inputs
+    classify_scene_elements(windows;ocr_boxes;detected;input_frames)
+    _normalize_confidence(value)
+    _word_count(text)
+    _text_or_label(box)
+    _label_candidates(window_ocr;used_ocr)
+    _match_ocr_to_bbox(bbox;window_ocr;used_ocr)
+    _nearest_label(frame;labels;used_ocr)
+    _ocr_inside_frame(frame;window_ocr;used_ocr)
+    _build_inputs()
+  imgl/cli.py:
+    e: _add_common_args,build_parser,_write_output,main,_check_blank_before_analyze,_apply_config_overrides,_run_image_command
+    _add_common_args(parser)
+    build_parser()
+    _write_output(content;output)
+    main(argv)
+    _check_blank_before_analyze(image_path)
+    _apply_config_overrides(config;args)
+    _run_image_command(args;image_path;config)
+  imgl/config.py:
+    e: ImglConfig
+    ImglConfig:
+  imgl/coords.py:
+    e: scale_scene_to_screen
+    scale_scene_to_screen(scene)
+  imgl/detect/__init__.py:
+  imgl/detect/img2vql_bridge.py:
+    e: img2vql_available,_from_img2vql_dict,detect_with_img2vql,detect_ui_merged
+    img2vql_available()
+    _from_img2vql_dict(raw)
+    detect_with_img2vql(image_path)
+    detect_ui_merged(image)
+  imgl/detect/local.py:
+    e: _hex_color,_avg_color,_iou_xyxy,_detect_titlebar,_flood_rects,_detect_buttons,_detect_panels_simple,_dedupe,detect_ui_elements,DetectedUI
+    DetectedUI:
+    _hex_color(rgb)
+    _avg_color(im;x0;y0;x1;y1)
+    _iou_xyxy(a;b)
+    _detect_titlebar(im;w;h)
+    _flood_rects(mask)
+    _detect_buttons(im;w;h)
+    _detect_panels_simple(im;w;h)
+    _dedupe(elements)
+    detect_ui_elements(image)
+  imgl/detect/rectangles.py:
+    e: detect_input_frames,_find_rectangular_frames,_looks_like_frame,_column_has_edge,_row_has_edge
+    detect_input_frames(image)
+    _find_rectangular_frames(mask)
+    _looks_like_frame(mask;x;y;width;height)
+    _column_has_edge(mask;x;y;height)
+    _row_has_edge(mask;x;y;width)
+  imgl/diagnose.py:
+    e: img2nl_available,diagnose_content,worth_analyzing,content_summary,_diagnose_with_img2nl,_diagnose_fallback,_diagnose_pil_fallback,_scene_class,_has_ui_signals,_recommendation,BlankImageError
+    BlankImageError:  # Raised when a screenshot has no meaningful UI content.
+    img2nl_available()
+    diagnose_content(image_path)
+    worth_analyzing(diag)
+    content_summary(diag)
+    _diagnose_with_img2nl(path)
+    _diagnose_fallback(path)
+    _diagnose_pil_fallback(path)
+    _scene_class(diag)
+    _has_ui_signals(diag)
+    _recommendation(diag)
+  imgl/execute.py:
+    e: execute_action,_execute_xdotool,_execute_ydotool,execute_keys,_normalize_keys,ExecuteResult
+    ExecuteResult: to_dict(0)
+    execute_action(action)
+    _execute_xdotool(kind;x;y;text)
+    _execute_ydotool(kind;x;y;text)
+    execute_keys(keys)
+    _normalize_keys(keys)
+  imgl/export/__init__.py:
+  imgl/export/_escape.py:
+    e: escape_html,escape_xml
+    escape_html(text)
+    escape_xml(text)
+  imgl/export/annotate_export.py:
+    e: default_annotated_path,scene_to_annotated_image,write_annotated_image,write_window_preview_images,write_annotated_images_per_window,open_image,_catalog_relative_to_window,_short_hint_text,_short_hint,_badge_size,_load_fonts,_draw_number_badge,_text_size,_hex_rgba
+    default_annotated_path(image_path)
+    scene_to_annotated_image(scene;catalog)
+    write_annotated_image(scene;catalog;output_path)
+    write_window_preview_images(scene;windows;output_dir)
+    write_annotated_images_per_window(scene;catalogs)
+    open_image(path)
+    _catalog_relative_to_window(catalog;origin)
+    _short_hint_text(text;max_len)
+    _short_hint(option;max_len)
+    _badge_size(image_size)
+    _load_fonts(image_size)
+    _draw_number_badge(draw;text;x;y)
+    _text_size(draw;text;font)
+    _hex_rgba(hex_color;alpha)
+  imgl/export/html_export.py:
+    e: scene_to_html,_default_title,_background_layer,_base_css,_render_window,_render_element,_bbox_style
+    scene_to_html(scene)
+    _default_title(scene)
+    _background_layer(scene)
+    _base_css()
+    _render_window(window)
+    _render_element(element)
+    _bbox_style(bbox)
+  imgl/export/json_export.py:
+    e: scene_to_json,scene_from_json
+    scene_to_json(scene)
+    scene_from_json(payload)
+  imgl/export/svg_export.py:
+    e: scene_to_svg,_default_title,_background_rect,_svg_css,_render_window_svg,_render_element_svg,_element_css_class
+    scene_to_svg(scene)
+    _default_title(scene)
+    _background_rect(scene)
+    _svg_css()
+    _render_window_svg(window)
+    _render_element_svg(element)
+    _element_css_class(element_type)
+  imgl/export/vql_adapter.py:
+    e: scene_to_vql,scene_to_vql_json,write_vql_program,_grid_layer,_bbox_norm,_location_label,_object_from_bbox,_window_to_object,_element_to_object,_ocr_to_object
+    scene_to_vql(scene)
+    scene_to_vql_json(scene)
+    write_vql_program(scene;path)
+    _grid_layer(image_path)
+    _bbox_norm(bbox;width;height)
+    _location_label(cx;cy;width;height)
+    _object_from_bbox()
+    _window_to_object(window;width;height)
+    _element_to_object(element;width;height)
+    _ocr_to_object(box;width;height)
+  imgl/freshness.py:
+    e: is_valid_png,max_image_age_seconds,capture_sidecar_path,vql_cache_paths,clear_vql_cache,sync_vql_cache_with_image,mark_capture_fresh,image_freshness,verify_capture_updated
+    is_valid_png(image)
+    max_image_age_seconds()
+    capture_sidecar_path(image)
+    vql_cache_paths(image)
+    clear_vql_cache(image)
+    sync_vql_cache_with_image(image)
+    mark_capture_fresh(image)
+    image_freshness(image_path)
+    verify_capture_updated(image;before_mtime)
+  imgl/geometry.py:
+    e: iou,center_in,bbox_distance,bbox_from_xyxy
+    iou(a;b)
+    center_in(inner;outer)
+    bbox_distance(a;b)
+    bbox_from_xyxy(x0;y0;x1;y1)
+  imgl/interact.py:
+    e: _build_session_catalog,resolve_imgl_uri,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt,InteractSession
+    InteractSession:
+    _build_session_catalog(session)
+    resolve_imgl_uri(uri;session)
+    _resolve_click(qs;finder;session)
+    _resolve_type(qs;finder;session)
+    _annotate_catalog(session)
+    _select_window(session;window_ref)
+    _export_window_previews(session)
+    run_interactive_shell(image_path)
+    describe_resolution(resolved)
+    _print_catalog_banner(session;cfg;use_llm;no_filter;stderr)
+    _handle_window_phase_prompt(prompt)
+  imgl/layout.py:
+    e: build_windows,find_containing_window,assign_ocr_to_windows,extract_window_titles,_best_titlebar_for_window,_overlaps_top
+    build_windows(detected)
+    find_containing_window(bbox;windows)
+    assign_ocr_to_windows(windows;ocr_boxes)
+    extract_window_titles(windows;detected;ocr_boxes)
+    _best_titlebar_for_window(window_bbox;titlebars)
+    _overlaps_top(window_bbox;bar_bbox)
+  imgl/llm_catalog.py:
+    e: _env_file_candidates,_load_env_files,llm_available,llm_dependencies_ok,refine_catalog_with_llm,_heuristic_fallback,_short_error,_call_vision_llm,_parse_json_payload,_image_to_base64,_llm_json_to_options,_snap_options_to_scene,_merge_heuristic_inputs,_overlaps_catalog,_renumber_options,_best_label_match
+    _env_file_candidates()
+    _load_env_files()
+    llm_available()
+    llm_dependencies_ok()
+    refine_catalog_with_llm(scene)
+    _heuristic_fallback(scene)
+    _short_error(exc)
+    _call_vision_llm(image_path)
+    _parse_json_payload(content)
+    _image_to_base64(image_path)
+    _llm_json_to_options(payload)
+    _snap_options_to_scene(options;scene)
+    _merge_heuristic_inputs(llm_options;scene)
+    _overlaps_catalog(option;others)
+    _renumber_options(options)
+    _best_label_match(label;candidates)
+  imgl/nlp2uri.py:
+    e: prompt_to_imgl_uri,_delegate_vql_nlp2uri,_find_catalog_by_text,_find_catalog_input,_match_catalog_action,ResolvedImglUri
+    ResolvedImglUri: to_dict(0)
+    prompt_to_imgl_uri(prompt)
+    _delegate_vql_nlp2uri(prompt)
+    _find_catalog_by_text(catalog;query)
+    _find_catalog_input(catalog;hint)
+    _match_catalog_action(catalog;hint)
+  imgl/ocr/__init__.py:
+    e: get_ocr_backend
+    get_ocr_backend(name)
+  imgl/ocr/base.py:
+    e: OcrBackend
+    OcrBackend: run(1)
+  imgl/ocr/lang.py:
+    e: normalize_ocr_lang,ocr_lang_attempts
+    normalize_ocr_lang(lang)
+    ocr_lang_attempts(lang)
+  imgl/ocr/tesseract.py:
+    e: _level_name,TesseractOcr
+    TesseractOcr: run(1)  # Extract word-level bounding boxes using pytesseract.
+    _level_name(level)
+  imgl/paths.py:
+    e: resolve_image_path,resolve_image_path_optional
+    resolve_image_path(source)
+    resolve_image_path_optional(source)
+  imgl/pipeline.py:
+    e: analyze,_content_metadata,_count_roles
+    analyze(image)
+    _content_metadata(diag)
+    _count_roles(windows;orphan_elements)
+  imgl/preprocess.py:
+    e: load_image,preprocess,PreprocessedImage
+    PreprocessedImage:
+    load_image(source)
+    preprocess(source)
+  imgl/scene_cache.py:
+    e: scene_cache_path,load_cached_scene,save_scene_cache,load_or_analyze
+    scene_cache_path(vql_file)
+    load_cached_scene(image_path;vql_file)
+    save_scene_cache(scene;vql_file)
+    load_or_analyze(image_path)
+  imgl/types.py:
+    e: dataclass_to_dict,BBox,OcrBox,Element,Window,Scene
+    BBox: as_xyxy(0),contains(1),to_dict(0),from_xyxy(5)
+    OcrBox: to_dict(0)
+    Element: to_dict(0)
+    Window: to_dict(0)
+    Scene: to_dict(0),from_dict(2)
+    dataclass_to_dict(obj)
+  imgl/uri.py:
+    e: _imgl_uri,uri_for_imgl_analyze,uri_for_imgl_annotate,uri_for_imgl_list,uri_for_imgl_click,uri_for_imgl_type,uri_for_imgl_action
+    _imgl_uri()
+    uri_for_imgl_analyze()
+    uri_for_imgl_annotate()
+    uri_for_imgl_list()
+    uri_for_imgl_click()
+    uri_for_imgl_type()
+    uri_for_imgl_action()
+  imgl/vdisplay_bridge.py:
+    e: vdisplay_available,vdisplay_missing_message,default_display,list_os_windows,list_os_monitors,diagnose_os_display,_norm,find_os_window,suggest_imgl_region,list_vision_windows,correlate_windows,build_window_control_report
+    vdisplay_available()
+    vdisplay_missing_message()
+    default_display()
+    list_os_windows()
+    list_os_monitors()
+    diagnose_os_display()
+    _norm(value)
+    find_os_window(match)
+    suggest_imgl_region(window)
+    list_vision_windows(image)
+    correlate_windows(os_windows;vision_windows)
+    build_window_control_report(image)
+  imgl/web/__init__.py:
+    e: create_app
+    create_app()
+  imgl/web/agent.py:
+    e: _catalog_lines,_history_lines,pick_agent_action,_parse_agent_json
+    _catalog_lines(catalog)
+    _history_lines(history;limit)
+    pick_agent_action(goal;catalog;history)
+    _parse_agent_json(raw)
+  imgl/web/app.py:
+    e: create_app,SettingsBody,WindowBody,ActBody,CaptureBody,AgentStartBody,AgentStepBody
+    SettingsBody:
+    WindowBody:
+    ActBody:
+    CaptureBody:
+    AgentStartBody:
+    AgentStepBody:
+    create_app()
+  imgl/web/session.py:
+    e: StepRecord,AgentState,WebSettings,WebSession,SessionManager
+    StepRecord: to_dict(0)
+    AgentState: to_dict(0)
+    WebSettings: to_dict(0)
+    WebSession: __post_init__(0),refresh_catalog(0),analyze(0),capture(0),select_window(1),resolve_prompt(1),resolve_index(1),act(0),state_dict(0),_refresh_annotated_png(0),_interact_session(0),_step_record(0)
+    SessionManager: __init__(1),create(1),auto_select_first_window(0)  # Single global session for local desktop control.
+  imgl/web/thumbs.py:
+    e: _clamp_box,crop_bbox_png,window_bbox_dict
+    _clamp_box(bbox)
+    crop_bbox_png(image_path;bbox)
+    window_bbox_dict(window)
+  imgl/window_scope.py:
+    e: is_monolithic_scene,apply_discovered_windows,discover_windows,summarize_windows,format_window_picker,get_discovered_window,scene_for_window,crop_window_image,export_window_crop,default_window_annotated_path,_split_monolithic_window,_collect_elements,_detect_layout_mode,_split_side_by_side,_split_stacked,_image_gutter_candidates,_element_gap_gutters,_regions_from_balanced_gutters,_split_by_element_y_gaps,_best_vertical_split,_region_id_for_boxes,_guess_window_title,_shift_elements,_shift_ocr_boxes,_safe_filename,WindowSummary
+    WindowSummary: label(0),bbox(0)  # One discoverable window region with stats for the picker UI.
+    is_monolithic_scene(scene)
+    apply_discovered_windows(scene)
+    discover_windows(scene)
+    summarize_windows(scene)
+    format_window_picker(summaries)
+    get_discovered_window(scene;window_ref)
+    scene_for_window(scene;window)
+    crop_window_image(image_path;window)
+    export_window_crop(image_path;window)
+    default_window_annotated_path(image_path;window_id)
+    _split_monolithic_window(scene)
+    _collect_elements(scene)
+    _detect_layout_mode(elements;window_bbox)
+    _split_side_by_side(window_bbox;elements)
+    _split_stacked(window_bbox;elements)
+    _image_gutter_candidates(image_path;window_bbox)
+    _element_gap_gutters(window_bbox;elements)
+    _regions_from_balanced_gutters(window_bbox;elements;candidates)
+    _split_by_element_y_gaps(window_bbox;elements)
+    _best_vertical_split(elements;window_bbox)
+    _region_id_for_boxes(index;count;layout)
+    _guess_window_title(window;ocr_boxes)
+    _shift_elements(elements;origin)
+    _shift_ocr_boxes(boxes;origin)
+    _safe_filename(value)
+  packages/cli2imgl/src/cli2imgl/cli.py:
+    e: main
+    main(argv)
+  packages/dsl2imgl/src/dsl2imgl/__init__.py:
+  packages/dsl2imgl/src/dsl2imgl/bus.py:
+    e: _run_handler,dispatch,execute_dsl_line,execute_dsl,dispatch_json
+    _run_handler(payload)
+    dispatch(envelope)
+    execute_dsl_line(line)
+    execute_dsl(text)
+    dispatch_json(data)
+  packages/dsl2imgl/src/dsl2imgl/cli.py:
+    e: main
+    main(argv)
+  packages/dsl2imgl/src/dsl2imgl/codec.py:
+    e: validate_payload,parse_text,envelope_to_bytes,envelope_from_bytes,envelope_to_json,envelope_from_json,roundtrip_text
+    validate_payload(payload)
+    parse_text(line)
+    envelope_to_bytes(payload)
+    envelope_from_bytes(data)
+    envelope_to_json(payload)
+    envelope_from_json(data)
+    roundtrip_text(line)
+  packages/dsl2imgl/src/dsl2imgl/engine.py:
+  packages/dsl2imgl/src/dsl2imgl/events.py:
+    e: StoredEvent,EventStore
+    StoredEvent: to_dict(0)
+    EventStore: __init__(1),for_default(2),append_command(2),_append_pb(1),_append_jsonl(1),replay_pb(0),replay(0)
+  packages/dsl2imgl/src/dsl2imgl/grammar.py:
+    e: split_command,pick_flag,parse_line,to_text
+    split_command(line)
+    pick_flag(tokens;flag)
+    parse_line(line)
+    to_text(cmd)
+  packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py:
+  packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:
+    e: _build_interact_session,_run_prompt_act,handle_health,handle_capture,handle_analyze,handle_actions,handle_resolve,handle_execute
+    _build_interact_session()
+    _run_prompt_act(session)
+    handle_health(_cmd)
+    handle_capture(cmd)
+    handle_analyze(cmd)
+    handle_actions(cmd)
+    handle_resolve(cmd)
+    handle_execute(cmd)
+  packages/dsl2imgl/src/dsl2imgl/pb_codec.py:
+    e: _set_body,dict_to_envelope,envelope_to_dict,encode_protobuf,decode_protobuf,encode_text_to_protobuf,decode_protobuf_to_text,result_to_pb,pb_to_result,encode_result_protobuf
+    _set_body(envelope;cmd)
+    dict_to_envelope(cmd)
+    envelope_to_dict(envelope)
+    encode_protobuf(cmd)
+    decode_protobuf(data)
+    encode_text_to_protobuf(line)
+    decode_protobuf_to_text(data)
+    result_to_pb(result)
+    pb_to_result(pb)
+    encode_result_protobuf(result)
+  packages/dsl2imgl/src/dsl2imgl/result.py:
+    e: DslResult
+    DslResult: to_dict(0),to_json(0)
+  packages/dsl2imgl/src/dsl2imgl/schema_registry.py:
+    e: _load_schemas,schema_for_verb,all_verbs,validate_schemas
+    _load_schemas()
+    schema_for_verb(verb)
+    all_verbs()
+    validate_schemas()
+  packages/dsl2imgl/src/dsl2imgl/v1/__init__.py:
+  packages/dsl2imgl/src/dsl2imgl/v1/command_pb2.py:
+  packages/dsl2imgl/src/dsl2imgl/v1/result_pb2.py:
+  packages/dsl2imgl/tests/test_dsl2imgl.py:
+    e: test_health,test_grammar_roundtrip,test_key_dry_run,test_key_parses_trailing_image_window
+    test_health()
+    test_grammar_roundtrip()
+    test_key_dry_run()
+    test_key_parses_trailing_image_window()
+  packages/dsl2imgl/tests/test_dsl2imgl_phase4.py:
+    e: test_schema_registry_covers_all_verbs,test_parse_text_validates_health,test_protobuf_roundtrip_type,test_codec_roundtrip_text,test_dispatch_bytes_envelope,test_event_store_append_command,test_command_dispatch_records_event_id
+    test_schema_registry_covers_all_verbs()
+    test_parse_text_validates_health()
+    test_protobuf_roundtrip_type()
+    test_codec_roundtrip_text()
+    test_dispatch_bytes_envelope()
+    test_event_store_append_command(tmp_path)
+    test_command_dispatch_records_event_id(tmp_path;monkeypatch)
+  packages/mcp2imgl/src/mcp2imgl/cli.py:
+    e: main
+    main(argv)
+  packages/mcp2imgl/src/mcp2imgl/server.py:
+    e: run_stdio
+    run_stdio()
+  packages/nlp2imgl/src/nlp2imgl/__init__.py:
+  packages/nlp2imgl/src/nlp2imgl/cli.py:
+    e: main
+    main(argv)
+  packages/nlp2imgl/src/nlp2imgl/control.py:
+    e: default_image_path,default_window,_result_to_dict,doctor_capture,apply_nl_with_diag
+    default_image_path()
+    default_window()
+    _result_to_dict(result)
+    doctor_capture(image)
+    apply_nl_with_diag(prompt)
+  packages/nlp2imgl/src/nlp2imgl/to_dsl.py:
+    e: use_llm_enabled,to_dsl,apply_nl
+    use_llm_enabled(explicit)
+    to_dsl(prompt)
+    apply_nl(prompt)
+  packages/rest2imgl/src/rest2imgl/app.py:
+    e: create_app,NlBody,DoctorBody
+    NlBody:
+    DoctorBody:
+    create_app()
+  packages/rest2imgl/src/rest2imgl/cli.py:
+    e: main
+    main(argv)
+  packages/uri2imgl/src/uri2imgl/__init__.py:
+  packages/uri2imgl/src/uri2imgl/cli.py:
+    e: main
+    main(argv)
+  packages/uri2imgl/src/uri2imgl/decode.py:
+    e: uri_to_dsl
+    uri_to_dsl(uri)
+  tests/test_actions.py:
+    e: _dialog_scene,test_find_button_by_text,test_find_input_by_label,test_click_coords,test_click_action,test_type_into_by_label,test_find_in_window,test_find_one_not_found,test_click_raises_when_missing,test_list_actions,test_cli_find_command
+    _dialog_scene()
+    test_find_button_by_text()
+    test_find_input_by_label()
+    test_click_coords()
+    test_click_action()
+    test_type_into_by_label()
+    test_find_in_window()
+    test_find_one_not_found()
+    test_click_raises_when_missing()
+    test_list_actions()
+    test_cli_find_command(tmp_path;capsys)
+  tests/test_annotate.py:
+    e: _scene,test_default_annotated_path,test_write_annotated_image,test_nlp2uri_mapa
+    _scene()
+    test_default_annotated_path()
+    test_write_annotated_image(tmp_path)
+    test_nlp2uri_mapa()
+  tests/test_autodiag.py:
+    e: test_image_freshness_sidecar,test_verify_capture_updated_fails_on_stale,test_build_execute_report_json,test_diagnose_capture_stale,test_is_valid_png_rejects_empty,test_vql_cache_path_names
+    test_image_freshness_sidecar(tmp_path)
+    test_verify_capture_updated_fails_on_stale(tmp_path)
+    test_build_execute_report_json()
+    test_diagnose_capture_stale(tmp_path;monkeypatch)
+    test_is_valid_png_rejects_empty(tmp_path)
+    test_vql_cache_path_names()
+  tests/test_capture_paths.py:
+    e: test_resolve_image_path_absolute,test_resolve_image_path_relative,test_resolve_image_path_not_found,test_resolve_image_path_optional,test_cli_missing_image_friendly_error,test_capture_default_path,test_cli_vql_aborts_on_blank,test_cli_vql_allows_blank_with_flag,test_capture_screen_with_mock_vql
+    test_resolve_image_path_absolute(tmp_path)
+    test_resolve_image_path_relative(tmp_path;monkeypatch)
+    test_resolve_image_path_not_found(tmp_path;monkeypatch)
+    test_resolve_image_path_optional()
+    test_cli_missing_image_friendly_error(tmp_path;capsys)
+    test_capture_default_path(tmp_path)
+    test_cli_vql_aborts_on_blank(tmp_path)
+    test_cli_vql_allows_blank_with_flag(tmp_path)
+    test_capture_screen_with_mock_vql(tmp_path)
+  tests/test_catalog_filter.py:
+    e: _noisy_scene,test_filter_catalog_drops_code_and_generic,test_build_interactive_catalog_filtered_by_default
+    _noisy_scene()
+    test_filter_catalog_drops_code_and_generic()
+    test_build_interactive_catalog_filtered_by_default()
+  tests/test_catalog_interact.py:
+    e: _dialog_scene,test_build_interactive_catalog,test_format_catalog_table_contains_indices,test_prompt_to_imgl_uri_click_polish,test_prompt_to_imgl_uri_type_polish,test_prompt_to_imgl_uri_number,test_resolve_imgl_uri_click,test_resolve_imgl_uri_list,test_resolve_imgl_uri_type,test_catalog_input_number_is_click,test_interactive_shell_quit
+    _dialog_scene()
+    test_build_interactive_catalog()
+    test_format_catalog_table_contains_indices()
+    test_prompt_to_imgl_uri_click_polish()
+    test_prompt_to_imgl_uri_type_polish()
+    test_prompt_to_imgl_uri_number()
+    test_resolve_imgl_uri_click()
+    test_resolve_imgl_uri_list()
+    test_resolve_imgl_uri_type()
+    test_catalog_input_number_is_click()
+    test_interactive_shell_quit(monkeypatch)
+  tests/test_diagnose.py:
+    e: _black_image,_ui_like_image,test_worth_analyzing_blank_scene,test_worth_analyzing_ui_scene,test_diagnose_black_image_fallback,test_diagnose_with_img2nl_black,test_diagnose_with_img2nl_ui,test_pipeline_skip_blank_raises,test_pipeline_includes_content_metadata,test_cli_diagnose_command
+    _black_image(path;size)
+    _ui_like_image(path)
+    test_worth_analyzing_blank_scene()
+    test_worth_analyzing_ui_scene()
+    test_diagnose_black_image_fallback(tmp_path)
+    test_diagnose_with_img2nl_black(tmp_path)
+    test_diagnose_with_img2nl_ui(tmp_path)
+    test_pipeline_skip_blank_raises(tmp_path)
+    test_pipeline_includes_content_metadata(tmp_path)
+    test_cli_diagnose_command(tmp_path;capsys)
+  tests/test_execute_key.py:
+    e: test_normalize_keys,test_execute_key_dry_run
+    test_normalize_keys()
+    test_execute_key_dry_run()
+  tests/test_export.py:
+    e: _make_dialog_fixture,_sample_scene,test_scene_to_html_structure,test_scene_to_html_embed_image,test_scene_to_html_escapes_special_chars,test_scene_to_svg_wireframe,test_scene_to_svg_overlay,test_scene_to_svg_invalid_mode,test_cli_html_command,test_cli_svg_command_writes_file,test_cli_svg_wireframe_default
+    _make_dialog_fixture(path)
+    _sample_scene()
+    test_scene_to_html_structure()
+    test_scene_to_html_embed_image()
+    test_scene_to_html_escapes_special_chars()
+    test_scene_to_svg_wireframe()
+    test_scene_to_svg_overlay()
+    test_scene_to_svg_invalid_mode()
+    test_cli_html_command(tmp_path;capsys)
+    test_cli_svg_command_writes_file(tmp_path)
+    test_cli_svg_wireframe_default(tmp_path;capsys)
+  tests/test_imgl.py:
+    e: _make_text_image,test_import,test_bbox_as_xyxy_and_contains,test_scene_roundtrip_json,test_scene_from_dict,test_preprocess_resize,test_analyze_with_mocked_ocr,test_analyze_e2e_with_tesseract,test_cli_analyze_stdout,test_cli_analyze_output_file
+    _make_text_image(path;text)
+    test_import()
+    test_bbox_as_xyxy_and_contains()
+    test_scene_roundtrip_json()
+    test_scene_from_dict()
+    test_preprocess_resize()
+    test_analyze_with_mocked_ocr(tmp_path)
+    test_analyze_e2e_with_tesseract(tmp_path)
+    test_cli_analyze_stdout(tmp_path;capsys)
+    test_cli_analyze_output_file(tmp_path)
+  tests/test_layout_classify.py:
+    e: _font,_make_dialog_fixture,test_iou_and_center_in,test_build_windows_fallback,test_build_windows_from_panels,test_find_containing_window,test_extract_window_titles,test_classify_button_with_geometry,test_classify_label_input_pair,test_detect_ui_elements_on_fixture,test_analyze_classifies_dialog
+    _font(size)
+    _make_dialog_fixture(path)
+    test_iou_and_center_in()
+    test_build_windows_fallback()
+    test_build_windows_from_panels()
+    test_find_containing_window()
+    test_extract_window_titles()
+    test_classify_button_with_geometry()
+    test_classify_label_input_pair()
+    test_detect_ui_elements_on_fixture(tmp_path)
+    test_analyze_classifies_dialog(tmp_path)
+  tests/test_llm_catalog.py:
+    e: test_load_env_files_reads_dotenv,test_snap_options_to_scene,test_merge_heuristic_inputs_appends_missing_fields
+    test_load_env_files_reads_dotenv(tmp_path;monkeypatch)
+    test_snap_options_to_scene()
+    test_merge_heuristic_inputs_appends_missing_fields()
+  tests/test_nlp2imgl_control.py:
+    e: test_apply_nl_with_diag_blocks_stale
+    test_apply_nl_with_diag_blocks_stale(monkeypatch)
+  tests/test_nlp2imgl_llm.py:
+    e: test_to_dsl_adds_llm_flag,test_to_dsl_explicit_llm_false,test_use_llm_from_openrouter_key
+    test_to_dsl_adds_llm_flag(monkeypatch)
+    test_to_dsl_explicit_llm_false(monkeypatch)
+    test_use_llm_from_openrouter_key(monkeypatch)
+  tests/test_nlp2uri_fixes.py:
+    e: _scene_with_search_input,test_click_before_type_for_type_to_search_label,test_type_into_search_field_from_catalog
+    _scene_with_search_input()
+    test_click_before_type_for_type_to_search_label()
+    test_type_into_search_field_from_catalog()
+  tests/test_ocr_lang.py:
+    e: test_normalize_url_decoded_lang,test_ocr_lang_attempts_fallback
+    test_normalize_url_decoded_lang()
+    test_ocr_lang_attempts_fallback()
+  tests/test_scene_cache.py:
+    e: test_scale_scene_to_screen_doubles_coords,test_scene_cache_roundtrip,test_load_or_analyze_uses_cache
+    test_scale_scene_to_screen_doubles_coords()
+    test_scene_cache_roundtrip(tmp_path)
+    test_load_or_analyze_uses_cache(tmp_path;monkeypatch)
+  tests/test_vdisplay_bridge.py:
+    e: test_suggest_imgl_region_bottom,test_suggest_imgl_region_top,test_correlate_windows_finds_overlap,test_vdisplay_available_is_bool
+    test_suggest_imgl_region_bottom()
+    test_suggest_imgl_region_top()
+    test_correlate_windows_finds_overlap()
+    test_vdisplay_available_is_bool()
+  tests/test_vql_export.py:
+    e: _sample_scene,test_scene_to_vql_structure,test_scene_to_vql_json_roundtrip,test_write_vql_program,test_cli_vql_command
+    _sample_scene()
+    test_scene_to_vql_structure()
+    test_scene_to_vql_json_roundtrip()
+    test_write_vql_program(tmp_path)
+    test_cli_vql_command(tmp_path;capsys)
+  tests/test_web.py:
+    e: _write_ui_fixture,web_client,test_health,test_index_html,test_state_and_screenshot,test_act_dry_run_by_index,test_action_thumb,test_settings_update,test_capture_error_returns_state,test_agent_start_without_llm
+    _write_ui_fixture(path)
+    web_client(tmp_path)
+    test_health(web_client)
+    test_index_html(web_client)
+    test_state_and_screenshot(web_client)
+    test_act_dry_run_by_index(web_client)
+    test_action_thumb(web_client)
+    test_settings_update(web_client)
+    test_capture_error_returns_state(web_client;monkeypatch)
+    test_agent_start_without_llm(web_client)
+  tests/test_window_scope.py:
+    e: _wide_scene,test_discover_windows_splits_monolithic_scene,test_scene_for_window_shifts_coordinates,test_build_catalog_scoped_to_window,test_export_window_crop_and_preview,test_stacked_layout_splits_horizontally_not_grid,test_format_window_picker_lists_regions,test_single_monitor_region_bottom_alias
+    _wide_scene()
+    test_discover_windows_splits_monolithic_scene()
+    test_scene_for_window_shifts_coordinates()
+    test_build_catalog_scoped_to_window()
+    test_export_window_crop_and_preview(tmp_path)
+    test_stacked_layout_splits_horizontally_not_grid(tmp_path)
+    test_format_window_picker_lists_regions()
+    test_single_monitor_region_bottom_alias()

@@ -26,3 +26,12 @@ def test_key_dry_run() -> None:
     result = dispatch("KEY ctrl+Return EXECUTE 0")
     assert result.ok
     assert result.verb == "KEY"
+
+
+def test_key_parses_trailing_image_window() -> None:
+    cmd = parse_line("KEY ctrl+Return IMAGE screen.png WINDOW region-bottom EXECUTE 0")
+    assert cmd is not None
+    assert cmd["keys"] == "ctrl+Return"
+    assert cmd["image"] == "screen.png"
+    assert cmd["window"] == "region-bottom"
+    assert cmd["execute"] is False

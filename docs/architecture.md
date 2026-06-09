@@ -5,7 +5,7 @@
 | Projekt | Rola | NL → klik na zrzucie? |
 |---------|------|------------------------|
 | **imgl** | Zrzut → Scene → katalog → współrzędne → execute | **TAK (rdzeń)** |
-| **vql** | Capture portal, `VQLProgram`, bus `vql://window/*` | NIE (infrastruktura) |
+| **vql** | Opcjonalny capture portal, `VQLProgram`, bus `vql://window/*` | NIE (infrastruktura) |
 | **nlp2uri** (semcod) | NL → `app://`, `file://`, `desktop-*://` | Częściowo (delegacja do imgl) |
 | **img2nl** | Opis sceny, blank check | NIE |
 
@@ -25,7 +25,7 @@ nlp2imgl / uri2imgl / cli2imgl / mcp2imgl / rest2imgl
 
 ## Przepływ `kliknij Projects`
 
-1. `vql` lub `imgl capture` → `screen.png`
+1. `imgl capture` (vdisplay mirror / portal) → `screen.png`
 2. `imgl analyze` → `Scene`, `layout.vql.json`
 3. `imgl/nlp2uri.py` → `vql://window/imgl?action=click&text=Projects`
 4. `imgl/interact.resolve_imgl_uri` → `{x, y}`

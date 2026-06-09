@@ -55,6 +55,6 @@ Wymaga `OPENROUTER_API_KEY` w `.env` lub środowisku.
 
 ## Uwagi
 
-- **Wayland**: capture może wymagać portalu (`--capture-on-start` → prompt uprawnień)
+- **Wayland**: capture próbuje vdisplay mirror; przy `--capture-on-start` może pojawić się portal GNOME (fallback)
 - Współrzędne są ze **świeżego** zrzutu — włącz „Zrzut po akcji”
 - Domyślnie **dry-run** — zaznacz „Wykonuj na pulpicie” dla xdotool/ydotool

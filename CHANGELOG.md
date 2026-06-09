@@ -5,6 +5,110 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.10] - 2026-06-09
+
+### Fixed
+- Fix ai-boilerplate issues (ticket-2c58e148)
+- Fix string-concat issues (ticket-48321aa5)
+- Fix unused-imports issues (ticket-6134672b)
+- Fix string-concat issues (ticket-ee86b001)
+- Fix unused-imports issues (ticket-4deb65ca)
+- Fix magic-numbers issues (ticket-10009555)
+- Fix relative-imports issues (ticket-a0a9387a)
+- Fix string-concat issues (ticket-13b338b7)
+- Fix unused-imports issues (ticket-ede91617)
+- Fix magic-numbers issues (ticket-1fe42bad)
+- Fix string-concat issues (ticket-af43f13f)
+- Fix unused-imports issues (ticket-997b37e6)
+- Fix magic-numbers issues (ticket-81a27265)
+- Fix string-concat issues (ticket-2f9182d3)
+- Fix unused-imports issues (ticket-f86cd724)
+- Fix magic-numbers issues (ticket-0b686bc4)
+- Fix unused-imports issues (ticket-8a4426f0)
+- Fix relative-imports issues (ticket-df74b804)
+- Fix unused-imports issues (ticket-0342b906)
+- Fix magic-numbers issues (ticket-1dcb1328)
+- Fix unused-imports issues (ticket-3237fdc2)
+- Fix magic-numbers issues (ticket-8853ee7f)
+- Fix ai-boilerplate issues (ticket-a8f90a75)
+- Fix unused-imports issues (ticket-bd66e403)
+- Fix string-concat issues (ticket-158c8438)
+- Fix unused-imports issues (ticket-8b905d5e)
+- Fix magic-numbers issues (ticket-c3334bf5)
+- Fix string-concat issues (ticket-767a7e1d)
+- Fix unused-imports issues (ticket-5d6412ec)
+- Fix magic-numbers issues (ticket-07838706)
+- Fix unused-imports issues (ticket-b0d49b4e)
+- Fix magic-numbers issues (ticket-50720f10)
+- Fix relative-imports issues (ticket-06a44d99)
+- Fix unused-imports issues (ticket-d08e44bf)
+- Fix unused-imports issues (ticket-cf194eb3)
+- Fix unused-imports issues (ticket-543fd52e)
+- Fix unused-imports issues (ticket-b0d599a1)
+- Fix string-concat issues (ticket-9ac2b68b)
+- Fix unused-imports issues (ticket-bec34568)
+- Fix magic-numbers issues (ticket-c9399ecd)
+- Fix string-concat issues (ticket-4d3d663a)
+- Fix unused-imports issues (ticket-0e0094d1)
+- Fix magic-numbers issues (ticket-6206e954)
+- Fix string-concat issues (ticket-f35d8261)
+- Fix unused-imports issues (ticket-fecc4bae)
+- Fix string-concat issues (ticket-24ee739e)
+- Fix unused-imports issues (ticket-c857255e)
+- Fix magic-numbers issues (ticket-222c4b85)
+- Fix string-concat issues (ticket-22b62ed0)
+- Fix unused-imports issues (ticket-330dc368)
+- Fix string-concat issues (ticket-c5b5ca3f)
+- Fix unused-imports issues (ticket-2d2777ed)
+- Fix magic-numbers issues (ticket-2e14353f)
+- Fix relative-imports issues (ticket-f38b419b)
+- Fix unused-imports issues (ticket-8edfbe43)
+- Fix unused-imports issues (ticket-bfa141c7)
+- Fix unused-imports issues (ticket-d7505798)
+- Fix magic-numbers issues (ticket-d1cee8a9)
+- Fix unused-imports issues (ticket-ef90fe9f)
+- Fix unused-imports issues (ticket-d380175f)
+- Fix string-concat issues (ticket-746cbd46)
+- Fix unused-imports issues (ticket-a8708a42)
+- Fix string-concat issues (ticket-2cd3d80c)
+- Fix unused-imports issues (ticket-440b11bc)
+- Fix string-concat issues (ticket-e9eb145e)
+- Fix unused-imports issues (ticket-0bb1da60)
+- Fix unused-imports issues (ticket-903f24bb)
+- Fix magic-numbers issues (ticket-486cdc4a)
+- Fix unused-imports issues (ticket-f2619c87)
+- Fix magic-numbers issues (ticket-ce989c02)
+- Fix smart-return-type issues (ticket-c7374ed6)
+- Fix string-concat issues (ticket-8a37d70a)
+- Fix unused-imports issues (ticket-bb7b1ab2)
+- Fix magic-numbers issues (ticket-42f61592)
+- Fix unused-imports issues (ticket-01704e9a)
+- Fix magic-numbers issues (ticket-db0f3004)
+- Fix string-concat issues (ticket-d7cbf979)
+- Fix unused-imports issues (ticket-559ad6e4)
+- Fix magic-numbers issues (ticket-48d37d8e)
+- Fix unused-imports issues (ticket-0bbc0ffd)
+- Fix ai-boilerplate issues (ticket-74b586d3)
+- Fix string-concat issues (ticket-40b483da)
+- Fix unused-imports issues (ticket-26dc4889)
+- Fix magic-numbers issues (ticket-90eae837)
+- Fix unused-imports issues (ticket-ec4d57e2)
+- Fix magic-numbers issues (ticket-a1e155e1)
+- Fix string-concat issues (ticket-514f25c8)
+- Fix unused-imports issues (ticket-02ed2d0c)
+- Fix magic-numbers issues (ticket-712d72cd)
+- Fix unused-imports issues (ticket-04aefa7d)
+- Fix unused-imports issues (ticket-45835377)
+- Fix ai-boilerplate issues (ticket-6ffce9d6)
+- Fix unused-imports issues (ticket-202221be)
+- Fix string-concat issues (ticket-c81712cc)
+- Fix unused-imports issues (ticket-5606068a)
+- Fix string-concat issues (ticket-9324013a)
+- Fix unused-imports issues (ticket-ec0f56c5)
+- Fix unused-imports issues (ticket-5e28d582)
+- Fix magic-numbers issues (ticket-ca548f0d)
+- Fix unused-imports issues (ticket-836c881b)
+
 ## [Unreleased]
 
 ### Added
@@ -31,6 +135,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default `max_dim=2560` for faster Tesseract on 4K/8K captures
 - Scene cache (`layout.imgl.json`) — `uri2vql` list/click/type skips re-OCR when cache matches
 - Diagnose vql-fallback returns a short summary instead of empty text
+
+## [0.7.3] - 2026-06-09
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/README.md
+- Update docs/architecture.md
+- Update docs/capture.md
+- Update docs/nl-shell-examples.md
+- Update docs/web-ui.md
+- ... and 9 more files
+
+### Test
+- Update testql-scenarios/generated-api-integration.testql.toon.yaml
+- Update testql-scenarios/generated-api-smoke.testql.toon.yaml
+- Update testql-scenarios/generated-from-pytests.testql.toon.yaml
+- Update tests/conftest.py
+- Update tests/test_autodiag.py
+- Update tests/test_capture_paths.py
+- Update tests/test_capture_vdisplay.py
+- Update tests/test_capture_vdisplay_priority.py
+- Update tests/test_control_cli.py
+- Update tests/test_imgl.py
+- ... and 6 more files
+
+### Other
+- Update .gitignore
+- Update Makefile
+- Update app.doql.less
+- Update examples/img2nl-vql-flow.sh
+- Update examples/scripts/demo-agent-loop.sh
+- Update imgl/actions.py
+- Update imgl/autodiag.py
+- Update imgl/capture.py
+- Update imgl/cli.py
+- Update imgl/control.py
+- ... and 37 more files
 
 ## [0.7.2] - 2026-06-09
 

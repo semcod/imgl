@@ -1,0 +1,52 @@
+# imgl | 379 func | 64f | 59623L | python | 2026-06-09
+# generated in 0.00s
+
+HEALTH:
+  CC̄=5.3  critical=53 (limit:10)  dup=0  cycles=3
+
+ALERTS[20]:
+  !!! high_fan_out     create_app = 45 (limit:10)
+  !!! high_fan_out     main = 45 (limit:10)
+  !!! cc_exceeded      parse_line = 44 (limit:15)
+  !!! cc_exceeded      main = 44 (limit:15)
+  !!! cc_exceeded      run_interactive_shell = 43 (limit:15)
+  !!! cc_exceeded      envelope_to_dict = 42 (limit:15)
+  !!! high_fan_out     run_interactive_shell = 35 (limit:10)
+  !!! cc_exceeded      _set_body = 31 (limit:15)
+  !!! cc_exceeded      _resolve_type = 30 (limit:15)
+  !!! cc_exceeded      WebSession.act = 29 (limit:15)
+
+MODULES[117] (top by size):
+  M[layout.vql.json] 46316L C:0 F:0 CC↑0 D:0 (json)
+  M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
+  M[imgl/cli.py] 717L C:0 F:7 CC↑44 D:0 (python)
+  M[imgl/window_scope.py] 575L C:1 F:25 CC↑18 D:10 (python)
+  M[imgl/interact.py] 560L C:1 F:11 CC↑43 D:4 (python)
+  M[imgl/llm_catalog.py] 520L C:0 F:16 CC↑14 D:2 (python)
+  M[goal.yaml] 511L C:0 F:0 CC↑0 D:0 (yaml)
+  M[imgl/web/session.py] 452L C:5 F:18 CC↑29 D:0 (python)
+  M[imgl/autodiag.py] 406L C:0 F:21 CC↑24 D:3 (python)
+  M[imgl/catalog.py] 350L C:1 F:9 CC↑13 D:6 (python)
+  M[imgl/export/annotate_export.py] 299L C:0 F:14 CC↑8 D:3 (python)
+  M[imgl/web/app.py] 286L C:6 F:1 CC↑4 D:2 (python)
+  M[imgl/nlp2uri.py] 282L C:1 F:6 CC↑28 D:4 (python)
+  M[imgl/detect/local.py] 278L C:1 F:9 CC↑24 D:0 (python)
+  M[imgl/actions.py] 271L C:4 F:16 CC↑21 D:3 (python)
+  LANGS: python:76/shell:13/json:12/toml:7/yaml:6/proto:2/other:1
+
+HOTSPOTS[10]:
+  ★ create_app fan=45  // Orchestrates 45 calls
+  ★ main fan=45  // Orchestrates 45 calls
+  ★ run_interactive_shell fan=35  // Analyze screenshot and run an interactive action picker.
+  ★ _run_image_command fan=28  // Orchestrates 28 calls
+  ★ _detect_buttons fan=26  // Orchestrates 26 calls
+
+REFACTOR[15]:
+  [1] H/L Split _set_body (CC=31)
+  [2] H/L Split envelope_to_dict (CC=42)
+  [3] H/L Split prompt_to_imgl_uri (CC=28)
+  [4] H/L Split _resolve_type (CC=30)
+  [5] H/L Split run_interactive_shell (CC=43)
+
+EVOLUTION:
+  2026-06-09 CC̄=5.3 crit=53 59623L // Automated analysis

@@ -27,7 +27,7 @@ pip install -e ~/github/wronai/img2nl[analyze]
 
 | Katalog | Co pokazuje |
 |---------|-------------|
-| [platforms/gnome-wayland](platforms/gnome-wayland/README.md) | GNOME + Wayland, portal capture, typowe problemy |
+| [platforms/gnome-wayland](platforms/gnome-wayland/README.md) | GNOME + Wayland, vdisplay mirror + portal fallback |
 | [platforms/x11](platforms/x11/README.md) | X11, `xdotool`, szybszy capture |
 | [platforms/macos](platforms/macos/README.md) | macOS, Tesseract, ograniczenia automatyzacji |
 | [workflows/capture-to-action](workflows/capture-to-action/README.md) | Pełna ścieżka: capture → analyze → klik |
@@ -50,7 +50,8 @@ pip install -e ~/github/wronai/img2nl[analyze]
 
 ```bash
 # 1. Zrzut (lub użyj istniejącego screen.png)
-imgl capture --interactive -o screen.png
+make install-dev
+make capture-interactive   # mirror → portal fallback na Wayland
 
 # 2. Wykryte okna + wycinki
 imgl windows screen.png --export-crops --annotate

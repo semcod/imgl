@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Demo: pętla agenta — capture → analyze → dry-run akcji
 # Użycie: examples/scripts/demo-agent-loop.sh
-# Wymaga: działający capture (portal na Wayland)
+# Wymaga: działający capture (vdisplay mirror lub portal na Wayland)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -14,7 +14,7 @@ echo "=== imgl agent loop (dry-run) ==="
 echo "Capture → $OUT"
 echo
 
-if ! imgl capture --interactive -o "$OUT" 2>/dev/null; then
+if ! imgl capture -o "$OUT" --verify 2>/dev/null; then
   echo "Capture nieudany — używam screen.png z repo"
   OUT="screen.png"
 fi
@@ -31,7 +31,7 @@ printf 'kliknij Projects\nquit\n' | imgl interact "$OUT" --llm --window "$WINDOW
 
 echo
 echo "Pełna pętla z wykonaniem:"
-echo "  imgl capture --interactive -o step1.png"
+echo "  imgl capture -o step1.png --verify"
 echo "  imgl interact step1.png --llm --window $WINDOW --execute"
-echo "  imgl capture --interactive -o step2.png"
+echo "  imgl capture -o step2.png --verify"
 echo "  ..."

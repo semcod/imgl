@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -15,6 +16,39 @@ class CaptureError(RuntimeError):
 
 class BlankCaptureError(CaptureError):
     """Raised when capture succeeded but image is empty/black."""
+
+
+_last_capture_meta: dict[str, object] = {}
+
+
+def last_capture_meta() -> dict[str, object]:
+    """Metadata from the most recent successful capture (method, display, …)."""
+    return dict(_last_capture_meta)
+
+
+def _prefer_mirror() -> bool:
+    raw = os.environ.get("IMGL_CAPTURE_PREFER_MIRROR", "1").strip().lower()
+    return raw not in {"0", "false", "no", "off"}
+
+
+def _vql_capture_enabled() -> bool:
+    raw = os.environ.get("IMGL_CAPTURE_ALLOW_VQL", "").strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
+def _portal_fallback_enabled() -> bool:
+    """On Wayland, fall back to GNOME portal when driver/mirror capture fails."""
+    raw = os.environ.get("IMGL_CAPTURE_PORTAL_FALLBACK", "").strip().lower()
+    if raw:
+        return raw not in {"0", "false", "no", "off"}
+    return _is_wayland()
+
+
+def _vdisplay_portal_in_chain_enabled() -> bool:
+    raw = os.environ.get("IMGL_CAPTURE_VDISPLAY_PORTAL", "").strip().lower()
+    if raw:
+        return raw not in {"0", "false", "no", "off"}
+    return _portal_fallback_enabled()
 
 
 def default_capture_path(out: str | Path | None = None) -> Path:
@@ -39,27 +73,70 @@ def capture_screen(
     monitor: int = 1,
     interactive: bool = False,
     allow_blank: bool = False,
+    prefer_mirror: bool | None = None,
 ) -> Path:
     """
     Capture the desktop to a PNG file.
 
-    Tries vql capture (if installed), then grim/gnome-screenshot/scrot.
-    On Wayland, mss is avoided (usually returns a black frame).
+    Priority:
+    1. vdisplay mirror / monitor region (no Screen Recording portal)
+    2. grim / gnome-screenshot / scrot / mss
+    3. vql capture (opt-in: IMGL_CAPTURE_ALLOW_VQL=1)
+    4. GNOME portal region picker (only when interactive=True / --portal)
     """
+    global _last_capture_meta
+    _last_capture_meta = {}
     path = default_capture_path(out)
     errors: list[str] = []
+    use_mirror = _prefer_mirror() if prefer_mirror is None else prefer_mirror
 
-    if _try_vql_capture(path, monitor=monitor, interactive=interactive, allow_blank=allow_blank):
+    from imgl.installs import ensure_vdisplay
+
+    ensure_vdisplay(quiet=True)
+
+    ok, detail = _try_vdisplay_capture(
+        path,
+        monitor=monitor,
+        allow_blank=allow_blank,
+        prefer_mirror=use_mirror,
+        allow_portal=False,
+    )
+    if ok:
         return path
+    if detail:
+        errors.append(detail)
 
-    for name, runner in _native_backends(interactive=interactive):
+    if _vdisplay_portal_in_chain_enabled():
+        ok, detail = _try_vdisplay_capture(
+            path,
+            monitor=monitor,
+            allow_blank=allow_blank,
+            prefer_mirror=False,
+            allow_portal=True,
+        )
+        if ok:
+            return path
+        if detail:
+            errors.append(f"vdisplay-portal: {detail}")
+
+    for name, runner in _non_portal_backends():
         try:
-            if runner(path):
+            result = runner(path)
+            if isinstance(result, tuple):
+                ok, detail = result
+            else:
+                ok, detail = bool(result), ""
+            if ok:
                 if allow_blank or not _is_blank_image(path):
+                    from imgl.freshness import mark_capture_fresh
+
+                    mark_capture_fresh(path)
+                    _last_capture_meta = {"method": name}
                     return path
+                _discard_capture_file(path)
                 errors.append(f"{name}: captured but image is blank")
                 continue
-            errors.append(f"{name}: command failed")
+            errors.append(f"{name}: {detail or 'command failed'}")
         except Exception as exc:
             errors.append(f"{name}: {exc}")
 
@@ -67,18 +144,110 @@ def capture_screen(
         try:
             if _capture_with_mss(path, monitor=monitor):
                 if allow_blank or not _is_blank_image(path):
+                    _last_capture_meta = {"method": "mss"}
                     return path
                 errors.append("mss: captured but image is blank")
         except Exception as exc:
             errors.append(f"mss: {exc}")
 
-    hint = (
-        "Screen capture failed or produced a blank image (common on GNOME/Wayland). "
-        "Try: imgl capture --interactive  OR use an existing PNG:\n"
-        "  imgl vql /tmp/screen.png -o layout.vql.json\n"
-        "Install vql for portal capture: pip install -e ~/github/oqlos/vql"
-    )
+    if _vql_capture_enabled():
+        if _try_vql_capture(path, monitor=monitor, interactive=False, allow_blank=allow_blank):
+            return path
+        errors.append("vql: failed or blank")
+
+    if interactive:
+        for name, runner in _portal_backends():
+            try:
+                result = runner(path)
+                if isinstance(result, tuple):
+                    ok, detail = result
+                else:
+                    ok, detail = bool(result), ""
+                if ok:
+                    if allow_blank or not _is_blank_image(path):
+                        _last_capture_meta = {"method": name}
+                        return path
+                    _discard_capture_file(path)
+                    errors.append(f"{name}: captured but image is blank")
+                    continue
+                errors.append(f"{name}: {detail or 'command failed'}")
+            except Exception as exc:
+                errors.append(f"{name}: {exc}")
+
+    _discard_capture_file(path)
+    hint = _capture_failure_hint(interactive=interactive)
     raise BlankCaptureError(f"{hint}\nTried: {'; '.join(errors) or 'no backends'}")
+
+
+def _capture_failure_hint(*, interactive: bool) -> str:
+    if interactive:
+        return (
+            "Mirror/driver capture failed; portal też nie zadziałał.\n"
+            "Wybierz obszar w dialogu GNOME (Settings → Privacy → Screen Recording).\n"
+            "Bez portalu: sudo usermod -aG video $USER && re-login (DRM/fbdev)\n"
+            "sudo apt install python3-dbus python3-gi grim"
+        )
+    if _is_wayland():
+        return (
+            "Screen capture failed on GNOME/Wayland.\n"
+            "Portal fallback: imgl capture --portal -o screen.png --verify\n"
+            "Bez portalu (driver): sudo usermod -aG video $USER && re-login\n"
+            "Multi-monitor mirror: podłącz 2. wyświetlacz lub ustaw wirtualny w GNOME Displays"
+        )
+    return (
+        "Screen capture failed.\n"
+        "Try: imgl capture -o screen.png --verify\n"
+        "Install: imgl install vdisplay"
+    )
+
+
+def _try_vdisplay_capture(
+    path: Path,
+    *,
+    monitor: int,
+    allow_blank: bool,
+    prefer_mirror: bool = True,
+    allow_portal: bool = False,
+) -> tuple[bool, str]:
+    """Mirror/region capture via vdisplay; portal only when allow_portal=True."""
+    global _last_capture_meta
+    try:
+        from vdisplay.capture.host import capture_host_to_file
+    except ImportError:
+        return False, "vdisplay not installed — run: make install-dev (or: imgl install vdisplay)"
+
+    prev_portal = os.environ.get("VDISPLAY_CAPTURE_ALLOW_PORTAL")
+    try:
+        if allow_portal:
+            os.environ["VDISPLAY_CAPTURE_ALLOW_PORTAL"] = "1"
+        elif prev_portal is None:
+            os.environ.pop("VDISPLAY_CAPTURE_ALLOW_PORTAL", None)
+        meta = capture_host_to_file(
+            path,
+            monitor=monitor,
+            display=os.environ.get("DISPLAY"),
+            source=os.environ.get("IMGL_CAPTURE_SOURCE"),
+            target=os.environ.get("IMGL_CAPTURE_TARGET"),
+            prefer_mirror=prefer_mirror,
+        )
+        if allow_blank or not _is_blank_image(path):
+            from imgl.freshness import mark_capture_fresh
+
+            mark_capture_fresh(path)
+            _last_capture_meta = dict(meta)
+            return True, ""
+        _discard_capture_file(path)
+        return False, f"vdisplay {meta.get('method', 'capture')}: blank frame"
+    except Exception as exc:
+        detail = str(exc).strip().replace("\n", " ")
+        if len(detail) > 240:
+            detail = detail[:237] + "..."
+        return False, detail if detail.startswith("vdisplay") else f"vdisplay: {detail}"
+    finally:
+        if prev_portal is None:
+            os.environ.pop("VDISPLAY_CAPTURE_ALLOW_PORTAL", None)
+        else:
+            os.environ["VDISPLAY_CAPTURE_ALLOW_PORTAL"] = prev_portal
 
 
 def _try_vql_capture(
@@ -96,25 +265,35 @@ def _try_vql_capture(
     try:
         info = vql_capture(path, monitor=monitor, interactive=interactive)
         captured = Path(info.path)
-        if allow_blank or not _is_blank_image(captured):
+        if captured.is_file():
+            if captured.resolve() != path.resolve():
+                shutil.copy2(captured, path)
+            from imgl.freshness import mark_capture_fresh
+
+            mark_capture_fresh(path)
+            _last_capture_meta = {"method": "vql", "path": str(captured)}
+        target = path if path.is_file() else captured
+        if allow_blank or not _is_blank_image(target):
             return True
+        _discard_capture_file(path)
     except Exception:
         pass
     return False
 
 
-def _native_backends(*, interactive: bool) -> list[tuple[str, callable]]:
-    backends: list[tuple[str, callable]] = []
+def _discard_capture_file(path: Path) -> None:
+    """Remove invalid/blank capture so doctor does not read a stale PNG."""
+    sidecar = path.with_suffix(".captured_at")
+    for candidate in (path, sidecar):
+        if candidate.is_file():
+            candidate.unlink()
 
-    if interactive:
-        portal = _capture_with_portal
-        backends.append(("portal-interactive", lambda p: portal(p, interactive=True)))
 
+def _non_portal_backends() -> list[tuple[str, callable]]:
     if _is_wayland():
         order = (
-            ("gnome-screenshot", _capture_with_gnome_screenshot),
-            ("scrot", _capture_with_scrot),
             ("grim", _capture_with_grim),
+            ("gnome-screenshot", _capture_with_gnome_screenshot),
         )
     else:
         order = (
@@ -122,8 +301,14 @@ def _native_backends(*, interactive: bool) -> list[tuple[str, callable]]:
             ("gnome-screenshot", _capture_with_gnome_screenshot),
             ("grim", _capture_with_grim),
         )
-    backends.extend(order)
-    return backends
+    return list(order)
+
+
+def _portal_backends() -> list[tuple[str, callable]]:
+    return [
+        ("portal-interactive", lambda p: _capture_with_portal(p, interactive=True)),
+        ("portal", lambda p: _capture_with_portal(p, interactive=False)),
+    ]
 
 
 def _run_command(cmd: list[str], path: Path, *, timeout: int = 20) -> bool:
@@ -150,15 +335,86 @@ def _capture_with_scrot(path: Path) -> bool:
     return _run_command(["scrot", str(path)], path)
 
 
-def _capture_with_portal(path: Path, *, interactive: bool) -> bool:
-    """xdg-desktop-portal screenshot via vql helper script when available."""
-    try:
-        from vql.adopt.portal_capture import capture_via_portal
-    except ImportError:
-        return False
+def _portal_python() -> str:
+    """System Python with dbus/gi (venv usually lacks these)."""
+    candidates = [
+        os.environ.get("VQL_PORTAL_PYTHON", ""),
+        "/usr/bin/python3",
+        shutil.which("python3") or "",
+    ]
+    probe = "import dbus; from gi.repository import GLib"
+    for exe in candidates:
+        if not exe or not Path(exe).is_file():
+            continue
+        try:
+            proc = subprocess.run(
+                [exe, "-c", probe],
+                capture_output=True,
+                timeout=3,
+                check=False,
+            )
+            if proc.returncode == 0:
+                return exe
+        except Exception:
+            continue
+    return ""
 
-    result = capture_via_portal(str(path), interactive=interactive)
-    return bool(result.get("ok")) and path.is_file()
+
+def _portal_script() -> Path | None:
+    try:
+        import vql.adopt.portal_capture as mod
+
+        script = Path(mod.__file__)
+        if script.is_file():
+            return script
+    except ImportError:
+        pass
+    for candidate in (
+        Path.home() / "github/oqlos/vql/src/vql/adopt/portal_capture.py",
+        Path("/usr/share/vql/portal_capture.py"),
+    ):
+        if candidate.is_file():
+            return candidate
+    return None
+
+
+def _capture_with_portal(path: Path, *, interactive: bool) -> tuple[bool, str]:
+    """xdg-desktop-portal screenshot via system python3 + portal_capture.py."""
+    py = _portal_python()
+    script = _portal_script()
+    if not py:
+        return False, (
+            "portal python (python3-dbus, python3-gi) not found — "
+            "sudo apt install python3-dbus python3-gi"
+        )
+    if not script:
+        return False, "portal script missing (install vql or clone oqlos/vql)"
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_file():
+        path.unlink()
+
+    cmd = [py, str(script), "--out", str(path)]
+    if interactive:
+        cmd.append("--interactive")
+
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=45, check=False)
+    except Exception as exc:
+        return False, str(exc)
+
+    try:
+        payload = json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError:
+        detail = (proc.stderr or proc.stdout or "invalid portal json").strip()
+        return False, detail or "portal subprocess failed"
+
+    if not payload.get("ok"):
+        detail = str(payload.get("error") or payload.get("hint") or "portal failed")
+        return False, detail
+    if not path.is_file() or path.stat().st_size < 64:
+        return False, "portal succeeded but output file missing"
+    return True, ""
 
 
 def _capture_with_mss(path: Path, *, monitor: int) -> bool:

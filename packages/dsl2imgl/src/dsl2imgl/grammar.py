@@ -85,7 +85,7 @@ def parse_line(line: str) -> dict[str, Any] | None:
         elif verb == "KEY":
             keys_tokens: list[str] = []
             for tok in rest:
-                if tok == "EXECUTE":
+                if tok in {"EXECUTE", "IMAGE", "WINDOW"}:
                     break
                 keys_tokens.append(tok)
             cmd["keys"] = " ".join(keys_tokens) if keys_tokens else "Return"
@@ -97,6 +97,8 @@ def parse_line(line: str) -> dict[str, Any] | None:
             cmd["image"] = f
         if f := pick_flag(rest, "WINDOW"):
             cmd["window"] = f
+        if "LLM" in rest:
+            cmd["llm"] = True
         cmd["execute"] = pick_flag(rest, "EXECUTE") != "0"
     elif verb == "AGENT":
         cmd["goal"] = pick_flag(rest, "GOAL") or " ".join(rest).strip('"').strip("'")

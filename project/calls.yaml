@@ -1,0 +1,3756 @@
+project: /home/tom/github/semcod/imgl
+generated_from: code2llm call graph analysis
+stats:
+  total_nodes: 302
+  total_edges: 393
+  modules_count: 57
+nodes:
+  imgl.vdisplay_bridge.correlate_windows:
+    name: correlate_windows
+    module: imgl.vdisplay_bridge
+    line: 127
+    cyclomatic_complexity: 18
+    calls_out: 32
+    calls_in: 1
+  imgl.autodiag.should_block_blank_capture:
+    name: should_block_blank_capture
+    module: imgl.autodiag
+    line: 219
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  imgl.classify.gui_heuristics._word_count:
+    name: _word_count
+    module: imgl.classify.gui_heuristics
+    line: 132
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  imgl.vdisplay_bridge._norm:
+    name: _norm
+    module: imgl.vdisplay_bridge
+    line: 65
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  imgl.web.session.WebSession.capture:
+    name: capture
+    module: imgl.web.session
+    line: 164
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  imgl.export.vql_adapter._object_from_bbox:
+    name: _object_from_bbox
+    module: imgl.export.vql_adapter
+    line: 158
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 3
+  packages.nlp2imgl.src.nlp2imgl.control._result_to_dict:
+    name: _result_to_dict
+    module: packages.nlp2imgl.src.nlp2imgl.control
+    line: 29
+    cyclomatic_complexity: 4
+    calls_out: 13
+    calls_in: 1
+  imgl.export.svg_export.scene_to_svg:
+    name: scene_to_svg
+    module: imgl.export.svg_export
+    line: 22
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 1
+  imgl.uri.uri_for_imgl_click:
+    name: uri_for_imgl_click
+    module: imgl.uri
+    line: 64
+    cyclomatic_complexity: 5
+    calls_out: 1
+    calls_in: 6
+  imgl.diagnose.diagnose_content:
+    name: diagnose_content
+    module: imgl.diagnose
+    line: 25
+    cyclomatic_complexity: 3
+    calls_out: 7
+    calls_in: 5
+  imgl.web.thumbs.crop_bbox_png:
+    name: crop_bbox_png
+    module: imgl.web.thumbs
+    line: 32
+    cyclomatic_complexity: 2
+    calls_out: 15
+    calls_in: 2
+  imgl.autodiag.build_operation_step:
+    name: build_operation_step
+    module: imgl.autodiag
+    line: 113
+    cyclomatic_complexity: 19
+    calls_out: 33
+    calls_in: 1
+  imgl.window_scope._split_monolithic_window:
+    name: _split_monolithic_window
+    module: imgl.window_scope
+    line: 239
+    cyclomatic_complexity: 8
+    calls_out: 15
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.schema_registry.all_verbs:
+    name: all_verbs
+    module: packages.dsl2imgl.src.dsl2imgl.schema_registry
+    line: 34
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  imgl.ocr.lang.ocr_lang_attempts:
+    name: ocr_lang_attempts
+    module: imgl.ocr.lang
+    line: 18
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 1
+  imgl.classify.gui_heuristics._nearest_label:
+    name: _nearest_label
+    module: imgl.classify.gui_heuristics
+    line: 172
+    cyclomatic_complexity: 7
+    calls_out: 4
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_result_protobuf:
+    name: encode_result_protobuf
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 239
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  imgl.geometry.bbox_distance:
+    name: bbox_distance
+    module: imgl.geometry
+    line: 28
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 3
+  imgl.llm_catalog._call_vision_llm:
+    name: _call_vision_llm
+    module: imgl.llm_catalog
+    line: 213
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  imgl.web.app.create_app:
+    name: create_app
+    module: imgl.web.app
+    line: 54
+    cyclomatic_complexity: 4
+    calls_out: 107
+    calls_in: 2
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve:
+    name: handle_resolve
+    module: packages.dsl2imgl.src.dsl2imgl.handlers.runtime
+    line: 150
+    cyclomatic_complexity: 7
+    calls_out: 14
+    calls_in: 0
+  packages.dsl2imgl.src.dsl2imgl.bus.dispatch:
+    name: dispatch
+    module: packages.dsl2imgl.src.dsl2imgl.bus
+    line: 48
+    cyclomatic_complexity: 10
+    calls_out: 21
+    calls_in: 14
+  imgl.uri.uri_for_imgl_list:
+    name: uri_for_imgl_list
+    module: imgl.uri
+    line: 55
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  imgl.diagnose._diagnose_with_img2nl:
+    name: _diagnose_with_img2nl
+    module: imgl.diagnose
+    line: 90
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  imgl.classify.gui_heuristics._ocr_inside_frame:
+    name: _ocr_inside_frame
+    module: imgl.classify.gui_heuristics
+    line: 201
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  imgl.paths.resolve_image_path_optional:
+    name: resolve_image_path_optional
+    module: imgl.paths
+    line: 34
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  packages.nlp2imgl.src.nlp2imgl.control.default_window:
+    name: default_window
+    module: packages.nlp2imgl.src.nlp2imgl.control
+    line: 21
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  imgl.ocr.lang.normalize_ocr_lang:
+    name: normalize_ocr_lang
+    module: imgl.ocr.lang
+    line: 6
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  imgl.window_scope._image_gutter_candidates:
+    name: _image_gutter_candidates
+    module: imgl.window_scope
+    line: 337
+    cyclomatic_complexity: 14
+    calls_out: 19
+    calls_in: 1
+  imgl.diagnose._has_ui_signals:
+    name: _has_ui_signals
+    module: imgl.diagnose
+    line: 209
+    cyclomatic_complexity: 7
+    calls_out: 11
+    calls_in: 4
+  imgl.freshness.clear_vql_cache:
+    name: clear_vql_cache
+    module: imgl.freshness
+    line: 48
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  imgl.capture._capture_with_gnome_screenshot:
+    name: _capture_with_gnome_screenshot
+    module: imgl.capture
+    line: 148
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  imgl.llm_catalog._overlaps_catalog:
+    name: _overlaps_catalog
+    module: imgl.llm_catalog
+    line: 451
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 1
+  imgl.llm_catalog._merge_heuristic_inputs:
+    name: _merge_heuristic_inputs
+    module: imgl.llm_catalog
+    line: 423
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 1
+  imgl.cli._check_blank_before_analyze:
+    name: _check_blank_before_analyze
+    module: imgl.cli
+    line: 572
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 3
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf:
+    name: decode_protobuf
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 190
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 2
+  imgl.export.annotate_export.default_annotated_path:
+    name: default_annotated_path
+    module: imgl.export.annotate_export
+    line: 24
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 4
+  imgl.llm_catalog._env_file_candidates:
+    name: _env_file_candidates
+    module: imgl.llm_catalog
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  imgl.llm_catalog._heuristic_fallback:
+    name: _heuristic_fallback
+    module: imgl.llm_catalog
+    line: 185
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 4
+  imgl.llm_catalog._best_label_match:
+    name: _best_label_match
+    module: imgl.llm_catalog
+    line: 498
+    cyclomatic_complexity: 13
+    calls_out: 10
+    calls_in: 1
+  imgl.export.vql_adapter._element_to_object:
+    name: _element_to_object
+    module: imgl.export.vql_adapter
+    line: 216
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 2
+  imgl.actions._format_query:
+    name: _format_query
+    module: imgl.actions
+    line: 199
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 2
+  imgl.window_scope.export_window_crop:
+    name: export_window_crop
+    module: imgl.window_scope
+    line: 218
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 2
+  imgl.layout._overlaps_top:
+    name: _overlaps_top
+    module: imgl.layout
+    line: 105
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  imgl.autodiag._overall_verdict:
+    name: _overall_verdict
+    module: imgl.autodiag
+    line: 309
+    cyclomatic_complexity: 10
+    calls_out: 8
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute:
+    name: handle_execute
+    module: packages.dsl2imgl.src.dsl2imgl.handlers.runtime
+    line: 170
+    cyclomatic_complexity: 14
+    calls_out: 35
+    calls_in: 0
+  packages.uri2imgl.src.uri2imgl.cli.main:
+    name: main
+    module: packages.uri2imgl.src.uri2imgl.cli
+    line: 12
+    cyclomatic_complexity: 4
+    calls_out: 15
+    calls_in: 0
+  imgl.catalog._window_option:
+    name: _window_option
+    module: imgl.catalog
+    line: 150
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  imgl.nlp2uri._find_catalog_input:
+    name: _find_catalog_input
+    module: imgl.nlp2uri
+    line: 248
+    cyclomatic_complexity: 9
+    calls_out: 4
+    calls_in: 2
+  imgl.export.vql_adapter.scene_to_vql:
+    name: scene_to_vql
+    module: imgl.export.vql_adapter
+    line: 28
+    cyclomatic_complexity: 16
+    calls_out: 27
+    calls_in: 1
+  packages.nlp2imgl.src.nlp2imgl.control.default_image_path:
+    name: default_image_path
+    module: packages.nlp2imgl.src.nlp2imgl.control
+    line: 13
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 3
+  imgl.llm_catalog._load_env_files:
+    name: _load_env_files
+    module: imgl.llm_catalog
+    line: 57
+    cyclomatic_complexity: 12
+    calls_out: 17
+    calls_in: 2
+  imgl.autodiag.diagnostics_enabled:
+    name: diagnostics_enabled
+    module: imgl.autodiag
+    line: 231
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  imgl.web.thumbs._clamp_box:
+    name: _clamp_box
+    module: imgl.web.thumbs
+    line: 14
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  imgl.freshness.sync_vql_cache_with_image:
+    name: sync_vql_cache_with_image
+    module: imgl.freshness
+    line: 57
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 1
+  imgl.capture._try_vql_capture:
+    name: _try_vql_capture
+    module: imgl.capture
+    line: 84
+    cyclomatic_complexity: 8
+    calls_out: 9
+    calls_in: 1
+  imgl.cli._apply_config_overrides:
+    name: _apply_config_overrides
+    module: imgl.cli
+    line: 592
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  imgl.window_scope._split_side_by_side:
+    name: _split_side_by_side
+    module: imgl.window_scope
+    line: 310
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  imgl.autodiag._flag_enabled:
+    name: _flag_enabled
+    module: imgl.autodiag
+    line: 211
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 3
+  imgl.scene_cache.load_or_analyze:
+    name: load_or_analyze
+    module: imgl.scene_cache
+    line: 42
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 7
+  packages.rest2imgl.src.rest2imgl.cli.main:
+    name: main
+    module: packages.rest2imgl.src.rest2imgl.cli
+    line: 8
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 0
+  imgl.export.annotate_export._catalog_relative_to_window:
+    name: _catalog_relative_to_window
+    module: imgl.export.annotate_export
+    line: 197
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  imgl.actions._text_matches:
+    name: _text_matches
+    module: imgl.actions
+    line: 218
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 5
+  imgl.geometry.iou:
+    name: iou
+    module: imgl.geometry
+    line: 8
+    cyclomatic_complexity: 3
+    calls_out: 7
+    calls_in: 3
+  imgl.actions.SceneActions.type_into:
+    name: type_into
+    module: imgl.actions
+    line: 154
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 0
+  imgl.autodiag._actionable_hints:
+    name: _actionable_hints
+    module: imgl.autodiag
+    line: 327
+    cyclomatic_complexity: 12
+    calls_out: 17
+    calls_in: 1
+  packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl:
+    name: to_dsl
+    module: packages.nlp2imgl.src.nlp2imgl.to_dsl
+    line: 40
+    cyclomatic_complexity: 15
+    calls_out: 19
+    calls_in: 6
+  imgl.autodiag.render_report:
+    name: render_report
+    module: imgl.autodiag
+    line: 200
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 3
+  imgl.scene_cache.load_cached_scene:
+    name: load_cached_scene
+    module: imgl.scene_cache
+    line: 21
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 1
+  imgl.cli.main:
+    name: main
+    module: imgl.cli
+    line: 348
+    cyclomatic_complexity: 44
+    calls_out: 94
+    calls_in: 0
+  imgl.autodiag._compact_result:
+    name: _compact_result
+    module: imgl.autodiag
+    line: 141
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 1
+  imgl.capture._is_wayland:
+    name: _is_wayland
+    module: imgl.capture
+    line: 31
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  imgl.window_scope._element_gap_gutters:
+    name: _element_gap_gutters
+    module: imgl.window_scope
+    line: 381
+    cyclomatic_complexity: 6
+    calls_out: 9
+    calls_in: 1
+  imgl.layout.extract_window_titles:
+    name: extract_window_titles
+    module: imgl.layout
+    line: 71
+    cyclomatic_complexity: 10
+    calls_out: 4
+    calls_in: 1
+  imgl.export.html_export.scene_to_html:
+    name: scene_to_html
+    module: imgl.export.html_export
+    line: 21
+    cyclomatic_complexity: 4
+    calls_out: 9
+    calls_in: 1
+  imgl.cli.build_parser:
+    name: build_parser
+    module: imgl.cli
+    line: 57
+    cyclomatic_complexity: 1
+    calls_out: 73
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.grammar.parse_line:
+    name: parse_line
+    module: packages.dsl2imgl.src.dsl2imgl.grammar
+    line: 27
+    cyclomatic_complexity: 44
+    calls_out: 46
+    calls_in: 2
+  imgl.catalog_filter._keep_element:
+    name: _keep_element
+    module: imgl.catalog_filter
+    line: 79
+    cyclomatic_complexity: 17
+    calls_out: 13
+    calls_in: 1
+  imgl.catalog.build_interactive_catalog:
+    name: build_interactive_catalog
+    module: imgl.catalog
+    line: 53
+    cyclomatic_complexity: 12
+    calls_out: 11
+    calls_in: 6
+  imgl.export.vql_adapter.scene_to_vql_json:
+    name: scene_to_vql_json
+    module: imgl.export.vql_adapter
+    line: 91
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  imgl.export._escape.escape_html:
+    name: escape_html
+    module: imgl.export._escape
+    line: 8
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 11
+  imgl.export.vql_adapter.write_vql_program:
+    name: write_vql_program
+    module: imgl.export.vql_adapter
+    line: 106
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 5
+  scripts.imgl-verify-capture.print:
+    name: print
+    module: scripts.imgl-verify-capture
+    line: 14
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 95
+  imgl.window_scope.summarize_windows:
+    name: summarize_windows
+    module: imgl.window_scope
+    line: 79
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 5
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf_to_text:
+    name: decode_protobuf_to_text
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 203
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  imgl.detect.local._iou_xyxy:
+    name: _iou_xyxy
+    module: imgl.detect.local
+    line: 41
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 3
+  imgl.cli._run_image_command:
+    name: _run_image_command
+    module: imgl.cli
+    line: 599
+    cyclomatic_complexity: 19
+    calls_out: 43
+    calls_in: 1
+  packages.nlp2imgl.src.nlp2imgl.to_dsl.use_llm_enabled:
+    name: use_llm_enabled
+    module: packages.nlp2imgl.src.nlp2imgl.to_dsl
+    line: 29
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 2
+  imgl.interact.run_interactive_shell:
+    name: run_interactive_shell
+    module: imgl.interact
+    line: 294
+    cyclomatic_complexity: 43
+    calls_out: 87
+    calls_in: 1
+  imgl.classify.gui_heuristics._normalize_confidence:
+    name: _normalize_confidence
+    module: imgl.classify.gui_heuristics
+    line: 128
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 3
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture:
+    name: handle_capture
+    module: packages.dsl2imgl.src.dsl2imgl.handlers.runtime
+    line: 97
+    cyclomatic_complexity: 3
+    calls_out: 9
+    calls_in: 0
+  imgl.web.session.WebSession.resolve_prompt:
+    name: resolve_prompt
+    module: imgl.web.session
+    line: 185
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  imgl.window_scope._split_stacked:
+    name: _split_stacked
+    module: imgl.window_scope
+    line: 321
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 1
+  imgl.detect.rectangles._row_has_edge:
+    name: _row_has_edge
+    module: imgl.detect.rectangles
+    line: 95
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  imgl.autodiag.diagnose_capture:
+    name: diagnose_capture
+    module: imgl.autodiag
+    line: 33
+    cyclomatic_complexity: 16
+    calls_out: 41
+    calls_in: 4
+  imgl.vdisplay_bridge.vdisplay_missing_message:
+    name: vdisplay_missing_message
+    module: imgl.vdisplay_bridge
+    line: 26
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope:
+    name: dict_to_envelope
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 97
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 3
+  imgl.capture._capture_with_grim:
+    name: _capture_with_grim
+    module: imgl.capture
+    line: 142
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  imgl.diagnose._diagnose_fallback:
+    name: _diagnose_fallback
+    module: imgl.diagnose
+    line: 125
+    cyclomatic_complexity: 8
+    calls_out: 14
+    calls_in: 1
+  imgl.vdisplay_bridge.diagnose_os_display:
+    name: diagnose_os_display
+    module: imgl.vdisplay_bridge
+    line: 53
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 1
+  imgl.export.annotate_export._draw_number_badge:
+    name: _draw_number_badge
+    module: imgl.export.annotate_export
+    line: 266
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 2
+  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes:
+    name: envelope_to_bytes
+    module: packages.dsl2imgl.src.dsl2imgl.codec
+    line: 32
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  imgl.catalog.format_catalog_table:
+    name: format_catalog_table
+    module: imgl.catalog
+    line: 123
+    cyclomatic_complexity: 8
+    calls_out: 10
+    calls_in: 6
+  imgl.web.session.WebSession.select_window:
+    name: select_window
+    module: imgl.web.session
+    line: 171
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 0
+  imgl.classify.gui_heuristics._label_candidates:
+    name: _label_candidates
+    module: imgl.classify.gui_heuristics
+    line: 145
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 1
+  imgl.vdisplay_bridge.find_os_window:
+    name: find_os_window
+    module: imgl.vdisplay_bridge
+    line: 69
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 1
+  imgl.autodiag.build_execute_report:
+    name: build_execute_report
+    module: imgl.autodiag
+    line: 149
+    cyclomatic_complexity: 5
+    calls_out: 15
+    calls_in: 3
+  imgl.geometry.bbox_from_xyxy:
+    name: bbox_from_xyxy
+    module: imgl.geometry
+    line: 36
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 5
+  imgl.autodiag.pick_output_format:
+    name: pick_output_format
+    module: imgl.autodiag
+    line: 187
+    cyclomatic_complexity: 7
+    calls_out: 4
+    calls_in: 1
+  imgl.catalog_filter._renumber:
+    name: _renumber
+    module: imgl.catalog_filter
+    line: 50
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.envelope_to_dict:
+    name: envelope_to_dict
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 106
+    cyclomatic_complexity: 42
+    calls_out: 6
+    calls_in: 2
+  imgl.window_scope.scene_for_window:
+    name: scene_for_window
+    module: imgl.window_scope
+    line: 176
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  imgl.vdisplay_bridge.list_vision_windows:
+    name: list_vision_windows
+    module: imgl.vdisplay_bridge
+    line: 100
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 1
+  imgl.export.annotate_export.scene_to_annotated_image:
+    name: scene_to_annotated_image
+    module: imgl.export.annotate_export
+    line: 31
+    cyclomatic_complexity: 8
+    calls_out: 25
+    calls_in: 2
+  imgl.export.json_export.scene_from_json:
+    name: scene_from_json
+    module: imgl.export.json_export
+    line: 16
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  imgl.window_scope.default_window_annotated_path:
+    name: default_window_annotated_path
+    module: imgl.window_scope
+    line: 233
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 4
+  imgl.export._escape.escape_xml:
+    name: escape_xml
+    module: imgl.export._escape
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 8
+  imgl.detect.local._detect_buttons:
+    name: _detect_buttons
+    module: imgl.detect.local
+    line: 107
+    cyclomatic_complexity: 24
+    calls_out: 41
+    calls_in: 1
+  imgl.layout._best_titlebar_for_window:
+    name: _best_titlebar_for_window
+    module: imgl.layout
+    line: 94
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_json:
+    name: envelope_from_json
+    module: packages.dsl2imgl.src.dsl2imgl.codec
+    line: 46
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  imgl.scene_cache.scene_cache_path:
+    name: scene_cache_path
+    module: imgl.scene_cache
+    line: 14
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 2
+  imgl.interact._print_catalog_banner:
+    name: _print_catalog_banner
+    module: imgl.interact
+    line: 489
+    cyclomatic_complexity: 8
+    calls_out: 10
+    calls_in: 4
+  imgl.window_scope.crop_window_image:
+    name: crop_window_image
+    module: imgl.window_scope
+    line: 207
+    cyclomatic_complexity: 1
+    calls_out: 13
+    calls_in: 4
+  imgl.diagnose._scene_class:
+    name: _scene_class
+    module: imgl.diagnose
+    line: 203
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 4
+  imgl.window_scope.discover_windows:
+    name: discover_windows
+    module: imgl.window_scope
+    line: 67
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 7
+  imgl.web.agent.pick_agent_action:
+    name: pick_agent_action
+    module: imgl.web.agent
+    line: 51
+    cyclomatic_complexity: 20
+    calls_out: 23
+    calls_in: 1
+  packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag:
+    name: apply_nl_with_diag
+    module: packages.nlp2imgl.src.nlp2imgl.control
+    line: 54
+    cyclomatic_complexity: 17
+    calls_out: 16
+    calls_in: 2
+  imgl.preprocess.preprocess:
+    name: preprocess
+    module: imgl.preprocess
+    line: 39
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb:
+    name: schema_for_verb
+    module: packages.dsl2imgl.src.dsl2imgl.schema_registry
+    line: 27
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  imgl.catalog_filter.filter_catalog:
+    name: filter_catalog
+    module: imgl.catalog_filter
+    line: 18
+    cyclomatic_complexity: 8
+    calls_out: 7
+    calls_in: 2
+  imgl.catalog._infer_input_label:
+    name: _infer_input_label
+    module: imgl.catalog
+    line: 302
+    cyclomatic_complexity: 13
+    calls_out: 0
+    calls_in: 2
+  imgl.window_scope.apply_discovered_windows:
+    name: apply_discovered_windows
+    module: imgl.window_scope
+    line: 49
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 5
+  imgl.export.svg_export._svg_css:
+    name: _svg_css
+    module: imgl.export.svg_export
+    line: 76
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  imgl.detect.img2vql_bridge.detect_with_img2vql:
+    name: detect_with_img2vql
+    module: imgl.detect.img2vql_bridge
+    line: 39
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 1
+  imgl.export.vql_adapter._grid_layer:
+    name: _grid_layer
+    module: imgl.export.vql_adapter
+    line: 122
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
+  packages.mcp2imgl.src.mcp2imgl.cli.main:
+    name: main
+    module: packages.mcp2imgl.src.mcp2imgl.cli
+    line: 10
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 0
+  imgl.export.json_export.scene_to_json:
+    name: scene_to_json
+    module: imgl.export.json_export
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  imgl.uri.uri_for_imgl_action:
+    name: uri_for_imgl_action
+    module: imgl.uri
+    line: 109
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  imgl.export.html_export._render_element:
+    name: _render_element
+    module: imgl.export.html_export
+    line: 115
+    cyclomatic_complexity: 8
+    calls_out: 13
+    calls_in: 2
+  imgl.export.svg_export._render_window_svg:
+    name: _render_window_svg
+    module: imgl.export.svg_export
+    line: 88
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  imgl.capture.capture_status_message:
+    name: capture_status_message
+    module: imgl.capture
+    line: 204
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas:
+    name: _load_schemas
+    module: packages.dsl2imgl.src.dsl2imgl.schema_registry
+    line: 15
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 3
+  imgl.web.session.WebSession.refresh_catalog:
+    name: refresh_catalog
+    module: imgl.web.session
+    line: 125
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  imgl.cli._write_output:
+    name: _write_output
+    module: imgl.cli
+    line: 340
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 6
+  imgl.pipeline.analyze:
+    name: analyze
+    module: imgl.pipeline
+    line: 22
+    cyclomatic_complexity: 11
+    calls_out: 21
+    calls_in: 7
+  imgl.uri._imgl_uri:
+    name: _imgl_uri
+    module: imgl.uri
+    line: 11
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 6
+  imgl.detect.rectangles.detect_input_frames:
+    name: detect_input_frames
+    module: imgl.detect.rectangles
+    line: 11
+    cyclomatic_complexity: 14
+    calls_out: 22
+    calls_in: 1
+  imgl.catalog._iter_interactive_elements:
+    name: _iter_interactive_elements
+    module: imgl.catalog
+    line: 326
+    cyclomatic_complexity: 9
+    calls_out: 2
+    calls_in: 1
+  imgl.interact._annotate_catalog:
+    name: _annotate_catalog
+    module: imgl.interact
+    line: 223
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 3
+  imgl.diagnose.img2nl_available:
+    name: img2nl_available
+    module: imgl.diagnose
+    line: 16
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 1
+  packages.cli2imgl.src.cli2imgl.cli.main:
+    name: main
+    module: packages.cli2imgl.src.cli2imgl.cli
+    line: 12
+    cyclomatic_complexity: 6
+    calls_out: 14
+    calls_in: 0
+  imgl.diagnose._diagnose_pil_fallback:
+    name: _diagnose_pil_fallback
+    module: imgl.diagnose
+    line: 174
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 1
+  imgl.detect.rectangles._looks_like_frame:
+    name: _looks_like_frame
+    module: imgl.detect.rectangles
+    line: 78
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 1
+  imgl.actions.SceneActions.click:
+    name: click
+    module: imgl.actions
+    line: 138
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  imgl.export.annotate_export.write_annotated_images_per_window:
+    name: write_annotated_images_per_window
+    module: imgl.export.annotate_export
+    line: 149
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 0
+  imgl.detect.local._dedupe:
+    name: _dedupe
+    module: imgl.detect.local
+    line: 240
+    cyclomatic_complexity: 8
+    calls_out: 10
+    calls_in: 1
+  imgl.export.vql_adapter._window_to_object:
+    name: _window_to_object
+    module: imgl.export.vql_adapter
+    line: 203
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  imgl.freshness.is_valid_png:
+    name: is_valid_png
+    module: imgl.freshness
+    line: 14
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 4
+  imgl.capture._is_blank_image:
+    name: _is_blank_image
+    module: imgl.capture
+    line: 184
+    cyclomatic_complexity: 6
+    calls_out: 13
+    calls_in: 4
+  imgl.interact._export_window_previews:
+    name: _export_window_previews
+    module: imgl.interact
+    line: 281
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text:
+    name: roundtrip_text
+    module: packages.dsl2imgl.src.dsl2imgl.codec
+    line: 53
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  imgl.actions.SceneActions.find:
+    name: find
+    module: imgl.actions
+    line: 73
+    cyclomatic_complexity: 21
+    calls_out: 18
+    calls_in: 0
+  imgl.export.html_export._default_title:
+    name: _default_title
+    module: imgl.export.html_export
+    line: 56
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  imgl.export.annotate_export.write_annotated_image:
+    name: write_annotated_image
+    module: imgl.export.annotate_export
+    line: 92
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 3
+  imgl.capture._capture_with_scrot:
+    name: _capture_with_scrot
+    module: imgl.capture
+    line: 154
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  imgl.layout.build_windows:
+    name: build_windows
+    module: imgl.layout
+    line: 10
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.codec.validate_payload:
+    name: validate_payload
+    module: packages.dsl2imgl.src.dsl2imgl.codec
+    line: 15
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 6
+  imgl.interact._select_window:
+    name: _select_window
+    module: imgl.interact
+    line: 260
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 2
+  imgl.export.annotate_export._load_fonts:
+    name: _load_fonts
+    module: imgl.export.annotate_export
+    line: 251
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 2
+  imgl.export.svg_export._render_element_svg:
+    name: _render_element_svg
+    module: imgl.export.svg_export
+    line: 104
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 2
+  imgl.capture.default_capture_path:
+    name: default_capture_path
+    module: imgl.capture
+    line: 20
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 1
+  imgl.coords.scale_scene_to_screen:
+    name: scale_scene_to_screen
+    module: imgl.coords
+    line: 8
+    cyclomatic_complexity: 6
+    calls_out: 29
+    calls_in: 1
+  imgl.export.html_export._background_layer:
+    name: _background_layer
+    module: imgl.export.html_export
+    line: 65
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 1
+  imgl.layout.find_containing_window:
+    name: find_containing_window
+    module: imgl.layout
+    line: 45
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 2
+  imgl.detect.rectangles._find_rectangular_frames:
+    name: _find_rectangular_frames
+    module: imgl.detect.rectangles
+    line: 56
+    cyclomatic_complexity: 11
+    calls_out: 8
+    calls_in: 1
+  imgl.actions.SceneActions.list_actions:
+    name: list_actions
+    module: imgl.actions
+    line: 173
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 0
+  imgl.interact._handle_window_phase_prompt:
+    name: _handle_window_phase_prompt
+    module: imgl.interact
+    line: 516
+    cyclomatic_complexity: 9
+    calls_out: 21
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb:
+    name: _append_pb
+    module: packages.dsl2imgl.src.dsl2imgl.events
+    line: 65
+    cyclomatic_complexity: 3
+    calls_out: 27
+    calls_in: 0
+  imgl.llm_catalog.llm_available:
+    name: llm_available
+    module: imgl.llm_catalog
+    line: 82
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 2
+  imgl.web.agent._parse_agent_json:
+    name: _parse_agent_json
+    module: imgl.web.agent
+    line: 138
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 1
+  imgl.catalog._find_window:
+    name: _find_window
+    module: imgl.catalog
+    line: 318
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag:
+    name: pick_flag
+    module: packages.dsl2imgl.src.dsl2imgl.grammar
+    line: 19
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 18
+  imgl.actions._find_label_for_input:
+    name: _find_label_for_input
+    module: imgl.actions
+    line: 256
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 1
+  imgl.paths.resolve_image_path:
+    name: resolve_image_path
+    module: imgl.paths
+    line: 8
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 12
+  imgl.diagnose.content_summary:
+    name: content_summary
+    module: imgl.diagnose
+    line: 74
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
+  imgl.detect.img2vql_bridge.img2vql_available:
+    name: img2vql_available
+    module: imgl.detect.img2vql_bridge
+    line: 18
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 1
+  imgl.export.svg_export._default_title:
+    name: _default_title
+    module: imgl.export.svg_export
+    line: 56
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  imgl.detect.local._flood_rects:
+    name: _flood_rects
+    module: imgl.detect.local
+    line: 73
+    cyclomatic_complexity: 14
+    calls_out: 13
+    calls_in: 1
+  imgl.export.vql_adapter._bbox_norm:
+    name: _bbox_norm
+    module: imgl.export.vql_adapter
+    line: 135
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 1
+  imgl.actions._iter_elements:
+    name: _iter_elements
+    module: imgl.actions
+    line: 226
+    cyclomatic_complexity: 9
+    calls_out: 2
+    calls_in: 4
+  imgl.capture._native_backends:
+    name: _native_backends
+    module: imgl.capture
+    line: 113
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl:
+    name: execute_dsl
+    module: packages.dsl2imgl.src.dsl2imgl.bus
+    line: 89
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session:
+    name: _build_interact_session
+    module: packages.dsl2imgl.src.dsl2imgl.handlers.runtime
+    line: 12
+    cyclomatic_complexity: 4
+    calls_out: 12
+    calls_in: 4
+  imgl.llm_catalog._renumber_options:
+    name: _renumber_options
+    module: imgl.llm_catalog
+    line: 473
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  imgl.export.html_export._bbox_style:
+    name: _bbox_style
+    module: imgl.export.html_export
+    line: 148
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  imgl.llm_catalog._parse_json_payload:
+    name: _parse_json_payload
+    module: imgl.llm_catalog
+    line: 263
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  imgl.execute.execute_action:
+    name: execute_action
+    module: imgl.execute
+    line: 28
+    cyclomatic_complexity: 9
+    calls_out: 19
+    calls_in: 5
+  imgl.detect.local._detect_panels_simple:
+    name: _detect_panels_simple
+    module: imgl.detect.local
+    line: 173
+    cyclomatic_complexity: 23
+    calls_out: 31
+    calls_in: 1
+  imgl.classify.gui_heuristics._text_or_label:
+    name: _text_or_label
+    module: imgl.classify.gui_heuristics
+    line: 136
+    cyclomatic_complexity: 7
+    calls_out: 5
+    calls_in: 2
+  packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl_line:
+    name: execute_dsl_line
+    module: packages.dsl2imgl.src.dsl2imgl.bus
+    line: 85
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  imgl.window_scope.is_monolithic_scene:
+    name: is_monolithic_scene
+    module: imgl.window_scope
+    line: 40
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  imgl.capture._run_command:
+    name: _run_command
+    module: imgl.capture
+    line: 136
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 3
+  imgl.window_scope._shift_ocr_boxes:
+    name: _shift_ocr_boxes
+    module: imgl.window_scope
+    line: 551
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  packages.nlp2imgl.src.nlp2imgl.control.doctor_capture:
+    name: doctor_capture
+    module: packages.nlp2imgl.src.nlp2imgl.control
+    line: 47
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  imgl.freshness.max_image_age_seconds:
+    name: max_image_age_seconds
+    module: imgl.freshness
+    line: 26
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  imgl.window_scope._regions_from_balanced_gutters:
+    name: _regions_from_balanced_gutters
+    module: imgl.window_scope
+    line: 399
+    cyclomatic_complexity: 18
+    calls_out: 17
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act:
+    name: _run_prompt_act
+    module: packages.dsl2imgl.src.dsl2imgl.handlers.runtime
+    line: 45
+    cyclomatic_complexity: 8
+    calls_out: 15
+    calls_in: 2
+  imgl.cli._add_common_args:
+    name: _add_common_args
+    module: imgl.cli
+    line: 31
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 5
+  imgl.uri.uri_for_imgl_type:
+    name: uri_for_imgl_type
+    module: imgl.uri
+    line: 86
+    cyclomatic_complexity: 5
+    calls_out: 1
+    calls_in: 1
+  imgl.detect.img2vql_bridge.detect_ui_merged:
+    name: detect_ui_merged
+    module: imgl.detect.img2vql_bridge
+    line: 52
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
+  imgl.export.svg_export._element_css_class:
+    name: _element_css_class
+    module: imgl.export.svg_export
+    line: 128
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  imgl.catalog_filter._replace_index_in_uri:
+    name: _replace_index_in_uri
+    module: imgl.catalog_filter
+    line: 75
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  imgl.llm_catalog.refine_catalog_with_llm:
+    name: refine_catalog_with_llm
+    module: imgl.llm_catalog
+    line: 95
+    cyclomatic_complexity: 14
+    calls_out: 14
+    calls_in: 1
+  imgl.execute._normalize_keys:
+    name: _normalize_keys
+    module: imgl.execute
+    line: 134
+    cyclomatic_complexity: 9
+    calls_out: 12
+    calls_in: 1
+  imgl.vdisplay_bridge.list_os_monitors:
+    name: list_os_monitors
+    module: imgl.vdisplay_bridge
+    line: 47
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  imgl.scene_cache.save_scene_cache:
+    name: save_scene_cache
+    module: imgl.scene_cache
+    line: 36
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 5
+  imgl.actions.actions:
+    name: actions
+    module: imgl.actions
+    line: 194
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  imgl.catalog_filter._window_score:
+    name: _window_score
+    module: imgl.catalog_filter
+    line: 134
+    cyclomatic_complexity: 5
+    calls_out: 1
+    calls_in: 1
+  imgl.web.session.WebSession._refresh_annotated_png:
+    name: _refresh_annotated_png
+    module: imgl.web.session
+    line: 351
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 0
+  imgl.uri.uri_for_imgl_analyze:
+    name: uri_for_imgl_analyze
+    module: imgl.uri
+    line: 28
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  imgl.freshness.image_freshness:
+    name: image_freshness
+    module: imgl.freshness
+    line: 82
+    cyclomatic_complexity: 5
+    calls_out: 21
+    calls_in: 1
+  imgl.window_scope._split_by_element_y_gaps:
+    name: _split_by_element_y_gaps
+    module: imgl.window_scope
+    line: 454
+    cyclomatic_complexity: 10
+    calls_out: 12
+    calls_in: 1
+  imgl.window_scope._detect_layout_mode:
+    name: _detect_layout_mode
+    module: imgl.window_scope
+    line: 287
+    cyclomatic_complexity: 12
+    calls_out: 16
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes:
+    name: envelope_from_bytes
+    module: packages.dsl2imgl.src.dsl2imgl.codec
+    line: 37
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze:
+    name: handle_analyze
+    module: packages.dsl2imgl.src.dsl2imgl.handlers.runtime
+    line: 109
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  packages.uri2imgl.src.uri2imgl.decode.uri_to_dsl:
+    name: uri_to_dsl
+    module: packages.uri2imgl.src.uri2imgl.decode
+    line: 8
+    cyclomatic_complexity: 18
+    calls_out: 16
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb:
+    name: result_to_pb
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 207
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 3
+  imgl.freshness.capture_sidecar_path:
+    name: capture_sidecar_path
+    module: imgl.freshness
+    line: 37
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  imgl.classify.gui_heuristics.classify_scene_elements:
+    name: classify_scene_elements
+    module: imgl.classify.gui_heuristics
+    line: 15
+    cyclomatic_complexity: 27
+    calls_out: 29
+    calls_in: 1
+  imgl.ocr.tesseract.TesseractOcr.run:
+    name: run
+    module: imgl.ocr.tesseract
+    line: 19
+    cyclomatic_complexity: 13
+    calls_out: 17
+    calls_in: 0
+  imgl.geometry.center_in:
+    name: center_in
+    module: imgl.geometry
+    line: 21
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 14
+  imgl.export.vql_adapter._location_label:
+    name: _location_label
+    module: imgl.export.vql_adapter
+    line: 145
+    cyclomatic_complexity: 9
+    calls_out: 2
+    calls_in: 1
+  imgl.nlp2uri.prompt_to_imgl_uri:
+    name: prompt_to_imgl_uri
+    module: imgl.nlp2uri
+    line: 71
+    cyclomatic_complexity: 28
+    calls_out: 37
+    calls_in: 4
+  imgl.layout.assign_ocr_to_windows:
+    name: assign_ocr_to_windows
+    module: imgl.layout
+    line: 53
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 0
+  imgl.detect.local._detect_titlebar:
+    name: _detect_titlebar
+    module: imgl.detect.local
+    line: 54
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 1
+  imgl.interact.resolve_imgl_uri:
+    name: resolve_imgl_uri
+    module: imgl.interact
+    line: 80
+    cyclomatic_complexity: 13
+    calls_out: 19
+    calls_in: 4
+  imgl.freshness.verify_capture_updated:
+    name: verify_capture_updated
+    module: imgl.freshness
+    line: 122
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  imgl.catalog._element_option:
+    name: _element_option
+    module: imgl.catalog
+    line: 195
+    cyclomatic_complexity: 13
+    calls_out: 19
+    calls_in: 1
+  scripts.imgl-capture.mark_capture_fresh:
+    name: mark_capture_fresh
+    module: scripts.imgl-capture
+    line: 89
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 2
+  packages.mcp2imgl.src.mcp2imgl.server.run_stdio:
+    name: run_stdio
+    module: packages.mcp2imgl.src.mcp2imgl.server
+    line: 11
+    cyclomatic_complexity: 2
+    calls_out: 12
+    calls_in: 1
+  imgl.detect.rectangles._column_has_edge:
+    name: _column_has_edge
+    module: imgl.detect.rectangles
+    line: 91
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  imgl.web.session.WebSession.analyze:
+    name: analyze
+    module: imgl.web.session
+    line: 142
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 0
+  imgl.catalog_filter._element_score:
+    name: _element_score
+    module: imgl.catalog_filter
+    line: 116
+    cyclomatic_complexity: 9
+    calls_out: 5
+    calls_in: 1
+  imgl.diagnose.worth_analyzing:
+    name: worth_analyzing
+    module: imgl.diagnose
+    line: 52
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 7
+  imgl.export.annotate_export.write_window_preview_images:
+    name: write_window_preview_images
+    module: imgl.export.annotate_export
+    line: 113
+    cyclomatic_complexity: 3
+    calls_out: 20
+    calls_in: 2
+  imgl.window_scope._guess_window_title:
+    name: _guess_window_title
+    module: imgl.window_scope
+    line: 513
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 2
+  imgl.window_scope._collect_elements:
+    name: _collect_elements
+    module: imgl.window_scope
+    line: 279
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  imgl.export.svg_export._background_rect:
+    name: _background_rect
+    module: imgl.export.svg_export
+    line: 65
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl:
+    name: apply_nl
+    module: packages.nlp2imgl.src.nlp2imgl.to_dsl
+    line: 76
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 4
+  imgl.freshness.vql_cache_paths:
+    name: vql_cache_paths
+    module: imgl.freshness
+    line: 41
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  imgl.window_scope.get_discovered_window:
+    name: get_discovered_window
+    module: imgl.window_scope
+    line: 156
+    cyclomatic_complexity: 10
+    calls_out: 9
+    calls_in: 6
+  imgl.window_scope._safe_filename:
+    name: _safe_filename
+    module: imgl.window_scope
+    line: 571
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 2
+  imgl.interact._build_session_catalog:
+    name: _build_session_catalog
+    module: imgl.interact
+    line: 58
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 6
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf:
+    name: encode_protobuf
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 186
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl:
+    name: _append_jsonl
+    module: packages.dsl2imgl.src.dsl2imgl.events
+    line: 91
+    cyclomatic_complexity: 3
+    calls_out: 27
+    calls_in: 0
+  imgl.diagnose._recommendation:
+    name: _recommendation
+    module: imgl.diagnose
+    line: 225
+    cyclomatic_complexity: 10
+    calls_out: 9
+    calls_in: 1
+  imgl.autodiag._render_markdown:
+    name: _render_markdown
+    module: imgl.autodiag
+    line: 235
+    cyclomatic_complexity: 24
+    calls_out: 35
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.grammar.to_text:
+    name: to_text
+    module: packages.dsl2imgl.src.dsl2imgl.grammar
+    line: 116
+    cyclomatic_complexity: 10
+    calls_out: 20
+    calls_in: 4
+  imgl.llm_catalog._snap_options_to_scene:
+    name: _snap_options_to_scene
+    module: imgl.llm_catalog
+    line: 370
+    cyclomatic_complexity: 8
+    calls_out: 7
+    calls_in: 1
+  imgl.export.html_export._render_window:
+    name: _render_window
+    module: imgl.export.html_export
+    line: 98
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  imgl.window_scope._best_vertical_split:
+    name: _best_vertical_split
+    module: imgl.window_scope
+    line: 479
+    cyclomatic_complexity: 12
+    calls_out: 10
+    calls_in: 1
+  imgl.vdisplay_bridge.list_os_windows:
+    name: list_os_windows
+    module: imgl.vdisplay_bridge
+    line: 41
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 2
+  imgl.export.vql_adapter._ocr_to_object:
+    name: _ocr_to_object
+    module: imgl.export.vql_adapter
+    line: 234
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  imgl.autodiag.should_block_stale_capture:
+    name: should_block_stale_capture
+    module: imgl.autodiag
+    line: 225
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  imgl.actions._window_matches:
+    name: _window_matches
+    module: imgl.actions
+    line: 247
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_json:
+    name: envelope_to_json
+    module: packages.dsl2imgl.src.dsl2imgl.codec
+    line: 42
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  imgl.classify.gui_heuristics._build_inputs:
+    name: _build_inputs
+    module: imgl.classify.gui_heuristics
+    line: 213
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.bus.dispatch_json:
+    name: dispatch_json
+    module: packages.dsl2imgl.src.dsl2imgl.bus
+    line: 98
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  imgl.export.annotate_export._text_size:
+    name: _text_size
+    module: imgl.export.annotate_export
+    line: 287
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_body:
+    name: _set_body
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 26
+    cyclomatic_complexity: 31
+    calls_out: 73
+    calls_in: 1
+  imgl.classify.gui_heuristics._match_ocr_to_bbox:
+    name: _match_ocr_to_bbox
+    module: imgl.classify.gui_heuristics
+    line: 156
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 1
+  examples.scripts.demo-nlp2uri.main:
+    name: main
+    module: examples.scripts.demo-nlp2uri
+    line: 19
+    cyclomatic_complexity: 7
+    calls_out: 25
+    calls_in: 0
+  imgl.detect.img2vql_bridge._from_img2vql_dict:
+    name: _from_img2vql_dict
+    module: imgl.detect.img2vql_bridge
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 1
+  imgl.vdisplay_bridge.default_display:
+    name: default_display
+    module: imgl.vdisplay_bridge
+    line: 36
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 3
+  imgl.nlp2uri._match_catalog_action:
+    name: _match_catalog_action
+    module: imgl.nlp2uri
+    line: 267
+    cyclomatic_complexity: 8
+    calls_out: 4
+    calls_in: 0
+  imgl.preprocess.load_image:
+    name: load_image
+    module: imgl.preprocess
+    line: 28
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 1
+  imgl.execute.execute_keys:
+    name: execute_keys
+    module: imgl.execute
+    line: 111
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  imgl.ocr.get_ocr_backend:
+    name: get_ocr_backend
+    module: imgl.ocr
+    line: 9
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  imgl.detect.local._avg_color:
+    name: _avg_color
+    module: imgl.detect.local
+    line: 29
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 4
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions:
+    name: handle_actions
+    module: packages.dsl2imgl.src.dsl2imgl.handlers.runtime
+    line: 131
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 0
+  imgl.llm_catalog._image_to_base64:
+    name: _image_to_base64
+    module: imgl.llm_catalog
+    line: 273
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 1
+  imgl.window_scope._shift_elements:
+    name: _shift_elements
+    module: imgl.window_scope
+    line: 528
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  imgl.pipeline._count_roles:
+    name: _count_roles
+    module: imgl.pipeline
+    line: 109
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
+  imgl.pipeline._content_metadata:
+    name: _content_metadata
+    module: imgl.pipeline
+    line: 96
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 1
+  imgl.llm_catalog._llm_json_to_options:
+    name: _llm_json_to_options
+    module: imgl.llm_catalog
+    line: 293
+    cyclomatic_complexity: 13
+    calls_out: 22
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.bus._run_handler:
+    name: _run_handler
+    module: packages.dsl2imgl.src.dsl2imgl.bus
+    line: 36
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 1
+  imgl.export.html_export._base_css:
+    name: _base_css
+    module: imgl.export.html_export
+    line: 75
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  imgl.export.annotate_export._badge_size:
+    name: _badge_size
+    module: imgl.export.annotate_export
+    line: 246
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 3
+  imgl.vdisplay_bridge.build_window_control_report:
+    name: build_window_control_report
+    module: imgl.vdisplay_bridge
+    line: 181
+    cyclomatic_complexity: 19
+    calls_out: 32
+    calls_in: 1
+  imgl.detect.local.detect_ui_elements:
+    name: detect_ui_elements
+    module: imgl.detect.local
+    line: 258
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 0
+  imgl.llm_catalog.llm_dependencies_ok:
+    name: llm_dependencies_ok
+    module: imgl.llm_catalog
+    line: 87
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 1
+  imgl.freshness.mark_capture_fresh:
+    name: mark_capture_fresh
+    module: imgl.freshness
+    line: 70
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 1
+  imgl.capture.capture_screen:
+    name: capture_screen
+    module: imgl.capture
+    line: 36
+    cyclomatic_complexity: 13
+    calls_out: 15
+    calls_in: 3
+  packages.dsl2imgl.src.dsl2imgl.grammar.split_command:
+    name: split_command
+    module: packages.dsl2imgl.src.dsl2imgl.grammar
+    line: 9
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  imgl.nlp2uri._delegate_vql_nlp2uri:
+    name: _delegate_vql_nlp2uri
+    module: imgl.nlp2uri
+    line: 202
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  imgl.catalog._truncate:
+    name: _truncate
+    module: imgl.catalog
+    line: 346
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  imgl.uri.uri_for_imgl_annotate:
+    name: uri_for_imgl_annotate
+    module: imgl.uri
+    line: 42
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  imgl.capture._capture_with_mss:
+    name: _capture_with_mss
+    module: imgl.capture
+    line: 171
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 1
+  packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas:
+    name: validate_schemas
+    module: packages.dsl2imgl.src.dsl2imgl.schema_registry
+    line: 38
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 0
+  imgl.export.annotate_export.open_image:
+    name: open_image
+    module: imgl.export.annotate_export
+    line: 180
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 3
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf:
+    name: encode_text_to_protobuf
+    module: packages.dsl2imgl.src.dsl2imgl.pb_codec
+    line: 196
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  packages.dsl2imgl.src.dsl2imgl.codec.parse_text:
+    name: parse_text
+    module: packages.dsl2imgl.src.dsl2imgl.codec
+    line: 24
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 2
+edges:
+- caller: packages.rest2imgl.src.rest2imgl.cli.main
+  callee: imgl.web.app.create_app
+  call_type: resolved
+- caller: packages.cli2imgl.src.cli2imgl.cli.main
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: packages.cli2imgl.src.cli2imgl.cli.main
+  callee: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  call_type: resolved
+- caller: packages.cli2imgl.src.cli2imgl.cli.main
+  callee: packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl
+  call_type: resolved
+- caller: packages.uri2imgl.src.uri2imgl.cli.main
+  callee: packages.uri2imgl.src.uri2imgl.decode.uri_to_dsl
+  call_type: resolved
+- caller: packages.uri2imgl.src.uri2imgl.cli.main
+  callee: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  call_type: resolved
+- caller: packages.mcp2imgl.src.mcp2imgl.cli.main
+  callee: packages.mcp2imgl.src.mcp2imgl.server.run_stdio
+  call_type: resolved
+- caller: packages.mcp2imgl.src.mcp2imgl.server.run_stdio
+  callee: packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl
+  call_type: resolved
+- caller: packages.mcp2imgl.src.mcp2imgl.server.run_stdio
+  callee: packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  callee: packages.dsl2imgl.src.dsl2imgl.bus._run_handler
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  callee: packages.dsl2imgl.src.dsl2imgl.grammar.to_text
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl_line
+  callee: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl
+  callee: packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl_line
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.dispatch_json
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_json
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.bus.dispatch_json
+  callee: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec._set_body
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.envelope_to_dict
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf
+  callee: packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf_to_text
+  callee: packages.dsl2imgl.src.dsl2imgl.grammar.to_text
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf_to_text
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_result_protobuf
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb
+  callee: packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.schema_registry.all_verbs
+  callee: packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas
+  callee: packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  callee: packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.parse_text
+  callee: packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.parse_text
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes
+  callee: packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_json
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_json
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.parse_text
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text
+  callee: packages.dsl2imgl.src.dsl2imgl.grammar.to_text
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text
+  callee: packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  callee: imgl.scene_cache.load_or_analyze
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  callee: imgl.window_scope.apply_discovered_windows
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  callee: imgl.interact._build_session_catalog
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  callee: imgl.window_scope.summarize_windows
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  callee: imgl.nlp2uri.prompt_to_imgl_uri
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  callee: imgl.interact.resolve_imgl_uri
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  callee: imgl.execute.execute_action
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture
+  callee: imgl.capture.capture_screen
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze
+  callee: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions
+  callee: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve
+  callee: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve
+  callee: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
+  callee: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
+  callee: packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
+  callee: imgl.execute.execute_action
+  call_type: resolved
+- caller: examples.scripts.demo-nlp2uri.main
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: examples.scripts.demo-nlp2uri.main
+  callee: imgl.pipeline.analyze
+  call_type: resolved
+- caller: examples.scripts.demo-nlp2uri.main
+  callee: imgl.window_scope.apply_discovered_windows
+  call_type: resolved
+- caller: examples.scripts.demo-nlp2uri.main
+  callee: imgl.catalog.build_interactive_catalog
+  call_type: resolved
+- caller: examples.scripts.demo-nlp2uri.main
+  callee: imgl.nlp2uri.prompt_to_imgl_uri
+  call_type: resolved
+- caller: examples.scripts.demo-nlp2uri.main
+  callee: imgl.interact.resolve_imgl_uri
+  call_type: resolved
+- caller: imgl.scene_cache.load_cached_scene
+  callee: imgl.scene_cache.scene_cache_path
+  call_type: resolved
+- caller: imgl.scene_cache.load_cached_scene
+  callee: imgl.export.json_export.scene_from_json
+  call_type: resolved
+- caller: imgl.scene_cache.save_scene_cache
+  callee: imgl.scene_cache.scene_cache_path
+  call_type: resolved
+- caller: imgl.scene_cache.save_scene_cache
+  callee: imgl.export.json_export.scene_to_json
+  call_type: resolved
+- caller: imgl.scene_cache.load_or_analyze
+  callee: imgl.pipeline.analyze
+  call_type: resolved
+- caller: imgl.scene_cache.load_or_analyze
+  callee: imgl.scene_cache.save_scene_cache
+  call_type: resolved
+- caller: imgl.scene_cache.load_or_analyze
+  callee: imgl.scene_cache.load_cached_scene
+  call_type: resolved
+- caller: imgl.nlp2uri.prompt_to_imgl_uri
+  callee: imgl.nlp2uri._delegate_vql_nlp2uri
+  call_type: resolved
+- caller: imgl.nlp2uri._delegate_vql_nlp2uri
+  callee: imgl.uri.uri_for_imgl_list
+  call_type: resolved
+- caller: imgl.nlp2uri._match_catalog_action
+  callee: imgl.nlp2uri._find_catalog_input
+  call_type: resolved
+- caller: imgl.interact._build_session_catalog
+  callee: imgl.catalog.build_interactive_catalog
+  call_type: resolved
+- caller: imgl.interact.resolve_imgl_uri
+  callee: imgl.actions.actions
+  call_type: resolved
+- caller: imgl.interact.resolve_imgl_uri
+  callee: imgl.interact._annotate_catalog
+  call_type: resolved
+- caller: imgl.interact.resolve_imgl_uri
+  callee: imgl.scene_cache.load_or_analyze
+  call_type: resolved
+- caller: imgl.interact.resolve_imgl_uri
+  callee: imgl.export.vql_adapter.write_vql_program
+  call_type: resolved
+- caller: imgl.interact.resolve_imgl_uri
+  callee: imgl.scene_cache.save_scene_cache
+  call_type: resolved
+- caller: imgl.interact.resolve_imgl_uri
+  callee: imgl.interact._build_session_catalog
+  call_type: resolved
+- caller: imgl.interact._annotate_catalog
+  callee: imgl.export.annotate_export.write_annotated_image
+  call_type: resolved
+- caller: imgl.interact._annotate_catalog
+  callee: imgl.window_scope.get_discovered_window
+  call_type: resolved
+- caller: imgl.interact._annotate_catalog
+  callee: imgl.export.annotate_export.default_annotated_path
+  call_type: resolved
+- caller: imgl.interact._annotate_catalog
+  callee: imgl.export.annotate_export.open_image
+  call_type: resolved
+- caller: imgl.interact._select_window
+  callee: imgl.window_scope.get_discovered_window
+  call_type: resolved
+- caller: imgl.interact._select_window
+  callee: imgl.interact._build_session_catalog
+  call_type: resolved
+- caller: imgl.interact._select_window
+  callee: imgl.interact._annotate_catalog
+  call_type: resolved
+- caller: imgl.interact._select_window
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: imgl.interact._select_window
+  callee: imgl.export.annotate_export.default_annotated_path
+  call_type: resolved
+- caller: imgl.interact._export_window_previews
+  callee: imgl.window_scope.discover_windows
+  call_type: resolved
+- caller: imgl.interact._export_window_previews
+  callee: imgl.export.annotate_export.write_window_preview_images
+  call_type: resolved
+- caller: imgl.interact.run_interactive_shell
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: imgl.interact.run_interactive_shell
+  callee: imgl.scene_cache.load_or_analyze
+  call_type: resolved
+- caller: imgl.interact.run_interactive_shell
+  callee: imgl.window_scope.apply_discovered_windows
+  call_type: resolved
+- caller: imgl.interact.run_interactive_shell
+  callee: imgl.export.vql_adapter.write_vql_program
+  call_type: resolved
+- caller: imgl.interact.run_interactive_shell
+  callee: imgl.scene_cache.save_scene_cache
+  call_type: resolved
+- caller: imgl.interact.run_interactive_shell
+  callee: imgl.window_scope.discover_windows
+  call_type: resolved
+- caller: imgl.interact._print_catalog_banner
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: imgl.interact._handle_window_phase_prompt
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: imgl.interact._handle_window_phase_prompt
+  callee: imgl.interact._export_window_previews
+  call_type: resolved
+- caller: imgl.interact._handle_window_phase_prompt
+  callee: imgl.interact._build_session_catalog
+  call_type: resolved
+- caller: imgl.interact._handle_window_phase_prompt
+  callee: imgl.interact._print_catalog_banner
+  call_type: resolved
+- caller: imgl.catalog.build_interactive_catalog
+  callee: imgl.actions.actions
+  call_type: resolved
+- caller: imgl.catalog.build_interactive_catalog
+  callee: imgl.catalog._iter_interactive_elements
+  call_type: resolved
+- caller: imgl.catalog.build_interactive_catalog
+  callee: imgl.catalog._find_window
+  call_type: resolved
+- caller: imgl.catalog.build_interactive_catalog
+  callee: imgl.llm_catalog.refine_catalog_with_llm
+  call_type: resolved
+- caller: imgl.catalog.build_interactive_catalog
+  callee: imgl.catalog._element_option
+  call_type: resolved
+- caller: imgl.catalog.build_interactive_catalog
+  callee: imgl.catalog_filter.filter_catalog
+  call_type: resolved
+- caller: imgl.catalog.format_catalog_table
+  callee: imgl.catalog._truncate
+  call_type: resolved
+- caller: imgl.catalog._window_option
+  callee: imgl.uri.uri_for_imgl_click
+  call_type: resolved
+- caller: imgl.catalog._find_window
+  callee: imgl.window_scope.get_discovered_window
+  call_type: resolved
+- caller: imgl.preprocess.load_image
+  callee: imgl.paths.resolve_image_path
+  call_type: resolved
+- caller: imgl.preprocess.preprocess
+  callee: imgl.preprocess.load_image
+  call_type: resolved
+- caller: imgl.layout.find_containing_window
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.layout.assign_ocr_to_windows
+  callee: imgl.layout.find_containing_window
+  call_type: resolved
+- caller: imgl.layout.extract_window_titles
+  callee: imgl.layout._best_titlebar_for_window
+  call_type: resolved
+- caller: imgl.layout.extract_window_titles
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.layout._best_titlebar_for_window
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.layout._best_titlebar_for_window
+  callee: imgl.layout._overlaps_top
+  call_type: resolved
+- caller: imgl.uri.uri_for_imgl_analyze
+  callee: imgl.uri._imgl_uri
+  call_type: resolved
+- caller: imgl.uri.uri_for_imgl_annotate
+  callee: imgl.uri._imgl_uri
+  call_type: resolved
+- caller: imgl.uri.uri_for_imgl_list
+  callee: imgl.uri._imgl_uri
+  call_type: resolved
+- caller: imgl.uri.uri_for_imgl_click
+  callee: imgl.uri._imgl_uri
+  call_type: resolved
+- caller: imgl.uri.uri_for_imgl_type
+  callee: imgl.uri._imgl_uri
+  call_type: resolved
+- caller: imgl.uri.uri_for_imgl_action
+  callee: imgl.uri._imgl_uri
+  call_type: resolved
+- caller: imgl.llm_catalog._load_env_files
+  callee: imgl.llm_catalog._env_file_candidates
+  call_type: resolved
+- caller: imgl.llm_catalog.llm_available
+  callee: imgl.llm_catalog._load_env_files
+  call_type: resolved
+- caller: imgl.llm_catalog.refine_catalog_with_llm
+  callee: imgl.llm_catalog.llm_dependencies_ok
+  call_type: resolved
+- caller: imgl.llm_catalog.refine_catalog_with_llm
+  callee: imgl.llm_catalog.llm_available
+  call_type: resolved
+- caller: imgl.llm_catalog.refine_catalog_with_llm
+  callee: imgl.llm_catalog._call_vision_llm
+  call_type: resolved
+- caller: imgl.llm_catalog.refine_catalog_with_llm
+  callee: imgl.llm_catalog._llm_json_to_options
+  call_type: resolved
+- caller: imgl.llm_catalog.refine_catalog_with_llm
+  callee: imgl.llm_catalog._snap_options_to_scene
+  call_type: resolved
+- caller: imgl.llm_catalog.refine_catalog_with_llm
+  callee: imgl.llm_catalog._merge_heuristic_inputs
+  call_type: resolved
+- caller: imgl.llm_catalog.refine_catalog_with_llm
+  callee: imgl.llm_catalog._heuristic_fallback
+  call_type: resolved
+- caller: imgl.llm_catalog._heuristic_fallback
+  callee: imgl.catalog.build_interactive_catalog
+  call_type: resolved
+- caller: imgl.llm_catalog._heuristic_fallback
+  callee: imgl.catalog_filter.filter_catalog
+  call_type: resolved
+- caller: imgl.llm_catalog._call_vision_llm
+  callee: imgl.llm_catalog._image_to_base64
+  call_type: resolved
+- caller: imgl.llm_catalog._call_vision_llm
+  callee: imgl.llm_catalog._parse_json_payload
+  call_type: resolved
+- caller: imgl.llm_catalog._image_to_base64
+  callee: imgl.window_scope.crop_window_image
+  call_type: resolved
+- caller: imgl.llm_catalog._snap_options_to_scene
+  callee: imgl.catalog.build_interactive_catalog
+  call_type: resolved
+- caller: imgl.llm_catalog._snap_options_to_scene
+  callee: imgl.llm_catalog._best_label_match
+  call_type: resolved
+- caller: imgl.llm_catalog._merge_heuristic_inputs
+  callee: imgl.llm_catalog._heuristic_fallback
+  call_type: resolved
+- caller: imgl.llm_catalog._merge_heuristic_inputs
+  callee: imgl.llm_catalog._overlaps_catalog
+  call_type: resolved
+- caller: imgl.llm_catalog._merge_heuristic_inputs
+  callee: imgl.llm_catalog._renumber_options
+  call_type: resolved
+- caller: imgl.llm_catalog._overlaps_catalog
+  callee: imgl.geometry.iou
+  call_type: resolved
+- caller: imgl.catalog_filter.filter_catalog
+  callee: imgl.catalog_filter._renumber
+  call_type: resolved
+- caller: imgl.catalog_filter.filter_catalog
+  callee: imgl.catalog_filter._keep_element
+  call_type: resolved
+- caller: imgl.catalog_filter.filter_catalog
+  callee: imgl.catalog_filter._element_score
+  call_type: resolved
+- caller: imgl.catalog_filter.filter_catalog
+  callee: imgl.catalog_filter._window_score
+  call_type: resolved
+- caller: imgl.catalog_filter._renumber
+  callee: imgl.catalog_filter._replace_index_in_uri
+  call_type: resolved
+- caller: imgl.paths.resolve_image_path_optional
+  callee: imgl.paths.resolve_image_path
+  call_type: resolved
+- caller: imgl.execute.execute_action
+  callee: imgl.execute.execute_keys
+  call_type: resolved
+- caller: imgl.execute.execute_keys
+  callee: imgl.execute._normalize_keys
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.preprocess.preprocess
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.ocr.get_ocr_backend
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.detect.img2vql_bridge.detect_ui_merged
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.layout.build_windows
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.layout.extract_window_titles
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.classify.gui_heuristics.classify_scene_elements
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.pipeline._count_roles
+  call_type: resolved
+- caller: imgl.pipeline.analyze
+  callee: imgl.coords.scale_scene_to_screen
+  call_type: resolved
+- caller: imgl.pipeline._content_metadata
+  callee: imgl.diagnose.worth_analyzing
+  call_type: resolved
+- caller: imgl.diagnose.diagnose_content
+  callee: imgl.diagnose.img2nl_available
+  call_type: resolved
+- caller: imgl.diagnose.diagnose_content
+  callee: imgl.diagnose._diagnose_fallback
+  call_type: resolved
+- caller: imgl.diagnose.diagnose_content
+  callee: imgl.diagnose._diagnose_with_img2nl
+  call_type: resolved
+- caller: imgl.diagnose.worth_analyzing
+  callee: imgl.diagnose._scene_class
+  call_type: resolved
+- caller: imgl.diagnose.worth_analyzing
+  callee: imgl.diagnose._has_ui_signals
+  call_type: resolved
+- caller: imgl.diagnose.content_summary
+  callee: imgl.diagnose._scene_class
+  call_type: resolved
+- caller: imgl.diagnose._diagnose_with_img2nl
+  callee: imgl.diagnose._scene_class
+  call_type: resolved
+- caller: imgl.diagnose._diagnose_with_img2nl
+  callee: imgl.diagnose.worth_analyzing
+  call_type: resolved
+- caller: imgl.diagnose._diagnose_with_img2nl
+  callee: imgl.diagnose._recommendation
+  call_type: resolved
+- caller: imgl.diagnose._diagnose_fallback
+  callee: imgl.diagnose._diagnose_pil_fallback
+  call_type: resolved
+- caller: imgl.diagnose._recommendation
+  callee: imgl.diagnose._scene_class
+  call_type: resolved
+- caller: imgl.diagnose._recommendation
+  callee: imgl.diagnose._has_ui_signals
+  call_type: resolved
+- caller: imgl.export.vql_adapter.scene_to_vql
+  callee: imgl.export.vql_adapter._grid_layer
+  call_type: resolved
+- caller: imgl.export.vql_adapter.scene_to_vql
+  callee: imgl.export.vql_adapter._window_to_object
+  call_type: resolved
+- caller: imgl.export.vql_adapter.scene_to_vql
+  callee: imgl.export.vql_adapter._ocr_to_object
+  call_type: resolved
+- caller: imgl.export.vql_adapter.scene_to_vql_json
+  callee: imgl.export.vql_adapter.scene_to_vql
+  call_type: resolved
+- caller: imgl.export.vql_adapter.write_vql_program
+  callee: imgl.export.vql_adapter.scene_to_vql_json
+  call_type: resolved
+- caller: imgl.export.vql_adapter._object_from_bbox
+  callee: imgl.export.vql_adapter._location_label
+  call_type: resolved
+- caller: imgl.export.vql_adapter._object_from_bbox
+  callee: imgl.export.vql_adapter._bbox_norm
+  call_type: resolved
+- caller: imgl.export.vql_adapter._window_to_object
+  callee: imgl.export.vql_adapter._object_from_bbox
+  call_type: resolved
+- caller: imgl.export.vql_adapter._element_to_object
+  callee: imgl.export.vql_adapter._object_from_bbox
+  call_type: resolved
+- caller: imgl.export.vql_adapter._ocr_to_object
+  callee: imgl.export.vql_adapter._object_from_bbox
+  call_type: resolved
+- caller: imgl.export.html_export.scene_to_html
+  callee: imgl.export.html_export._background_layer
+  call_type: resolved
+- caller: imgl.export.html_export.scene_to_html
+  callee: imgl.export.html_export._default_title
+  call_type: resolved
+- caller: imgl.export.html_export.scene_to_html
+  callee: imgl.export.html_export._render_window
+  call_type: resolved
+- caller: imgl.export.html_export.scene_to_html
+  callee: imgl.export.html_export._render_element
+  call_type: resolved
+- caller: imgl.export.html_export.scene_to_html
+  callee: imgl.export._escape.escape_html
+  call_type: resolved
+- caller: imgl.export.html_export.scene_to_html
+  callee: imgl.export.html_export._base_css
+  call_type: resolved
+- caller: imgl.export.html_export._background_layer
+  callee: imgl.export._escape.escape_html
+  call_type: resolved
+- caller: imgl.export.html_export._render_window
+  callee: imgl.export.html_export._bbox_style
+  call_type: resolved
+- caller: imgl.export.html_export._render_window
+  callee: imgl.export.html_export._render_element
+  call_type: resolved
+- caller: imgl.export.html_export._render_window
+  callee: imgl.export._escape.escape_html
+  call_type: resolved
+- caller: imgl.export.html_export._render_element
+  callee: imgl.export.html_export._bbox_style
+  call_type: resolved
+- caller: imgl.export.html_export._render_element
+  callee: imgl.export._escape.escape_html
+  call_type: resolved
+- caller: imgl.export.annotate_export.default_annotated_path
+  callee: imgl.window_scope.default_window_annotated_path
+  call_type: resolved
+- caller: imgl.export.annotate_export.scene_to_annotated_image
+  callee: imgl.export.annotate_export._load_fonts
+  call_type: resolved
+- caller: imgl.export.annotate_export.scene_to_annotated_image
+  callee: imgl.export.annotate_export._badge_size
+  call_type: resolved
+- caller: imgl.export.annotate_export.scene_to_annotated_image
+  callee: imgl.export.annotate_export._catalog_relative_to_window
+  call_type: resolved
+- caller: imgl.export.annotate_export.write_annotated_image
+  callee: imgl.export.annotate_export.scene_to_annotated_image
+  call_type: resolved
+- caller: imgl.export.annotate_export.write_window_preview_images
+  callee: imgl.export.annotate_export._badge_size
+  call_type: resolved
+- caller: imgl.export.annotate_export.write_window_preview_images
+  callee: imgl.export.annotate_export._load_fonts
+  call_type: resolved
+- caller: imgl.export.annotate_export.write_window_preview_images
+  callee: imgl.export.annotate_export._draw_number_badge
+  call_type: resolved
+- caller: imgl.export.annotate_export.write_annotated_images_per_window
+  callee: imgl.export.annotate_export.write_annotated_image
+  call_type: resolved
+- caller: imgl.export.annotate_export.write_annotated_images_per_window
+  callee: imgl.window_scope.default_window_annotated_path
+  call_type: resolved
+- caller: imgl.export.annotate_export._load_fonts
+  callee: imgl.export.annotate_export._badge_size
+  call_type: resolved
+- caller: imgl.export.annotate_export._draw_number_badge
+  callee: imgl.export.annotate_export._text_size
+  call_type: resolved
+- caller: imgl.export.svg_export.scene_to_svg
+  callee: imgl.export.svg_export._background_rect
+  call_type: resolved
+- caller: imgl.export.svg_export.scene_to_svg
+  callee: imgl.export.svg_export._render_window_svg
+  call_type: resolved
+- caller: imgl.export.svg_export.scene_to_svg
+  callee: imgl.export.svg_export._render_element_svg
+  call_type: resolved
+- caller: imgl.export.svg_export.scene_to_svg
+  callee: imgl.export._escape.escape_xml
+  call_type: resolved
+- caller: imgl.export.svg_export.scene_to_svg
+  callee: imgl.export.svg_export._svg_css
+  call_type: resolved
+- caller: imgl.export.svg_export.scene_to_svg
+  callee: imgl.export.svg_export._default_title
+  call_type: resolved
+- caller: imgl.export.svg_export._background_rect
+  callee: imgl.export._escape.escape_xml
+  call_type: resolved
+- caller: imgl.export.svg_export._render_window_svg
+  callee: imgl.export.svg_export._render_element_svg
+  call_type: resolved
+- caller: imgl.export.svg_export._render_window_svg
+  callee: imgl.export._escape.escape_xml
+  call_type: resolved
+- caller: imgl.export.svg_export._render_element_svg
+  callee: imgl.export.svg_export._element_css_class
+  call_type: resolved
+- caller: imgl.export.svg_export._render_element_svg
+  callee: imgl.export._escape.escape_xml
+  call_type: resolved
+- caller: imgl.detect.local._detect_titlebar
+  callee: imgl.detect.local._avg_color
+  call_type: resolved
+- caller: imgl.detect.local._detect_titlebar
+  callee: imgl.geometry.bbox_from_xyxy
+  call_type: resolved
+- caller: imgl.detect.local._detect_buttons
+  callee: imgl.detect.local._flood_rects
+  call_type: resolved
+- caller: imgl.detect.local._detect_panels_simple
+  callee: imgl.detect.local._avg_color
+  call_type: resolved
+- caller: imgl.detect.local._dedupe
+  callee: imgl.detect.local._iou_xyxy
+  call_type: resolved
+- caller: imgl.detect.local.detect_ui_elements
+  callee: imgl.detect.local._detect_titlebar
+  call_type: resolved
+- caller: imgl.detect.local.detect_ui_elements
+  callee: imgl.detect.local._dedupe
+  call_type: resolved
+- caller: imgl.detect.local.detect_ui_elements
+  callee: imgl.detect.local._detect_panels_simple
+  call_type: resolved
+- caller: imgl.detect.local.detect_ui_elements
+  callee: imgl.detect.local._detect_buttons
+  call_type: resolved
+- caller: imgl.detect.rectangles.detect_input_frames
+  callee: imgl.detect.rectangles._find_rectangular_frames
+  call_type: resolved
+- caller: imgl.detect.rectangles.detect_input_frames
+  callee: imgl.geometry.bbox_from_xyxy
+  call_type: resolved
+- caller: imgl.detect.rectangles._find_rectangular_frames
+  callee: imgl.detect.rectangles._looks_like_frame
+  call_type: resolved
+- caller: imgl.detect.rectangles._find_rectangular_frames
+  callee: imgl.detect.rectangles._column_has_edge
+  call_type: resolved
+- caller: imgl.detect.rectangles._find_rectangular_frames
+  callee: imgl.detect.rectangles._row_has_edge
+  call_type: resolved
+- caller: imgl.detect.img2vql_bridge._from_img2vql_dict
+  callee: imgl.geometry.bbox_from_xyxy
+  call_type: resolved
+- caller: imgl.detect.img2vql_bridge.detect_with_img2vql
+  callee: imgl.detect.img2vql_bridge.img2vql_available
+  call_type: resolved
+- caller: imgl.detect.img2vql_bridge.detect_with_img2vql
+  callee: imgl.detect.img2vql_bridge._from_img2vql_dict
+  call_type: resolved
+- caller: imgl.detect.img2vql_bridge.detect_ui_merged
+  callee: imgl.detect.img2vql_bridge.detect_with_img2vql
+  call_type: resolved
+- caller: imgl.ocr.tesseract.TesseractOcr.run
+  callee: imgl.ocr.lang.ocr_lang_attempts
+  call_type: resolved
+- caller: imgl.ocr.lang.ocr_lang_attempts
+  callee: imgl.ocr.lang.normalize_ocr_lang
+  call_type: resolved
+- caller: imgl.web.thumbs.crop_bbox_png
+  callee: imgl.paths.resolve_image_path
+  call_type: resolved
+- caller: imgl.web.thumbs.crop_bbox_png
+  callee: imgl.web.thumbs._clamp_box
+  call_type: resolved
+- caller: imgl.web.session.WebSession.refresh_catalog
+  callee: imgl.catalog.build_interactive_catalog
+  call_type: resolved
+- caller: imgl.web.session.WebSession.analyze
+  callee: imgl.scene_cache.load_or_analyze
+  call_type: resolved
+- caller: imgl.web.session.WebSession.analyze
+  callee: imgl.window_scope.apply_discovered_windows
+  call_type: resolved
+- caller: imgl.web.session.WebSession.analyze
+  callee: imgl.export.vql_adapter.write_vql_program
+  call_type: resolved
+- caller: imgl.web.session.WebSession.analyze
+  callee: imgl.scene_cache.save_scene_cache
+  call_type: resolved
+- caller: imgl.web.session.WebSession.analyze
+  callee: imgl.window_scope.summarize_windows
+  call_type: resolved
+- caller: imgl.web.session.WebSession.capture
+  callee: imgl.capture.capture_screen
+  call_type: resolved
+- caller: imgl.web.session.WebSession.select_window
+  callee: imgl.window_scope.get_discovered_window
+  call_type: resolved
+- caller: imgl.web.session.WebSession.resolve_prompt
+  callee: imgl.nlp2uri.prompt_to_imgl_uri
+  call_type: resolved
+- caller: imgl.web.session.WebSession.resolve_prompt
+  callee: imgl.interact.resolve_imgl_uri
+  call_type: resolved
+- caller: imgl.web.session.WebSession._refresh_annotated_png
+  callee: imgl.export.annotate_export.scene_to_annotated_image
+  call_type: resolved
+- caller: imgl.web.session.WebSession._refresh_annotated_png
+  callee: imgl.window_scope.get_discovered_window
+  call_type: resolved
+- caller: imgl.web.agent.pick_agent_action
+  callee: imgl.llm_catalog._load_env_files
+  call_type: resolved
+- caller: imgl.web.agent.pick_agent_action
+  callee: imgl.web.agent._parse_agent_json
+  call_type: resolved
+- caller: imgl.web.agent.pick_agent_action
+  callee: imgl.llm_catalog.llm_available
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics.classify_scene_elements
+  callee: imgl.classify.gui_heuristics._label_candidates
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics.classify_scene_elements
+  callee: imgl.classify.gui_heuristics._build_inputs
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics.classify_scene_elements
+  callee: imgl.classify.gui_heuristics._match_ocr_to_bbox
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._text_or_label
+  callee: imgl.classify.gui_heuristics._word_count
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._label_candidates
+  callee: imgl.classify.gui_heuristics._word_count
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._match_ocr_to_bbox
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._match_ocr_to_bbox
+  callee: imgl.geometry.iou
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._nearest_label
+  callee: imgl.geometry.bbox_distance
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._ocr_inside_frame
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._build_inputs
+  callee: imgl.classify.gui_heuristics._ocr_inside_frame
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._build_inputs
+  callee: imgl.classify.gui_heuristics._nearest_label
+  call_type: resolved
+- caller: imgl.classify.gui_heuristics._build_inputs
+  callee: imgl.classify.gui_heuristics._normalize_confidence
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
+  callee: packages.dsl2imgl.src.dsl2imgl.grammar.split_command
+  call_type: resolved
+- caller: packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
+  callee: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl
+  callee: packages.nlp2imgl.src.nlp2imgl.to_dsl.use_llm_enabled
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl
+  callee: packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl
+  callee: packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.doctor_capture
+  callee: imgl.autodiag.diagnose_capture
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.doctor_capture
+  callee: packages.nlp2imgl.src.nlp2imgl.control.default_image_path
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: packages.nlp2imgl.src.nlp2imgl.control._result_to_dict
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: imgl.autodiag.diagnostics_enabled
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: packages.nlp2imgl.src.nlp2imgl.control.default_window
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: imgl.autodiag.diagnose_capture
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: imgl.autodiag.should_block_stale_capture
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: imgl.autodiag.build_execute_report
+  call_type: resolved
+- caller: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  callee: imgl.autodiag.should_block_blank_capture
+  call_type: resolved
+- caller: imgl.autodiag.diagnose_capture
+  callee: imgl.freshness.sync_vql_cache_with_image
+  call_type: resolved
+- caller: imgl.autodiag.diagnose_capture
+  callee: imgl.freshness.image_freshness
+  call_type: resolved
+- caller: imgl.autodiag.diagnose_capture
+  callee: imgl.diagnose.diagnose_content
+  call_type: resolved
+- caller: imgl.autodiag.diagnose_capture
+  callee: imgl.diagnose.content_summary
+  call_type: resolved
+- caller: imgl.autodiag.diagnose_capture
+  callee: imgl.freshness.is_valid_png
+  call_type: resolved
+- caller: imgl.autodiag.diagnose_capture
+  callee: imgl.diagnose.worth_analyzing
+  call_type: resolved
+- caller: imgl.autodiag.build_execute_report
+  callee: imgl.autodiag.build_operation_step
+  call_type: resolved
+- caller: imgl.autodiag.build_execute_report
+  callee: imgl.autodiag._compact_result
+  call_type: resolved
+- caller: imgl.autodiag.build_execute_report
+  callee: imgl.autodiag._overall_verdict
+  call_type: resolved
+- caller: imgl.autodiag.render_report
+  callee: imgl.autodiag.pick_output_format
+  call_type: resolved
+- caller: imgl.autodiag.render_report
+  callee: imgl.autodiag._render_markdown
+  call_type: resolved
+- caller: imgl.autodiag.should_block_blank_capture
+  callee: imgl.autodiag._flag_enabled
+  call_type: resolved
+- caller: imgl.autodiag.should_block_stale_capture
+  callee: imgl.autodiag._flag_enabled
+  call_type: resolved
+- caller: imgl.autodiag.diagnostics_enabled
+  callee: imgl.autodiag._flag_enabled
+  call_type: resolved
+- caller: imgl.autodiag._render_markdown
+  callee: imgl.autodiag._actionable_hints
+  call_type: resolved
+- caller: imgl.cli.build_parser
+  callee: imgl.cli._add_common_args
+  call_type: resolved
+- caller: imgl.cli._write_output
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: imgl.cli.main
+  callee: imgl.cli.build_parser
+  call_type: resolved
+- caller: imgl.cli.main
+  callee: imgl.web.app.create_app
+  call_type: resolved
+- caller: imgl.cli.main
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: imgl.cli.main
+  callee: imgl.diagnose.diagnose_content
+  call_type: resolved
+- caller: imgl.cli.main
+  callee: imgl.cli._write_output
+  call_type: resolved
+- caller: imgl.cli.main
+  callee: imgl.cli._check_blank_before_analyze
+  call_type: resolved
+- caller: imgl.cli._check_blank_before_analyze
+  callee: imgl.diagnose.diagnose_content
+  call_type: resolved
+- caller: imgl.cli._check_blank_before_analyze
+  callee: scripts.imgl-verify-capture.print
+  call_type: resolved
+- caller: imgl.cli._check_blank_before_analyze
+  callee: imgl.diagnose.worth_analyzing
+  call_type: resolved
+- caller: imgl.cli._run_image_command
+  callee: imgl.cli._apply_config_overrides
+  call_type: resolved
+- caller: imgl.cli._run_image_command
+  callee: imgl.cli._check_blank_before_analyze
+  call_type: resolved
+- caller: imgl.cli._run_image_command
+  callee: imgl.pipeline.analyze
+  call_type: resolved
+- caller: imgl.cli._run_image_command
+  callee: imgl.cli._write_output
+  call_type: resolved
+- caller: imgl.cli._run_image_command
+  callee: imgl.export.html_export.scene_to_html
+  call_type: resolved
+- caller: imgl.cli._run_image_command
+  callee: imgl.export.svg_export.scene_to_svg
+  call_type: resolved
+- caller: imgl.actions.SceneActions.find
+  callee: imgl.actions._iter_elements
+  call_type: resolved
+- caller: imgl.actions.SceneActions.find
+  callee: imgl.actions._find_label_for_input
+  call_type: resolved
+- caller: imgl.actions.SceneActions.find
+  callee: imgl.catalog._infer_input_label
+  call_type: resolved
+- caller: imgl.actions.SceneActions.find
+  callee: imgl.actions._text_matches
+  call_type: resolved
+- caller: imgl.actions.SceneActions.click
+  callee: imgl.actions._format_query
+  call_type: resolved
+- caller: imgl.actions.SceneActions.type_into
+  callee: imgl.actions._format_query
+  call_type: resolved
+- caller: imgl.actions.SceneActions.list_actions
+  callee: imgl.actions._iter_elements
+  call_type: resolved
+- caller: imgl.actions._iter_elements
+  callee: imgl.window_scope.get_discovered_window
+  call_type: resolved
+- caller: imgl.actions._iter_elements
+  callee: imgl.actions._window_matches
+  call_type: resolved
+- caller: imgl.actions._find_label_for_input
+  callee: imgl.actions._iter_elements
+  call_type: resolved
+- caller: imgl.actions._find_label_for_input
+  callee: imgl.geometry.bbox_distance
+  call_type: resolved
+- caller: imgl.freshness.clear_vql_cache
+  callee: imgl.freshness.vql_cache_paths
+  call_type: resolved
+- caller: imgl.freshness.sync_vql_cache_with_image
+  callee: imgl.freshness.clear_vql_cache
+  call_type: resolved
+- caller: imgl.freshness.sync_vql_cache_with_image
+  callee: imgl.freshness.vql_cache_paths
+  call_type: resolved
+- caller: imgl.freshness.mark_capture_fresh
+  callee: imgl.freshness.capture_sidecar_path
+  call_type: resolved
+- caller: imgl.freshness.mark_capture_fresh
+  callee: imgl.freshness.is_valid_png
+  call_type: resolved
+- caller: imgl.freshness.image_freshness
+  callee: imgl.freshness.max_image_age_seconds
+  call_type: resolved
+- caller: imgl.freshness.image_freshness
+  callee: imgl.freshness.capture_sidecar_path
+  call_type: resolved
+- caller: imgl.freshness.verify_capture_updated
+  callee: imgl.freshness.mark_capture_fresh
+  call_type: resolved
+- caller: imgl.freshness.verify_capture_updated
+  callee: imgl.freshness.is_valid_png
+  call_type: resolved
+- caller: imgl.capture.capture_screen
+  callee: imgl.capture.default_capture_path
+  call_type: resolved
+- caller: imgl.capture.capture_screen
+  callee: imgl.capture._try_vql_capture
+  call_type: resolved
+- caller: imgl.capture.capture_screen
+  callee: imgl.capture._native_backends
+  call_type: resolved
+- caller: imgl.capture.capture_screen
+  callee: imgl.capture._is_wayland
+  call_type: resolved
+- caller: imgl.capture.capture_screen
+  callee: imgl.capture._capture_with_mss
+  call_type: resolved
+- caller: imgl.capture._try_vql_capture
+  callee: scripts.imgl-capture.mark_capture_fresh
+  call_type: resolved
+- caller: imgl.capture._try_vql_capture
+  callee: imgl.capture._is_blank_image
+  call_type: resolved
+- caller: imgl.capture._native_backends
+  callee: imgl.capture._is_wayland
+  call_type: resolved
+- caller: imgl.capture._capture_with_grim
+  callee: imgl.capture._run_command
+  call_type: resolved
+- caller: imgl.capture._capture_with_gnome_screenshot
+  callee: imgl.capture._run_command
+  call_type: resolved
+- caller: imgl.capture._capture_with_scrot
+  callee: imgl.capture._run_command
+  call_type: resolved
+- caller: imgl.capture._is_blank_image
+  callee: imgl.diagnose.diagnose_content
+  call_type: resolved
+- caller: imgl.capture._is_blank_image
+  callee: imgl.diagnose.worth_analyzing
+  call_type: resolved
+- caller: imgl.capture.capture_status_message
+  callee: imgl.capture._is_blank_image
+  call_type: resolved
+- caller: imgl.window_scope.apply_discovered_windows
+  callee: imgl.window_scope.discover_windows
+  call_type: resolved
+- caller: imgl.window_scope.discover_windows
+  callee: imgl.window_scope.is_monolithic_scene
+  call_type: resolved
+- caller: imgl.window_scope.discover_windows
+  callee: imgl.window_scope._split_monolithic_window
+  call_type: resolved
+- caller: imgl.window_scope.summarize_windows
+  callee: imgl.window_scope.discover_windows
+  call_type: resolved
+- caller: imgl.window_scope.summarize_windows
+  callee: imgl.window_scope.export_window_crop
+  call_type: resolved
+- caller: imgl.window_scope.get_discovered_window
+  callee: imgl.window_scope.discover_windows
+  call_type: resolved
+- caller: imgl.window_scope.scene_for_window
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.window_scope.scene_for_window
+  callee: imgl.window_scope._shift_ocr_boxes
+  call_type: resolved
+- caller: imgl.window_scope.scene_for_window
+  callee: imgl.window_scope._shift_elements
+  call_type: resolved
+- caller: imgl.window_scope.export_window_crop
+  callee: imgl.window_scope._safe_filename
+  call_type: resolved
+- caller: imgl.window_scope.export_window_crop
+  callee: imgl.paths.resolve_image_path
+  call_type: resolved
+- caller: imgl.window_scope.export_window_crop
+  callee: imgl.window_scope.crop_window_image
+  call_type: resolved
+- caller: imgl.window_scope.default_window_annotated_path
+  callee: imgl.window_scope._safe_filename
+  call_type: resolved
+- caller: imgl.window_scope._split_monolithic_window
+  callee: imgl.window_scope._collect_elements
+  call_type: resolved
+- caller: imgl.window_scope._split_monolithic_window
+  callee: imgl.window_scope._detect_layout_mode
+  call_type: resolved
+- caller: imgl.window_scope._split_monolithic_window
+  callee: imgl.window_scope._split_side_by_side
+  call_type: resolved
+- caller: imgl.window_scope._split_monolithic_window
+  callee: imgl.window_scope._split_stacked
+  call_type: resolved
+- caller: imgl.window_scope._split_monolithic_window
+  callee: imgl.layout.find_containing_window
+  call_type: resolved
+- caller: imgl.window_scope._split_monolithic_window
+  callee: imgl.window_scope._guess_window_title
+  call_type: resolved
+- caller: imgl.window_scope._split_side_by_side
+  callee: imgl.window_scope._best_vertical_split
+  call_type: resolved
+- caller: imgl.window_scope._split_stacked
+  callee: imgl.window_scope._element_gap_gutters
+  call_type: resolved
+- caller: imgl.window_scope._split_stacked
+  callee: imgl.window_scope._regions_from_balanced_gutters
+  call_type: resolved
+- caller: imgl.window_scope._split_stacked
+  callee: imgl.window_scope._split_by_element_y_gaps
+  call_type: resolved
+- caller: imgl.window_scope._split_stacked
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.window_scope._split_stacked
+  callee: imgl.window_scope._image_gutter_candidates
+  call_type: resolved
+- caller: imgl.window_scope._split_by_element_y_gaps
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.window_scope._guess_window_title
+  callee: imgl.geometry.center_in
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.list_os_windows
+  callee: imgl.vdisplay_bridge.default_display
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.list_os_monitors
+  callee: imgl.vdisplay_bridge.default_display
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.diagnose_os_display
+  callee: imgl.vdisplay_bridge.vdisplay_missing_message
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.diagnose_os_display
+  callee: imgl.vdisplay_bridge.default_display
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.find_os_window
+  callee: imgl.vdisplay_bridge._norm
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.find_os_window
+  callee: imgl.vdisplay_bridge.list_os_windows
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.list_vision_windows
+  callee: imgl.scene_cache.load_or_analyze
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.list_vision_windows
+  callee: imgl.window_scope.summarize_windows
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.list_vision_windows
+  callee: imgl.window_scope.discover_windows
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.list_vision_windows
+  callee: imgl.paths.resolve_image_path
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.build_window_control_report
+  callee: imgl.autodiag.diagnose_capture
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.build_window_control_report
+  callee: imgl.vdisplay_bridge.diagnose_os_display
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.build_window_control_report
+  callee: imgl.vdisplay_bridge.list_os_windows
+  call_type: resolved
+- caller: imgl.vdisplay_bridge.build_window_control_report
+  callee: imgl.vdisplay_bridge.correlate_windows
+  call_type: resolved
+modules:
+  examples.scripts.demo-nlp2uri:
+  - examples.scripts.demo-nlp2uri.main
+  imgl.actions:
+  - imgl.actions.SceneActions.click
+  - imgl.actions.SceneActions.find
+  - imgl.actions.SceneActions.list_actions
+  - imgl.actions.SceneActions.type_into
+  - imgl.actions._find_label_for_input
+  - imgl.actions._format_query
+  - imgl.actions._iter_elements
+  - imgl.actions._text_matches
+  - imgl.actions._window_matches
+  - imgl.actions.actions
+  imgl.autodiag:
+  - imgl.autodiag._actionable_hints
+  - imgl.autodiag._compact_result
+  - imgl.autodiag._flag_enabled
+  - imgl.autodiag._overall_verdict
+  - imgl.autodiag._render_markdown
+  - imgl.autodiag.build_execute_report
+  - imgl.autodiag.build_operation_step
+  - imgl.autodiag.diagnose_capture
+  - imgl.autodiag.diagnostics_enabled
+  - imgl.autodiag.pick_output_format
+  - imgl.autodiag.render_report
+  - imgl.autodiag.should_block_blank_capture
+  - imgl.autodiag.should_block_stale_capture
+  imgl.capture:
+  - imgl.capture._capture_with_gnome_screenshot
+  - imgl.capture._capture_with_grim
+  - imgl.capture._capture_with_mss
+  - imgl.capture._capture_with_scrot
+  - imgl.capture._is_blank_image
+  - imgl.capture._is_wayland
+  - imgl.capture._native_backends
+  - imgl.capture._run_command
+  - imgl.capture._try_vql_capture
+  - imgl.capture.capture_screen
+  - imgl.capture.capture_status_message
+  - imgl.capture.default_capture_path
+  imgl.catalog:
+  - imgl.catalog._element_option
+  - imgl.catalog._find_window
+  - imgl.catalog._infer_input_label
+  - imgl.catalog._iter_interactive_elements
+  - imgl.catalog._truncate
+  - imgl.catalog._window_option
+  - imgl.catalog.build_interactive_catalog
+  - imgl.catalog.format_catalog_table
+  imgl.catalog_filter:
+  - imgl.catalog_filter._element_score
+  - imgl.catalog_filter._keep_element
+  - imgl.catalog_filter._renumber
+  - imgl.catalog_filter._replace_index_in_uri
+  - imgl.catalog_filter._window_score
+  - imgl.catalog_filter.filter_catalog
+  imgl.classify.gui_heuristics:
+  - imgl.classify.gui_heuristics._build_inputs
+  - imgl.classify.gui_heuristics._label_candidates
+  - imgl.classify.gui_heuristics._match_ocr_to_bbox
+  - imgl.classify.gui_heuristics._nearest_label
+  - imgl.classify.gui_heuristics._normalize_confidence
+  - imgl.classify.gui_heuristics._ocr_inside_frame
+  - imgl.classify.gui_heuristics._text_or_label
+  - imgl.classify.gui_heuristics._word_count
+  - imgl.classify.gui_heuristics.classify_scene_elements
+  imgl.cli:
+  - imgl.cli._add_common_args
+  - imgl.cli._apply_config_overrides
+  - imgl.cli._check_blank_before_analyze
+  - imgl.cli._run_image_command
+  - imgl.cli._write_output
+  - imgl.cli.build_parser
+  - imgl.cli.main
+  imgl.coords:
+  - imgl.coords.scale_scene_to_screen
+  imgl.detect.img2vql_bridge:
+  - imgl.detect.img2vql_bridge._from_img2vql_dict
+  - imgl.detect.img2vql_bridge.detect_ui_merged
+  - imgl.detect.img2vql_bridge.detect_with_img2vql
+  - imgl.detect.img2vql_bridge.img2vql_available
+  imgl.detect.local:
+  - imgl.detect.local._avg_color
+  - imgl.detect.local._dedupe
+  - imgl.detect.local._detect_buttons
+  - imgl.detect.local._detect_panels_simple
+  - imgl.detect.local._detect_titlebar
+  - imgl.detect.local._flood_rects
+  - imgl.detect.local._iou_xyxy
+  - imgl.detect.local.detect_ui_elements
+  imgl.detect.rectangles:
+  - imgl.detect.rectangles._column_has_edge
+  - imgl.detect.rectangles._find_rectangular_frames
+  - imgl.detect.rectangles._looks_like_frame
+  - imgl.detect.rectangles._row_has_edge
+  - imgl.detect.rectangles.detect_input_frames
+  imgl.diagnose:
+  - imgl.diagnose._diagnose_fallback
+  - imgl.diagnose._diagnose_pil_fallback
+  - imgl.diagnose._diagnose_with_img2nl
+  - imgl.diagnose._has_ui_signals
+  - imgl.diagnose._recommendation
+  - imgl.diagnose._scene_class
+  - imgl.diagnose.content_summary
+  - imgl.diagnose.diagnose_content
+  - imgl.diagnose.img2nl_available
+  - imgl.diagnose.worth_analyzing
+  imgl.execute:
+  - imgl.execute._normalize_keys
+  - imgl.execute.execute_action
+  - imgl.execute.execute_keys
+  imgl.export._escape:
+  - imgl.export._escape.escape_html
+  - imgl.export._escape.escape_xml
+  imgl.export.annotate_export:
+  - imgl.export.annotate_export._badge_size
+  - imgl.export.annotate_export._catalog_relative_to_window
+  - imgl.export.annotate_export._draw_number_badge
+  - imgl.export.annotate_export._load_fonts
+  - imgl.export.annotate_export._text_size
+  - imgl.export.annotate_export.default_annotated_path
+  - imgl.export.annotate_export.open_image
+  - imgl.export.annotate_export.scene_to_annotated_image
+  - imgl.export.annotate_export.write_annotated_image
+  - imgl.export.annotate_export.write_annotated_images_per_window
+  - imgl.export.annotate_export.write_window_preview_images
+  imgl.export.html_export:
+  - imgl.export.html_export._background_layer
+  - imgl.export.html_export._base_css
+  - imgl.export.html_export._bbox_style
+  - imgl.export.html_export._default_title
+  - imgl.export.html_export._render_element
+  - imgl.export.html_export._render_window
+  - imgl.export.html_export.scene_to_html
+  imgl.export.json_export:
+  - imgl.export.json_export.scene_from_json
+  - imgl.export.json_export.scene_to_json
+  imgl.export.svg_export:
+  - imgl.export.svg_export._background_rect
+  - imgl.export.svg_export._default_title
+  - imgl.export.svg_export._element_css_class
+  - imgl.export.svg_export._render_element_svg
+  - imgl.export.svg_export._render_window_svg
+  - imgl.export.svg_export._svg_css
+  - imgl.export.svg_export.scene_to_svg
+  imgl.export.vql_adapter:
+  - imgl.export.vql_adapter._bbox_norm
+  - imgl.export.vql_adapter._element_to_object
+  - imgl.export.vql_adapter._grid_layer
+  - imgl.export.vql_adapter._location_label
+  - imgl.export.vql_adapter._object_from_bbox
+  - imgl.export.vql_adapter._ocr_to_object
+  - imgl.export.vql_adapter._window_to_object
+  - imgl.export.vql_adapter.scene_to_vql
+  - imgl.export.vql_adapter.scene_to_vql_json
+  - imgl.export.vql_adapter.write_vql_program
+  imgl.freshness:
+  - imgl.freshness.capture_sidecar_path
+  - imgl.freshness.clear_vql_cache
+  - imgl.freshness.image_freshness
+  - imgl.freshness.is_valid_png
+  - imgl.freshness.mark_capture_fresh
+  - imgl.freshness.max_image_age_seconds
+  - imgl.freshness.sync_vql_cache_with_image
+  - imgl.freshness.verify_capture_updated
+  - imgl.freshness.vql_cache_paths
+  imgl.geometry:
+  - imgl.geometry.bbox_distance
+  - imgl.geometry.bbox_from_xyxy
+  - imgl.geometry.center_in
+  - imgl.geometry.iou
+  imgl.interact:
+  - imgl.interact._annotate_catalog
+  - imgl.interact._build_session_catalog
+  - imgl.interact._export_window_previews
+  - imgl.interact._handle_window_phase_prompt
+  - imgl.interact._print_catalog_banner
+  - imgl.interact._select_window
+  - imgl.interact.resolve_imgl_uri
+  - imgl.interact.run_interactive_shell
+  imgl.layout:
+  - imgl.layout._best_titlebar_for_window
+  - imgl.layout._overlaps_top
+  - imgl.layout.assign_ocr_to_windows
+  - imgl.layout.build_windows
+  - imgl.layout.extract_window_titles
+  - imgl.layout.find_containing_window
+  imgl.llm_catalog:
+  - imgl.llm_catalog._best_label_match
+  - imgl.llm_catalog._call_vision_llm
+  - imgl.llm_catalog._env_file_candidates
+  - imgl.llm_catalog._heuristic_fallback
+  - imgl.llm_catalog._image_to_base64
+  - imgl.llm_catalog._llm_json_to_options
+  - imgl.llm_catalog._load_env_files
+  - imgl.llm_catalog._merge_heuristic_inputs
+  - imgl.llm_catalog._overlaps_catalog
+  - imgl.llm_catalog._parse_json_payload
+  - imgl.llm_catalog._renumber_options
+  - imgl.llm_catalog._snap_options_to_scene
+  - imgl.llm_catalog.llm_available
+  - imgl.llm_catalog.llm_dependencies_ok
+  - imgl.llm_catalog.refine_catalog_with_llm
+  imgl.nlp2uri:
+  - imgl.nlp2uri._delegate_vql_nlp2uri
+  - imgl.nlp2uri._find_catalog_input
+  - imgl.nlp2uri._match_catalog_action
+  - imgl.nlp2uri.prompt_to_imgl_uri
+  imgl.ocr:
+  - imgl.ocr.get_ocr_backend
+  imgl.ocr.lang:
+  - imgl.ocr.lang.normalize_ocr_lang
+  - imgl.ocr.lang.ocr_lang_attempts
+  imgl.ocr.tesseract:
+  - imgl.ocr.tesseract.TesseractOcr.run
+  imgl.paths:
+  - imgl.paths.resolve_image_path
+  - imgl.paths.resolve_image_path_optional
+  imgl.pipeline:
+  - imgl.pipeline._content_metadata
+  - imgl.pipeline._count_roles
+  - imgl.pipeline.analyze
+  imgl.preprocess:
+  - imgl.preprocess.load_image
+  - imgl.preprocess.preprocess
+  imgl.scene_cache:
+  - imgl.scene_cache.load_cached_scene
+  - imgl.scene_cache.load_or_analyze
+  - imgl.scene_cache.save_scene_cache
+  - imgl.scene_cache.scene_cache_path
+  imgl.uri:
+  - imgl.uri._imgl_uri
+  - imgl.uri.uri_for_imgl_action
+  - imgl.uri.uri_for_imgl_analyze
+  - imgl.uri.uri_for_imgl_annotate
+  - imgl.uri.uri_for_imgl_click
+  - imgl.uri.uri_for_imgl_list
+  - imgl.uri.uri_for_imgl_type
+  imgl.vdisplay_bridge:
+  - imgl.vdisplay_bridge._norm
+  - imgl.vdisplay_bridge.build_window_control_report
+  - imgl.vdisplay_bridge.correlate_windows
+  - imgl.vdisplay_bridge.default_display
+  - imgl.vdisplay_bridge.diagnose_os_display
+  - imgl.vdisplay_bridge.find_os_window
+  - imgl.vdisplay_bridge.list_os_monitors
+  - imgl.vdisplay_bridge.list_os_windows
+  - imgl.vdisplay_bridge.list_vision_windows
+  - imgl.vdisplay_bridge.vdisplay_missing_message
+  imgl.web.agent:
+  - imgl.web.agent._parse_agent_json
+  - imgl.web.agent.pick_agent_action
+  imgl.web.app:
+  - imgl.web.app.create_app
+  imgl.web.session:
+  - imgl.web.session.WebSession._refresh_annotated_png
+  - imgl.web.session.WebSession.analyze
+  - imgl.web.session.WebSession.capture
+  - imgl.web.session.WebSession.refresh_catalog
+  - imgl.web.session.WebSession.resolve_prompt
+  - imgl.web.session.WebSession.select_window
+  imgl.web.thumbs:
+  - imgl.web.thumbs._clamp_box
+  - imgl.web.thumbs.crop_bbox_png
+  imgl.window_scope:
+  - imgl.window_scope._best_vertical_split
+  - imgl.window_scope._collect_elements
+  - imgl.window_scope._detect_layout_mode
+  - imgl.window_scope._element_gap_gutters
+  - imgl.window_scope._guess_window_title
+  - imgl.window_scope._image_gutter_candidates
+  - imgl.window_scope._regions_from_balanced_gutters
+  - imgl.window_scope._safe_filename
+  - imgl.window_scope._shift_elements
+  - imgl.window_scope._shift_ocr_boxes
+  - imgl.window_scope._split_by_element_y_gaps
+  - imgl.window_scope._split_monolithic_window
+  - imgl.window_scope._split_side_by_side
+  - imgl.window_scope._split_stacked
+  - imgl.window_scope.apply_discovered_windows
+  - imgl.window_scope.crop_window_image
+  - imgl.window_scope.default_window_annotated_path
+  - imgl.window_scope.discover_windows
+  - imgl.window_scope.export_window_crop
+  - imgl.window_scope.get_discovered_window
+  - imgl.window_scope.is_monolithic_scene
+  - imgl.window_scope.scene_for_window
+  - imgl.window_scope.summarize_windows
+  packages.cli2imgl.src.cli2imgl.cli:
+  - packages.cli2imgl.src.cli2imgl.cli.main
+  packages.dsl2imgl.src.dsl2imgl.bus:
+  - packages.dsl2imgl.src.dsl2imgl.bus._run_handler
+  - packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+  - packages.dsl2imgl.src.dsl2imgl.bus.dispatch_json
+  - packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl
+  - packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl_line
+  packages.dsl2imgl.src.dsl2imgl.codec:
+  - packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes
+  - packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_json
+  - packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes
+  - packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_json
+  - packages.dsl2imgl.src.dsl2imgl.codec.parse_text
+  - packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text
+  - packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
+  packages.dsl2imgl.src.dsl2imgl.events:
+  - packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl
+  - packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb
+  packages.dsl2imgl.src.dsl2imgl.grammar:
+  - packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
+  - packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
+  - packages.dsl2imgl.src.dsl2imgl.grammar.split_command
+  - packages.dsl2imgl.src.dsl2imgl.grammar.to_text
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime:
+  - packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  - packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  - packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions
+  - packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze
+  - packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture
+  - packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
+  - packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve
+  packages.dsl2imgl.src.dsl2imgl.pb_codec:
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec._set_body
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf_to_text
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_result_protobuf
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.envelope_to_dict
+  - packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
+  packages.dsl2imgl.src.dsl2imgl.schema_registry:
+  - packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
+  - packages.dsl2imgl.src.dsl2imgl.schema_registry.all_verbs
+  - packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb
+  - packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas
+  packages.mcp2imgl.src.mcp2imgl.cli:
+  - packages.mcp2imgl.src.mcp2imgl.cli.main
+  packages.mcp2imgl.src.mcp2imgl.server:
+  - packages.mcp2imgl.src.mcp2imgl.server.run_stdio
+  packages.nlp2imgl.src.nlp2imgl.control:
+  - packages.nlp2imgl.src.nlp2imgl.control._result_to_dict
+  - packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag
+  - packages.nlp2imgl.src.nlp2imgl.control.default_image_path
+  - packages.nlp2imgl.src.nlp2imgl.control.default_window
+  - packages.nlp2imgl.src.nlp2imgl.control.doctor_capture
+  packages.nlp2imgl.src.nlp2imgl.to_dsl:
+  - packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl
+  - packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl
+  - packages.nlp2imgl.src.nlp2imgl.to_dsl.use_llm_enabled
+  packages.rest2imgl.src.rest2imgl.cli:
+  - packages.rest2imgl.src.rest2imgl.cli.main
+  packages.uri2imgl.src.uri2imgl.cli:
+  - packages.uri2imgl.src.uri2imgl.cli.main
+  packages.uri2imgl.src.uri2imgl.decode:
+  - packages.uri2imgl.src.uri2imgl.decode.uri_to_dsl
+  scripts.imgl-capture:
+  - scripts.imgl-capture.mark_capture_fresh
+  scripts.imgl-verify-capture:
+  - scripts.imgl-verify-capture.print
+entry_points:
+- examples.scripts.demo-nlp2uri.main
+- imgl.actions.ActionTarget.center
+- imgl.actions.ActionTarget.click_coords
+- imgl.actions.ActionTarget.to_click_action
+- imgl.actions.SceneActions.click
+- imgl.actions.SceneActions.find
+- imgl.actions.SceneActions.find_one
+- imgl.actions.SceneActions.list_actions
+- imgl.actions.SceneActions.type_into
+- imgl.actions.TypeAction.coords
+- imgl.actions.TypeAction.to_dict
+- imgl.capture._capture_with_gnome_screenshot
+- imgl.capture._capture_with_grim
+- imgl.capture._capture_with_portal
+- imgl.capture._capture_with_scrot
+- imgl.capture.capture_status_message
+- imgl.catalog.InteractiveOption.to_dict
+- imgl.cli.main
+- imgl.detect.local.detect_ui_elements
+- imgl.execute.ExecuteResult.to_dict
+- imgl.export.annotate_export.write_annotated_images_per_window
+- imgl.freshness.verify_capture_updated
+- imgl.interact.describe_resolution
+- imgl.layout.assign_ocr_to_windows
+- imgl.nlp2uri.ResolvedImglUri.to_dict
+- imgl.nlp2uri._match_catalog_action
+- imgl.ocr.base.OcrBackend.run
+- imgl.ocr.tesseract.TesseractOcr.run
+- imgl.paths.resolve_image_path_optional
+- imgl.types.BBox.as_xyxy
+- imgl.types.BBox.contains
+- imgl.types.BBox.from_xyxy
+- imgl.types.BBox.to_dict
+- imgl.types.Element.to_dict
+- imgl.types.OcrBox.to_dict
+- imgl.types.Scene.from_dict
+- imgl.types.Scene.to_dict
+- imgl.types.Window.to_dict
+- imgl.types.dataclass_to_dict
+- imgl.uri.uri_for_imgl_action
+- imgl.vdisplay_bridge.list_os_monitors
+- imgl.web.create_app
+- imgl.web.session.AgentState.to_dict
+- imgl.web.session.SessionManager.__init__
+- imgl.web.session.SessionManager.auto_select_first_window
+- imgl.web.session.SessionManager.create
+- imgl.web.session.StepRecord.to_dict
+- imgl.web.session.WebSession.__post_init__
+- imgl.web.session.WebSession._interact_session
+- imgl.web.session.WebSession._refresh_annotated_png
+- imgl.web.session.WebSession._step_record
+- imgl.web.session.WebSession.act
+- imgl.web.session.WebSession.analyze
+- imgl.web.session.WebSession.capture
+- imgl.web.session.WebSession.refresh_catalog
+- imgl.web.session.WebSession.resolve_index
+- imgl.web.session.WebSession.resolve_prompt
+- imgl.web.session.WebSession.select_window
+- imgl.web.session.WebSession.state_dict
+- imgl.web.session.WebSettings.to_dict
+- packages.cli2imgl.src.cli2imgl.cli.main
+- packages.dsl2imgl.src.dsl2imgl.bus.dispatch_json
+- packages.dsl2imgl.src.dsl2imgl.bus.execute_dsl
+- packages.dsl2imgl.src.dsl2imgl.cli.main
+- packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_json
+- packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text
+- packages.dsl2imgl.src.dsl2imgl.events.EventStore.__init__
+- packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl
+- packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb
+- packages.dsl2imgl.src.dsl2imgl.events.EventStore.append_command
+- packages.dsl2imgl.src.dsl2imgl.events.EventStore.for_default
+- packages.dsl2imgl.src.dsl2imgl.events.EventStore.replay
+- packages.dsl2imgl.src.dsl2imgl.events.EventStore.replay_pb
+- packages.dsl2imgl.src.dsl2imgl.events.StoredEvent.to_dict
+- packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions
+- packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze
+- packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture
+- packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
+- packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_health
+- packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve
+- packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf_to_text
+- packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf
+- packages.dsl2imgl.src.dsl2imgl.result.DslResult.to_dict
+- packages.dsl2imgl.src.dsl2imgl.result.DslResult.to_json
+- packages.dsl2imgl.src.dsl2imgl.schema_registry.all_verbs
+- packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas
+- packages.mcp2imgl.src.mcp2imgl.cli.main
+- packages.nlp2imgl.src.nlp2imgl.cli.main
+- packages.rest2imgl.src.rest2imgl.app.create_app
+- packages.rest2imgl.src.rest2imgl.cli.main
+- packages.uri2imgl.src.uri2imgl.cli.main
+- scripts.imgl-capture.clear_cache
+- scripts.imgl-capture.png_valid
+- scripts.imgl-capture.screen_ready

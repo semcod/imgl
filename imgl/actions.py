@@ -100,6 +100,8 @@ class SceneActions:
             targets.append(ActionTarget(element=element, window=win))
 
         if label is not None and element_type in {None, "input"}:
+            from imgl.catalog import _infer_input_label
+
             for win, element in _iter_elements(self.scene, window=window):
                 if element.type != "input":
                     continue
@@ -107,6 +109,10 @@ class SceneActions:
                     continue
                 matched_label = _find_label_for_input(self.scene, element, win)
                 if matched_label and _text_matches(matched_label.text, label, contains=contains):
+                    targets.append(ActionTarget(element=element, window=win))
+                    continue
+                inferred = _infer_input_label(element, win)
+                if _text_matches(inferred, label, contains=contains):
                     targets.append(ActionTarget(element=element, window=win))
 
         return targets
@@ -222,6 +228,12 @@ def _iter_elements(
     *,
     window: str | None = None,
 ) -> Iterable[tuple[Window | None, Element]]:
+    if window is not None:
+        from imgl.window_scope import get_discovered_window
+
+        resolved = get_discovered_window(scene, window)
+        if resolved is not None:
+            window = resolved.id
     for win in scene.windows:
         if window is not None and not _window_matches(win, window):
             continue

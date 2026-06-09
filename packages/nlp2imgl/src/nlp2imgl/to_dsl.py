@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 
 from dsl2imgl import dispatch
@@ -25,23 +26,41 @@ _CAPTURE_RE = re.compile(r"\b(zrzut|capture|screenshot|ekran)\b", re.IGNORECASE)
 _ACTIONS_RE = re.compile(r"\b(akcje|actions|lista|catalog|katalog)\b", re.IGNORECASE)
 
 
+def use_llm_enabled(explicit: bool | None = None) -> bool:
+    if explicit is not None:
+        return explicit
+    raw = os.environ.get("IMGL_USE_LLM", "").strip().lower()
+    if raw in {"0", "false", "no", "off"}:
+        return False
+    if raw in {"1", "true", "yes", "on"}:
+        return True
+    try:
+        from imgl.llm_catalog import _load_env_files
+
+        _load_env_files()
+    except ImportError:
+        pass
+    return bool(os.environ.get("OPENROUTER_API_KEY", "").strip())
+
+
 def to_dsl(
     prompt: str,
     *,
     image: str = "screen.png",
     window: str | None = None,
     execute: bool = True,
+    use_llm: bool | None = None,
 ) -> str:
     text = prompt.strip()
-    flags = f' IMAGE {image}' + (f" WINDOW {window}" if window else "") + (
+    llm_flag = " LLM" if use_llm_enabled(use_llm) or "llm" in text.lower() else ""
+    flags = f' IMAGE {image}' + (f" WINDOW {window}" if window else "") + llm_flag + (
         " EXECUTE 0" if not execute else " EXECUTE 1"
     )
 
     if _CAPTURE_RE.search(text):
         return "CAPTURE INTERACTIVE" if "interak" in text.lower() else "CAPTURE"
     if _ACTIONS_RE.search(text):
-        llm = " LLM" if "llm" in text.lower() else ""
-        return f"ACTIONS {image}{llm}{flags.replace(' IMAGE ' + image, '')}"
+        return f"ACTIONS {image}{llm_flag}{flags.replace(' IMAGE ' + image, '')}"
     if _KEY_RE.search(text):
         keys = "ctrl+Return" if "ctrl" in text.lower() else "Return"
         return f"KEY {keys}{flags}"
@@ -66,8 +85,9 @@ def apply_nl(
     image: str = "screen.png",
     window: str | None = None,
     execute: bool = True,
+    use_llm: bool | None = None,
 ) -> DslResult:
-    line = to_dsl(prompt, image=image, window=window, execute=execute)
+    line = to_dsl(prompt, image=image, window=window, execute=execute, use_llm=use_llm)
     if line.startswith("RESOLVE"):
         resolved = dispatch(line)
         if not resolved.ok:

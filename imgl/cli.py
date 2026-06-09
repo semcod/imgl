@@ -28,6 +28,18 @@ from imgl.pipeline import analyze
 from imgl.scene_cache import load_or_analyze, save_scene_cache
 
 
+def _add_output_format_flags(parser: argparse.ArgumentParser) -> None:
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--json", action="store_true", help="Output JSON (default: markdown)")
+    group.add_argument("--yaml", action="store_true", help="Output YAML (default: markdown)")
+
+
+def _output_format(args: argparse.Namespace) -> str:
+    from imgl.autodiag import resolve_cli_output_format
+
+    return resolve_cli_output_format(json_flag=args.json, yaml_flag=args.yaml)
+
+
 def _add_common_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("image", type=Path, help="Path to screenshot image")
     parser.add_argument(
@@ -144,15 +156,117 @@ def build_parser() -> argparse.ArgumentParser:
     )
     capture_parser.add_argument("--monitor", type=int, default=1, help="Monitor index (default: 1)")
     capture_parser.add_argument(
+        "--portal",
+        action="store_true",
+        help="Fallback: GNOME portal region picker (after vdisplay mirror fails)",
+    )
+    capture_parser.add_argument(
         "--interactive",
         action="store_true",
-        help="Use interactive portal capture (GNOME/Wayland permission prompt)",
+        help="Alias for --portal (deprecated; default uses vdisplay mirror, no dialog)",
     )
     capture_parser.add_argument(
         "--allow-blank",
         action="store_true",
         help="Save capture even when image looks empty/black",
     )
+    capture_parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="After capture, verify PNG was updated (portal must not be cancelled)",
+    )
+    capture_parser.add_argument(
+        "--smart",
+        action="store_true",
+        help="Smart capture with OCR cache clear and X11 fallback",
+    )
+
+    doctor_parser = subparsers.add_parser(
+        "doctor",
+        help="Autodiagnose screenshot (img2nl) + optional vdisplay/vision map",
+    )
+    doctor_parser.add_argument(
+        "--image",
+        type=Path,
+        default=None,
+        help="PNG path (default: IMGL_IMAGE or screen.png)",
+    )
+    doctor_parser.add_argument("--window", default=None, help="Window scope e.g. region-bottom")
+    doctor_parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Include vdisplay OS windows + vision correlation",
+    )
+    doctor_parser.add_argument("--locale", default="pl", help="Summary locale (default: pl)")
+    _add_output_format_flags(doctor_parser)
+
+    map_parser = subparsers.add_parser(
+        "map",
+        help="Map OS windows (vdisplay) to vision regions on screenshot",
+    )
+    map_parser.add_argument(
+        "--image",
+        type=Path,
+        default=None,
+        help="PNG path (default: IMGL_IMAGE or screen.png)",
+    )
+    map_parser.add_argument("--window", default=None, help="Target window/app to highlight")
+    map_parser.add_argument("--locale", default="pl")
+    _add_output_format_flags(map_parser)
+
+    execute_parser = subparsers.add_parser(
+        "execute",
+        help="Run NL UI action (TYPE/KEY/CLICK) with autodiag",
+    )
+    execute_parser.add_argument("prompt", help='e.g. "wpisz test w Chat input"')
+    execute_parser.add_argument("--image", type=Path, default=None, help="Screenshot PNG")
+    execute_parser.add_argument("--window", default=None, help="region-bottom, region-top, …")
+    execute_parser.add_argument("--dry-run", action="store_true", help="Plan only, no desktop input")
+    execute_parser.add_argument(
+        "--llm",
+        action="store_true",
+        help="Vision LLM catalog via OpenRouter (OPENROUTER_API_KEY)",
+    )
+    execute_parser.add_argument("--no-diagnose", action="store_true", help="Skip capture autodiag")
+    execute_parser.add_argument("--locale", default="pl")
+    _add_output_format_flags(execute_parser)
+
+    shot_parser = subparsers.add_parser(
+        "shot",
+        help="capture --interactive + execute (one-shot window control)",
+    )
+    shot_parser.add_argument("prompt", help='e.g. "wpisz test w Chat input"')
+    shot_parser.add_argument("--image", type=Path, default=None, help="Screenshot PNG path")
+    shot_parser.add_argument("--window", default=None)
+    shot_parser.add_argument("--dry-run", action="store_true")
+    shot_parser.add_argument("--llm", action="store_true")
+    shot_parser.add_argument("--locale", default="pl")
+    _add_output_format_flags(shot_parser)
+
+    verify_parser = subparsers.add_parser(
+        "verify",
+        help="Verify capture PNG is fresh and valid",
+    )
+    verify_parser.add_argument(
+        "image",
+        type=Path,
+        nargs="?",
+        default=None,
+        help="PNG path (default: IMGL_IMAGE or screen.png)",
+    )
+    verify_parser.add_argument(
+        "--before",
+        type=float,
+        default=None,
+        help="Previous mtime to compare (default: file mtime - 1)",
+    )
+
+    install_parser = subparsers.add_parser("install", help="Install optional integrations")
+    install_sub = install_parser.add_subparsers(dest="install_target", required=True)
+    install_sub.add_parser("img2nl", help="pip install img2nl for capture autodiag")
+    install_sub.add_parser("vdisplay", help="pip install vdisplay for OS window map")
+    install_sub.add_parser("vql", help="pip install vql for portal capture (Wayland)")
+    install_sub.add_parser("control", help="pip install nlp2imgl/dsl2imgl/rest2imgl")
 
     diagnose_parser = subparsers.add_parser(
         "diagnose",
@@ -350,6 +464,112 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     config = ImglConfig()
 
+    if args.command == "doctor":
+        from imgl.control import default_image_path, run_doctor
+
+        image = args.image or default_image_path()
+        text, code = run_doctor(
+            image,
+            window=args.window,
+            full=args.full,
+            locale=args.locale,
+            output_format=_output_format(args),
+        )
+        from imgl.terminal_md import print_report
+
+        print_report(text, _output_format(args))
+        return code
+
+    if args.command == "map":
+        from imgl.control import default_image_path, run_map
+
+        image = args.image or default_image_path()
+        text, code = run_map(
+            image,
+            window=args.window,
+            locale=args.locale,
+            output_format=_output_format(args),
+        )
+        from imgl.terminal_md import print_report
+
+        print_report(text, _output_format(args))
+        return code
+
+    if args.command == "execute":
+        from imgl.control import default_image_path, run_execute
+
+        try:
+            text, code = run_execute(
+                args.prompt,
+                image=args.image or default_image_path(),
+                window=args.window,
+                dry_run=args.dry_run,
+                use_llm=args.llm or None,
+                with_diagnostics=not args.no_diagnose,
+                locale=args.locale,
+                output_format=_output_format(args),
+            )
+        except (FileNotFoundError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        from imgl.terminal_md import print_report
+
+        print_report(text, _output_format(args))
+        return code
+
+    if args.command == "shot":
+        from imgl.control import default_image_path, run_shot
+
+        try:
+            text, code = run_shot(
+                args.prompt,
+                image=args.image or default_image_path(),
+                window=args.window,
+                dry_run=args.dry_run,
+                use_llm=args.llm,
+                locale=args.locale,
+                output_format=_output_format(args),
+            )
+        except (CaptureError, BlankCaptureError, FileNotFoundError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        from imgl.terminal_md import print_report
+
+        print_report(text, _output_format(args))
+        return code
+
+    if args.command == "verify":
+        from imgl.control import default_image_path, verify_capture
+
+        image = args.image or default_image_path()
+        try:
+            path = verify_capture(image, before_mtime=args.before)
+        except (FileNotFoundError, RuntimeError) as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
+        print(f"OK: {path}")
+        return 0
+
+    if args.command == "install":
+        from imgl.installs import install_control, install_img2nl, install_vdisplay, install_vql
+
+        try:
+            if args.install_target == "img2nl":
+                install_img2nl()
+            elif args.install_target == "vdisplay":
+                install_vdisplay()
+            elif args.install_target == "vql":
+                install_vql()
+            elif args.install_target == "control":
+                install_control()
+            else:
+                print(f"Unknown install target: {args.install_target}", file=sys.stderr)
+                return 1
+        except Exception as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        return 0
+
     if args.command == "serve":
         try:
             import uvicorn
@@ -514,20 +734,40 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "capture":
-        try:
-            path = capture_screen(
-                args.output,
-                monitor=args.monitor,
-                interactive=args.interactive,
-                allow_blank=args.allow_blank,
+        from imgl.capture import last_capture_meta
+        from imgl.control import capture_interactive, smart_capture
+
+        out = args.output
+        before_mtime = out.stat().st_mtime if out and out.is_file() else 0.0
+        use_portal = args.portal or args.interactive
+        if args.interactive and not args.portal:
+            print(
+                "Note: --interactive opens GNOME portal; default is vdisplay mirror (no dialog). "
+                "Use: imgl capture -o screen.png --verify",
+                file=sys.stderr,
             )
+        try:
+            if args.smart:
+                path = smart_capture(out, interactive=use_portal)
+            elif args.verify or not use_portal:
+                path = capture_interactive(out, verify=args.verify, portal=use_portal)
+            else:
+                path = capture_screen(
+                    args.output,
+                    monitor=args.monitor,
+                    interactive=use_portal,
+                    allow_blank=args.allow_blank,
+                    prefer_mirror=True,
+                )
         except BlankCaptureError as exc:
             print(str(exc), file=sys.stderr)
             return 2
         except CaptureError as exc:
             print(f"Capture failed: {exc}", file=sys.stderr)
             return 1
-        print(f"Captured {path}", file=sys.stderr)
+        meta = last_capture_meta()
+        method = meta.get("method", "unknown")
+        print(f"Captured {path} (method={method})", file=sys.stderr)
         print(str(path.resolve()))
         return 0
 

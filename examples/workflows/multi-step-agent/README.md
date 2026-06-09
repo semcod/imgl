@@ -35,16 +35,16 @@ examples/scripts/demo-agent-loop.sh
 
 ```bash
 # Krok A — otwórz zakładkę
-imgl capture --interactive -o s1.png
+imgl capture -o s1.png --verify
 imgl interact s1.png --llm --window region-top --execute <<<'3'   # Projects
 
 # Krok B — poczekaj na UI, nowy zrzut
 sleep 1
-imgl capture --interactive -o s2.png
+imgl capture -o s2.png --verify
 imgl interact s2.png --llm --window region-top --execute <<<'kliknij Repositories'
 
 # Krok C — wpisz w search
-imgl capture --interactive -o s3.png
+imgl capture -o s3.png --verify
 imgl interact s3.png --llm --window region-top --execute <<<'wpisz imgl w Type to search'
 ```
 

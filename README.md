@@ -5,11 +5,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.7.2-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$4.29-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.4h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.7.3-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.85-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.4h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $4.2871 (3 commits)
-- 👤 **Human dev:** ~$238 (2.4h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.8480 (4 commits)
+- 👤 **Human dev:** ~$338 (3.4h @ $100/h, 30min dedup)
 
 Generated on 2026-06-09 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -19,11 +19,14 @@ Generated on 2026-06-09 using [openrouter/qwen/qwen3-coder-next](https://openrou
 
 ```bash
 pip install -e .              # from repo
-pip install -e ".[capture]"   # + screen capture (mss)
+pip install -e ".[capture]"   # mss (X11 fallback)
 pip install -e ".[diagnose]"   # numpy for img2nl (install img2nl locally)
-pip install -e ".[full]"      # capture + dev (no PyPI vql/img2vql)
+pip install -e ".[full]"      # capture + diagnose + dev + llm + web
 
-# Local siblings (not on PyPI):
+# Local siblings (not on PyPI) — mirror capture on Wayland:
+make install-dev              # .[dev,llm,capture] + vdisplay when ~/github/wronai/vdisplay exists
+imgl install vdisplay         # pip install -e ~/github/wronai/vdisplay[pillow]
+pip install -e ~/github/wronai/vdisplay[pillow]   # same as above
 pip install -e ~/github/wronai/img2nl[analyze]
 pip install -e ~/github/oqlos/vql
 pip install -e ~/github/oqlos/vql/packages/img2vql
@@ -58,7 +61,9 @@ pip install -e ".[llm]"    # vision LLM catalog (OpenRouter)
 ```bash
 make help              # lista komend
 make install-full      # imgl + capture + llm + control + web
-make capture           # zrzut → screen.png
+make capture-interactive  # vdisplay mirror → screen.png (portal fallback na Wayland)
+make doctor-full FORMAT=markdown
+make execute-llm PROMPT='wpisz test w Chat input'
 make demo-key          # dsl2imgl KEY ctrl+Return (dry-run)
 make demo-chat         # wpisz w Chat input + ctrl+enter (dry-run)
 make serve-rest        # rest2imgl :8219
@@ -73,6 +78,7 @@ Integracja z **Koru**: `cd ~/github/semcod/koru && make install-imgl-bridge`
 | Temat | Link |
 |-------|------|
 | Indeks | [docs/README.md](docs/README.md) |
+| Capture (mirror, portal, Wayland) | [docs/capture.md](docs/capture.md) |
 | Architektura (imgl / vql / nlp2uri) | [docs/architecture.md](docs/architecture.md) |
 | Warstwa kontroli `*2imgl` | [docs/control-layer.md](docs/control-layer.md) |
 | NL ze shell (chat input, Enter/Ctrl+Enter) | [docs/nl-shell-examples.md](docs/nl-shell-examples.md) |
@@ -122,9 +128,12 @@ print(scene_to_json(scene))
 imgl diagnose /tmp/screen.png
 imgl vql /tmp/screen.png -o layout.vql.json
 
-# Or capture (needs vql portal on Wayland — mss alone gives black screen):
-pip install -e ~/github/oqlos/vql   # portal/grim backends
-imgl capture --interactive -o screen.png
+# Capture (vdisplay mirror wbudowany w imgl[capture] — bez dialogu GNOME):
+make install-dev                              # vdisplay + mss w extra capture
+make capture-interactive                      # mirror capture → screen.png
+imgl capture -o screen.png --verify           # to samo bez make
+imgl capture --portal -o screen.png           # fallback: GNOME region picker
+
 imgl diagnose screen.png            # must show worth_analyzing: true
 
 # analyze / export (aborts on blank unless --allow-blank)
@@ -154,8 +163,8 @@ Szczegóły: [docs/web-ui.md](docs/web-ui.md), [docs/voice-browser.md](docs/voic
 Sterowanie z zewnątrz (shell, curl, MCP, asystent głosowy):
 
 ```bash
-make install-control   # lub: pip install -e packages/dsl2imgl packages/nlp2imgl packages/rest2imgl
-make capture
+make install-control   # imgl install control
+make capture-interactive                            # lub: imgl capture -o screen.png --verify
 make serve-rest        # http://127.0.0.1:8219
 
 # DSL

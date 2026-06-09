@@ -1,0 +1,71 @@
+# redup/duplication | 5 groups | 76f 10328L | 2026-06-09
+
+SUMMARY:
+  files_scanned: 76
+  total_lines:   10328
+  dup_groups:    5
+  dup_fragments: 10
+  saved_lines:   44
+  scan_ms:       2384
+
+HOTSPOTS[7] (files with most duplication):
+  imgl/export/html_export.py  dup=28L  groups=2  frags=2  (0.3%)
+  imgl/export/svg_export.py  dup=17L  groups=2  frags=2  (0.2%)
+  imgl/capture.py  dup=8L  groups=1  frags=2  (0.1%)
+  imgl/detect/img2vql_bridge.py  dup=7L  groups=1  frags=1  (0.1%)
+  imgl/diagnose.py  dup=7L  groups=1  frags=1  (0.1%)
+  imgl/catalog.py  dup=5L  groups=1  frags=1  (0.0%)
+  imgl/export/annotate_export.py  dup=5L  groups=1  frags=1  (0.0%)
+
+DUPLICATES[5] (ranked by impact):
+  [49d1d03e6ce392a1]   STRU  _base_css  L=21 N=2 saved=21 sim=1.00
+      imgl/export/html_export.py:75-95  (_base_css)
+      imgl/export/svg_export.py:76-85  (_svg_css)
+  [00c76eba96672ce9]   EXAC  _default_title  L=7 N=2 saved=7 sim=1.00
+      imgl/export/html_export.py:56-62  (_default_title)
+      imgl/export/svg_export.py:56-62  (_default_title)
+  [5843dfdd9fc8bd2f]   STRU  img2vql_available  L=7 N=2 saved=7 sim=1.00
+      imgl/detect/img2vql_bridge.py:18-24  (img2vql_available)
+      imgl/diagnose.py:16-22  (img2nl_available)
+  [e4a985e7f83fe868]   STRU  _truncate  L=5 N=2 saved=5 sim=1.00
+      imgl/catalog.py:346-350  (_truncate)
+      imgl/export/annotate_export.py:231-235  (_short_hint_text)
+  [e41d60f79f9afd0d]   STRU  _capture_with_grim  L=4 N=2 saved=4 sim=1.00
+      imgl/capture.py:142-145  (_capture_with_grim)
+      imgl/capture.py:154-157  (_capture_with_scrot)
+
+REFACTOR[5] (ranked by priority):
+  [1] ○ extract_function   → imgl/export/utils/_base_css.py
+      WHY: 2 occurrences of 21-line block across 2 files — saves 21 lines
+      FILES: imgl/export/html_export.py, imgl/export/svg_export.py
+  [2] ○ extract_function   → imgl/export/utils/_default_title.py
+      WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
+      FILES: imgl/export/html_export.py, imgl/export/svg_export.py
+  [3] ○ extract_function   → imgl/utils/img2vql_available.py
+      WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
+      FILES: imgl/detect/img2vql_bridge.py, imgl/diagnose.py
+  [4] ○ extract_function   → imgl/utils/_truncate.py
+      WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
+      FILES: imgl/catalog.py, imgl/export/annotate_export.py
+  [5] ○ extract_function   → imgl/utils/_capture_with_grim.py
+      WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
+      FILES: imgl/capture.py
+
+QUICK_WINS[3] (low risk, high savings — do first):
+  [1] extract_function   saved=21L  → imgl/export/utils/_base_css.py
+      FILES: html_export.py, svg_export.py
+  [2] extract_function   saved=7L  → imgl/export/utils/_default_title.py
+      FILES: html_export.py, svg_export.py
+  [3] extract_function   saved=7L  → imgl/utils/img2vql_available.py
+      FILES: img2vql_bridge.py, diagnose.py
+
+EFFORT_ESTIMATE (total ≈ 1.5h):
+  medium _base_css                           saved=21L  ~42min
+  easy   _default_title                      saved=7L  ~14min
+  easy   img2vql_available                   saved=7L  ~14min
+  easy   _truncate                           saved=5L  ~10min
+  easy   _capture_with_grim                  saved=4L  ~8min
+
+METRICS-TARGET:
+  dup_groups:  5 → 0
+  saved_lines: 44 lines recoverable

@@ -11,7 +11,7 @@ imgl serve --port 8008 --image screen.png --llm --window region-bottom
 
 | Element | Funkcja |
 |---------|---------|
-| Zrzut ekranu | `POST /api/capture` (portal Wayland) |
+| Zrzut ekranu | `POST /api/capture` (vdisplay mirror; portal fallback na Wayland) |
 | Region (chips) | `region-top` / `region-bottom` |
 | LLM katalog | Vision LLM na wycinku okna |
 | Wykonuj na pulpicie | xdotool/ydotool |

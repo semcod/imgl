@@ -82,7 +82,7 @@ def test_cli_vql_allows_blank_with_flag(tmp_path):
     assert result == 0
 
 
-def test_capture_screen_with_mock_vql(tmp_path):
+def test_capture_screen_with_mock_vql(tmp_path, monkeypatch: pytest.MonkeyPatch):
     import sys
     import types
 
@@ -99,6 +99,7 @@ def test_capture_screen_with_mock_vql(tmp_path):
     fake_vql = types.ModuleType("vql")
     fake_vql.adopt = fake_adopt
 
+    monkeypatch.setenv("IMGL_CAPTURE_ALLOW_VQL", "1")
     with patch.dict(sys.modules, {"vql": fake_vql, "vql.adopt": fake_adopt, "vql.adopt.window": fake_window}):
         result = capture_screen(out)
     assert result == out

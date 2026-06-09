@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imgl"
-version = "0.7.2"
+version = "0.7.3"
 description = "Image to Layout — screenshot OCR and semantic UI reconstruction"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 license = "Apache-2.0"
 authors = [
     {name = "Tom Sapletta", email = "tom@sapletta.com"}
@@ -25,16 +25,18 @@ classifiers = [
 dependencies = [
     "pillow>=10.0",
     "pytesseract>=0.3.10",
+    "PyYAML>=6.0",
 ]
 
 [project.optional-dependencies]
 capture = [
     "mss>=9.0",
 ]
-# vql/img2vql/img2nl are local sibling repos — not on PyPI:
-#   pip install -e ~/github/oqlos/vql
-#   pip install -e ~/github/oqlos/vql/packages/img2vql
-#   pip install -e ~/github/wronai/img2nl[analyze]
+# Local sibling repos (not on PyPI) — install separately:
+#   imgl install vdisplay   # ~/github/wronai/vdisplay[pillow]
+#   imgl install vql        # ~/github/oqlos/vql
+#   imgl install img2nl     # ~/github/wronai/img2nl[analyze]
+#   make install-dev        # pip install -e ".[dev,llm,capture]" + vdisplay when present
 diagnose = [
     "numpy>=1.24",
 ]

@@ -21,7 +21,7 @@ Scena `win-settings` z testów:
 ## Analiza zrzutu dialogu
 
 ```bash
-imgl capture --interactive -o dialog.png
+imgl capture -o dialog.png --verify
 imgl annotate dialog.png --open
 imgl interact dialog.png
 ```

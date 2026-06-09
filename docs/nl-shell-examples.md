@@ -6,12 +6,11 @@ Scenariusz: Cursor/IDE, panel AI na dole, pole **Chat input** / „Add a follow-
 
 ```bash
 cd ~/github/semcod/imgl
-pip install -e ".[llm,capture,web]"
-pip install -e packages/dsl2imgl packages/nlp2imgl
+make install-dev
+make install-control
 
-# zrzut (portal vql na Wayland)
-pip install -e ~/github/oqlos/vql
-imgl capture --interactive -o screen.png
+# zrzut (vdisplay mirror; portal fallback na Wayland)
+make capture-interactive
 
 # sprawdź regiony
 imgl windows screen.png
@@ -69,7 +68,7 @@ IMAGE=screen.png
 WINDOW=region-bottom
 PROMPT="Wyjaśnij podział odpowiedzialności imgl vs vql"
 
-imgl capture --interactive -o "$IMAGE"
+imgl capture -o "$IMAGE" --verify
 
 nlp2imgl apply "wpisz $PROMPT w Chat input" --image "$IMAGE" --window "$WINDOW"
 sleep 0.3
@@ -77,7 +76,7 @@ nlp2imgl apply "naciśnij ctrl+enter" --execute
 
 # odśwież zrzut po odpowiedzi
 sleep 2
-imgl capture --interactive -o "$IMAGE"
+imgl capture -o "$IMAGE" --verify
 ```
 
 ## 5. REST (automatyzacja zewnętrzna)
@@ -96,6 +95,6 @@ curl -s -X POST http://127.0.0.1:8219/v1/nl \
 
 ## Uwagi
 
-- Wymaga **xdotool** (Linux X11); na Wayland capture działa przez portal, klik może być ograniczony.
+- Wymaga **xdotool** (Linux X11); na Wayland capture działa przez vdisplay mirror lub portal GNOME, klik może być ograniczony.
 - Po każdej akcji zrób **nowy zrzut** — współrzędne ze starego PNG szybko się dezaktualizują.
 - Jeśli brak **Chat input** w katalogu: użyj `--llm` lub `region-bottom`, szukaj pola **Chat input** / **Pole tekstowe**.

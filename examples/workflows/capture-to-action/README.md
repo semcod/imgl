@@ -5,7 +5,7 @@ Podstawowa ścieżka od zrzutu ekranu do konkretnej akcji myszy/klawiatury.
 ## Krok 1 — Zrzut
 
 ```bash
-imgl capture --interactive -o screen.png
+make capture-interactive   # lub: imgl capture -o screen.png --verify
 imgl diagnose screen.png
 ```
 

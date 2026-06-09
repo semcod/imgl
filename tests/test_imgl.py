@@ -33,9 +33,11 @@ def _make_text_image(path: Path, text: str = "Save") -> Path:
 
 
 def test_import():
+    from importlib.metadata import version
+
     import imgl  # noqa: F401
 
-    assert imgl.__version__ == "0.7.1"
+    assert imgl.__version__ == version("imgl")
 
 
 def test_bbox_as_xyxy_and_contains():

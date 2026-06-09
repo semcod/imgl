@@ -1,0 +1,14 @@
+# SCENARIO: Auto-generated from Python Tests
+# TYPE: integration
+# GENERATED: true
+
+CONFIG[2]{key, value}:
+  base_url, ${api_url:-http://localhost:8101}
+  timeout_ms, 10000
+
+# Converted 4 assertions from pytest
+ASSERT[4]{field, operator, expected}:
+  scene.width, ==, 200
+  scene.height, ==, 80
+  scene.width, ==, 200
+  scene.height, ==, 80

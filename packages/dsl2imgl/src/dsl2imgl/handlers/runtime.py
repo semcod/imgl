@@ -18,13 +18,12 @@ def _build_interact_session(
 ):
     from imgl.interact import InteractSession, _build_session_catalog
     from imgl.scene_cache import load_or_analyze
-    from imgl.window_scope import apply_discovered_windows, discover_windows, summarize_windows
+    from imgl.window_scope import apply_discovered_windows, summarize_windows
 
     image_path = str(Path(image).expanduser())
     vql_file = str(Path(image_path).with_suffix(".vql.json"))
     scene = load_or_analyze(image_path, vql_file=vql_file, lang=lang, refresh=False)
-    windows = discover_windows(scene)
-    apply_discovered_windows(scene, windows)
+    scene = apply_discovered_windows(scene)
     session = InteractSession(
         image_path=image_path,
         vql_file=vql_file,
@@ -32,7 +31,7 @@ def _build_interact_session(
         scene=scene,
         catalog=[],
         use_llm=use_llm,
-        window_summaries=summarize_windows(scene, windows),
+        window_summaries=summarize_windows(scene, image_path=image_path),
         selected_window_id=window,
     )
     if window:

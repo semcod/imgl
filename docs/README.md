@@ -2,6 +2,7 @@
 
 | Dokument | Temat |
 |----------|--------|
+| [capture.md](capture.md) | Zrzut ekranu: vdisplay mirror, portal GNOME, Wayland |
 | [architecture.md](architecture.md) | Podział odpowiedzialności: imgl, vql, nlp2uri, img2nl |
 | [control-layer.md](control-layer.md) | Paczki `*2imgl`, DSL, porty 8008/8219 |
 | [nl-shell-examples.md](nl-shell-examples.md) | Komendy shell: NL → wpisz w chat → Enter/Ctrl+Enter |
