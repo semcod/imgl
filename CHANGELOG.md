@@ -112,6 +112,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- VQL export — `metadata.capture`, `metadata.window_os`, `scene.relations` (`contains`); sidecar `*.capture.json` z vdisplay
+- `imgl capture --analyze` / `make capture-analyze` — capture + OCR + VQL w jednym kroku
+- `capture_provenance` — korelacja okien imgl z metadanymi OS (vdisplay, IoU)
+- Guard DISPLAY przy `execute` (`IMGL_STRICT_DISPLAY=1` blokuje mismatch względem `.capture.json`)
+- `dsl2imgl` — `CAPTURE … ANALYZE [LANG eng+pol]`
+- `docs/vql-export.md` — format VQLProgram, pipeline vdisplay → imgl → automatyzacja
+- Walidacja eksportu przez `oqlos/vql` (`validate_vql_export`, domyślnie ON; `IMGL_VALIDATE_VQL=0` wyłącza)
 - `dsl2imgl` Faza 4 — JSON Schema (`schema/commands/`), Protobuf (`proto/dsl2imgl/v1/`), EventStore (`.imgl/events/dsl.events.pb`), CQRS bus
 - `packages/*2imgl` — warstwa kontroli: `dsl2imgl`, `uri2imgl`, `nlp2imgl`, `cli2imgl`, `mcp2imgl`, `rest2imgl` (port **8219**)
 - Integracja z Koru — `koru/integrations/imgl_client.py`, fallback `KORU_IMGL_FALLBACK`, MCP `koru_imgl_execute`

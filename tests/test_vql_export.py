@@ -80,10 +80,21 @@ def test_scene_to_vql_json_roundtrip():
 
 def test_write_vql_program(tmp_path):
     out = tmp_path / "layout.vql.json"
-    write_vql_program(_sample_scene(), out)
+    write_vql_program(_sample_scene(), out, validate=False)
     assert out.exists()
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["metadata"]["source"] == "imgl"
+
+
+def test_validate_vql_export_when_vql_installed():
+    pytest = __import__("pytest")
+    vql = pytest.importorskip("vql")
+    del vql  # noqa: F841 — ensure package is present
+
+    from imgl.export.vql_adapter import validate_vql_export
+
+    issues = validate_vql_export(scene_to_vql(_sample_scene()))
+    assert issues == []
 
 
 def test_cli_vql_command(tmp_path, capsys):

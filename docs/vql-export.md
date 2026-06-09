@@ -145,6 +145,16 @@ resolve_imgl_uri → {x, y, image_path} → execute (xdotool)
 
 Pętla agenta: **nowy capture po każdej akcji** — [workflows/multi-step-agent](../examples/workflows/multi-step-agent/README.md).
 
+## Walidacja (oqlos/vql)
+
+Po zapisie `write_vql_program` opcjonalnie waliduje program przez `VQLProgram.validate()` (gdy pakiet `vql` zainstalowany):
+
+```bash
+pip install -e ~/github/oqlos/vql
+imgl vql screen.png -o layout.vql.json   # ostrzeżenia na stderr przy błędach
+IMGL_VALIDATE_VQL=0 imgl vql screen.png  # wyłączenie walidacji
+```
+
 ## Powiązane
 
 - [capture.md](capture.md) — backendy zrzutu, Wayland

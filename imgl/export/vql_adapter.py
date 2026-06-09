@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -117,19 +119,54 @@ def scene_to_vql_json(
     )
 
 
+def validate_vql_export(program: dict[str, Any]) -> list[str]:
+    """Validate exported program with oqlos/vql when installed."""
+    try:
+        from vql import VQLProgram, validate_program
+    except ImportError:
+        return []
+
+    issues: list[str] = []
+    try:
+        model = VQLProgram.from_dict(program)
+        issues.extend(model.validate())
+        report = validate_program(model)
+        if not report.passed:
+            issues.extend(str(item) for item in report.issues)
+    except Exception as exc:
+        issues.append(str(exc))
+    return issues
+
+
 def write_vql_program(
     scene: Scene,
     path: str | Path,
     *,
     include_grid: bool = False,
     grid: int = 12,
+    validate: bool | None = None,
 ) -> Path:
     """Write a VQL program JSON file from a Scene."""
+    payload = scene_to_vql_json(scene, include_grid=include_grid, grid=grid)
     out = Path(path)
-    out.write_text(
-        scene_to_vql_json(scene, include_grid=include_grid, grid=grid),
-        encoding="utf-8",
-    )
+    out.write_text(payload, encoding="utf-8")
+
+    if validate is None:
+        validate = os.environ.get("IMGL_VALIDATE_VQL", "1").strip().lower() not in {
+            "0",
+            "false",
+            "no",
+            "off",
+        }
+    if validate:
+        program = json.loads(payload)
+        issues = validate_vql_export(program)
+        if issues:
+            print(
+                f"VQL validation warnings for {out}:\n  "
+                + "\n  ".join(issues[:8]),
+                file=sys.stderr,
+            )
     return out
 
 
