@@ -8,15 +8,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `dsl2imgl` Faza 4 — JSON Schema (`schema/commands/`), Protobuf (`proto/dsl2imgl/v1/`), EventStore (`.imgl/events/dsl.events.pb`), CQRS bus
+- `packages/*2imgl` — warstwa kontroli: `dsl2imgl`, `uri2imgl`, `nlp2imgl`, `cli2imgl`, `mcp2imgl`, `rest2imgl` (port **8219**)
+- Integracja z Koru — `koru/integrations/imgl_client.py`, fallback `KORU_IMGL_FALLBACK`, MCP `koru_imgl_execute`
+- `execute` — akcja `key` (Enter, ctrl+Return) przez xdotool
+- `docs/` — architektura, control layer, NL shell, głos + przeglądarka, web UI
+- `TODO.md` — roadmapa i znane ograniczenia
+- `imgl serve` — web UI na porcie 8008: tryb manualny (akcje z miniaturkami) i autonomiczny (agent LLM)
+- `examples/workflows/web-ui` — dokumentacja usługi web
+- `examples/` — dokumentacja i demo: platformy, workflow, aplikacje, konfiguracje, integracje
+- `imgl windows` — wykrywanie regionów, wycinki PNG, podgląd z numerami
+- `imgl interact --window` — analiza i LLM per wybrany region
+- `window_scope` — detekcja stacked/side-by-side, podział poziomy/pionowy
 - `imgl annotate` — PNG overlay with catalog numbers on screenshot
 - `imgl interact --annotate --open` — generate and open numbered map
 - Shell command / URI `action=annotate` (`mapa`, `obraz`, `numeracja`)
+- Vision LLM per-window crop (`--llm` + `--window region-top`)
+- LLM catalog merge — pola input z OCR/heurystyki łączone z wynikiem vision LLM
 
 ### Fixed
 - Action coordinates now map back to full screenshot resolution after OCR downscale
 - Default `max_dim=2560` for faster Tesseract on 4K/8K captures
 - Scene cache (`layout.imgl.json`) — `uri2vql` list/click/type skips re-OCR when cache matches
 - Diagnose vql-fallback returns a short summary instead of empty text
+
+## [0.7.2] - 2026-06-09
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+- Update docs/README.md
+- Update docs/architecture.md
+- Update docs/control-layer.md
+- Update docs/nl-shell-examples.md
+- Update docs/voice-browser.md
+- Update docs/web-ui.md
+- Update examples/README.md
+- ... and 18 more files
+
+### Test
+- Update tests/test_execute_key.py
+- Update tests/test_imgl.py
+- Update tests/test_llm_catalog.py
+- Update tests/test_nlp2uri_fixes.py
+- Update tests/test_web.py
+- Update tests/test_window_scope.py
+
+### Other
+- Update .gitignore
+- Update .imgl/control/layout.vql.imgl.json
+- Update .imgl/control/layout.vql.json
+- Update Makefile
+- Update examples/scripts/demo-agent-loop.sh
+- Update examples/scripts/demo-github.sh
+- Update examples/scripts/demo-nlp2uri.py
+- Update examples/scripts/demo-windows.sh
+- Update img.png
+- Update imgl/catalog.py
+- ... and 78 more files
 
 ## [0.7.1] - 2026-06-08
 

@@ -1,0 +1,12 @@
+{
+  "$id": "dsl2imgl/commands/resolve",
+  "type": "object",
+  "required": ["verb", "prompt"],
+  "properties": {
+    "verb": { "const": "RESOLVE" },
+    "prompt": { "type": "string" },
+    "image": { "type": "string" },
+    "window": { "type": "string" }
+  },
+  "additionalProperties": false
+}

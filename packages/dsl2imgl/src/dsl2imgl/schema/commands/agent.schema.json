@@ -1,0 +1,13 @@
+{
+  "$id": "dsl2imgl/commands/agent",
+  "type": "object",
+  "required": ["verb", "goal"],
+  "properties": {
+    "verb": { "const": "AGENT" },
+    "goal": { "type": "string" },
+    "max_steps": { "type": "integer", "minimum": 1 },
+    "image": { "type": "string" },
+    "window": { "type": "string" }
+  },
+  "additionalProperties": false
+}

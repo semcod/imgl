@@ -19,5 +19,5 @@ class ImglConfig:
     diagnose_locale: str = "pl"
     catalog_filter: bool = True
     use_llm_catalog: bool = False
-    llm_vision_model: str = "openrouter/google/gemini-2.5-flash"
+    llm_vision_model: str = "openrouter/google/gemini-3.1-flash-image-preview"
     catalog_max_items: int = 40

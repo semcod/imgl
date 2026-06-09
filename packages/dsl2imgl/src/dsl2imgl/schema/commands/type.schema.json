@@ -1,0 +1,14 @@
+{
+  "$id": "dsl2imgl/commands/type",
+  "type": "object",
+  "required": ["verb", "value"],
+  "properties": {
+    "verb": { "const": "TYPE" },
+    "value": { "type": "string" },
+    "field": { "type": "string" },
+    "image": { "type": "string" },
+    "window": { "type": "string" },
+    "execute": { "type": "boolean", "default": true }
+  },
+  "additionalProperties": false
+}

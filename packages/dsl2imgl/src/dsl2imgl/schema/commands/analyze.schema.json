@@ -1,0 +1,13 @@
+{
+  "$id": "dsl2imgl/commands/analyze",
+  "type": "object",
+  "required": ["verb", "image"],
+  "properties": {
+    "verb": { "const": "ANALYZE" },
+    "image": { "type": "string" },
+    "file": { "type": "string" },
+    "window": { "type": "string" },
+    "llm": { "type": "boolean", "default": false }
+  },
+  "additionalProperties": false
+}

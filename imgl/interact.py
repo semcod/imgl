@@ -44,11 +44,15 @@ class InteractSession:
     annotated_path: str | None = None
     filter_noise: bool = True
     use_llm: bool = False
-    llm_model: str = "openrouter/google/gemini-2.5-flash"
+    llm_model: str = "openrouter/google/gemini-3.1-flash-image-preview"
     catalog_max_items: int = 40
     selected_window_id: str | None = None
     window_summaries: list[WindowSummary] | None = None
     phase: str = "actions"
+    annotate: bool = False
+    open_annotated: bool = False
+    annotated_output: str | None = None
+    viewer_opened: bool = False
 
 
 def _build_session_catalog(
@@ -188,8 +192,26 @@ def _resolve_type(qs: dict[str, list[str]], finder, session: InteractSession) ->
         for option in session.catalog:
             if option.element_id == element_id and option.category == "input":
                 payload = dict(option.action_payload)
+                payload["action"] = "type"
                 payload["text"] = value
                 return {"ok": True, "uri_action": "type", **payload}
+
+    for hint in (label, text):
+        if not hint:
+            continue
+        for option in session.catalog:
+            if option.category != "input":
+                continue
+            for candidate in (option.label, option.text):
+                if not candidate:
+                    continue
+                cand = candidate.casefold()
+                query = hint.casefold()
+                if query == cand or query in cand or cand in query:
+                    payload = dict(option.action_payload)
+                    payload["action"] = "type"
+                    payload["text"] = value
+                    return {"ok": True, "uri_action": "type", **payload}
 
     try:
         payload = finder.type_into(value, label=label, text=text, window=window)
@@ -221,7 +243,11 @@ def _annotate_catalog(
         window=window,
     )
     session.annotated_path = str(path)
-    opened = open_image(path) if open_viewer else False
+    opened = False
+    if open_viewer and not session.viewer_opened:
+        opened = open_image(path)
+        if opened:
+            session.viewer_opened = True
     return {
         "ok": True,
         "action": "annotate",
@@ -238,6 +264,17 @@ def _select_window(session: InteractSession, window_ref: str | int) -> bool:
     session.selected_window_id = window.id
     session.phase = "actions"
     session.catalog = _build_session_catalog(session)
+    if session.annotate or session.open_annotated:
+        out = session.annotated_output or default_annotated_path(
+            session.image_path,
+            window_id=window.id,
+        )
+        payload = _annotate_catalog(
+            session,
+            output_path=str(out),
+            open_viewer=session.open_annotated and not session.viewer_opened,
+        )
+        print(f"Mapa numerów: {payload['path']}", file=sys.stderr)
     return True
 
 
@@ -296,15 +333,25 @@ def run_interactive_shell(
         llm_model=cfg.llm_vision_model,
         catalog_max_items=cfg.catalog_max_items,
         window_summaries=summarize_windows(scene, image_path=image),
+        annotate=annotate,
+        open_annotated=open_annotated,
+        annotated_output=str(annotated_output) if annotated_output else None,
     )
 
     print(f"Wykryto okien/regiónów: {len(discovered)}", file=stderr)
+    if use_llm or cfg.use_llm_catalog:
+        print(
+            "Tip: przy --llm najpierw wybierz okno (np. 2=GitHub), potem klikaj elementy.",
+            file=stderr,
+        )
     if len(discovered) > 1:
         print(format_window_picker(session.window_summaries or [], scene=scene), file=stdout)
         if window:
             if not _select_window(session, window):
                 print(f"Nie znaleziono okna: {window}", file=stderr)
                 return 1
+            _print_catalog_banner(session, cfg, use_llm, no_filter, stderr)
+            print(format_catalog_table(session.catalog), file=stdout)
         else:
             session.phase = "windows"
             print(
@@ -321,7 +368,7 @@ def run_interactive_shell(
     if session.phase == "actions":
         print(f"VQL program: {vql_path}", file=stderr)
         print(f"Lista URI: {uri_for_imgl_list(image=image, file=vql_path, lang=lang)}", file=stderr)
-        if annotate or open_annotated:
+        if (annotate or open_annotated) and not session.annotated_path:
             out = annotated_output or default_annotated_path(
                 image,
                 window_id=session.selected_window_id,
@@ -334,6 +381,8 @@ def run_interactive_shell(
             print(f"Mapa numerów: {payload['path']}", file=stderr)
             if open_annotated and not payload.get("opened"):
                 print("Nie udało się otworzyć podglądu (brak xdg-open).", file=stderr)
+        elif session.annotated_path:
+            print(f"Mapa numerów: {session.annotated_path}", file=stderr)
         print("", file=stderr)
         print(
             "Tryb interaktywny — numer, NL ('kliknij Save'), 'mapa', 'okna' (zmień okno), 'quit'.",

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imgl"
-version = "0.7.1"
+version = "0.7.2"
 description = "Image to Layout — screenshot OCR and semantic UI reconstruction"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -42,8 +42,12 @@ llm = [
     "litellm>=1.30",
     "python-dotenv>=1.0",
 ]
+web = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.30",
+]
 full = [
-    "imgl[capture,diagnose,dev,llm]",
+    "imgl[capture,diagnose,dev,llm,web]",
 ]
 dev = [
     "pytest>=8.0",
@@ -65,7 +69,7 @@ where = ["."]
 include = ["imgl*"]
 
 [tool.setuptools.package-data]
-imgl = ["py.typed"]
+imgl = ["py.typed", "web/static/*"]
 
 [tool.pfix]
 # Self-healing Python configuration

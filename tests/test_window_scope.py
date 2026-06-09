@@ -121,6 +121,56 @@ def test_export_window_crop_and_preview(tmp_path: Path):
     assert previews[0].is_file()
 
 
+def test_stacked_layout_splits_horizontally_not_grid(tmp_path: Path):
+    image = tmp_path / "stacked.png"
+    # dark gutter band in the middle
+    from PIL import ImageDraw
+
+    canvas = Image.new("RGB", (800, 1000), color=(40, 40, 40))
+    draw = ImageDraw.Draw(canvas)
+    draw.rectangle((0, 0, 800, 420), fill=(70, 130, 180))
+    draw.rectangle((0, 520, 800, 1000), fill=(180, 90, 60))
+    canvas.save(image)
+
+    scene = Scene(
+        width=800,
+        height=1000,
+        source_image=str(image),
+        windows=[
+            Window(
+                id="window_0",
+                bbox=BBox(x=0, y=0, w=800, h=1000),
+                title=None,
+                z=1,
+                elements=[
+                    *[
+                        Element(
+                            id=f"top-{index}",
+                            type="button",
+                            text=f"T{index}",
+                            bbox=BBox(x=80 + index * 20, y=80 + index, w=60, h=24),
+                        )
+                        for index in range(10)
+                    ],
+                    *[
+                        Element(
+                            id=f"bot-{index}",
+                            type="button",
+                            text=f"B{index}",
+                            bbox=BBox(x=90 + index * 20, y=700 + index, w=60, h=24),
+                        )
+                        for index in range(10)
+                    ],
+                ],
+            )
+        ],
+    )
+    windows = discover_windows(scene)
+    assert len(windows) == 2
+    assert {window.id for window in windows} == {"region-top", "region-bottom"}
+    assert all(window.bbox.w == 800 for window in windows)
+
+
 def test_format_window_picker_lists_regions():
     scene = apply_discovered_windows(_wide_scene())
     summaries = summarize_windows(scene)

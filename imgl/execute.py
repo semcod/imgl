@@ -26,8 +26,13 @@ class ExecuteResult:
 
 
 def execute_action(action: dict[str, Any], *, dry_run: bool = False) -> ExecuteResult:
-    """Run a click/type action on the desktop."""
+    """Run a click/type/key action on the desktop."""
     kind = action.get("action")
+    if kind == "key":
+        keys = str(action.get("keys") or action.get("text") or "")
+        if dry_run:
+            return ExecuteResult(ok=True, method="dry-run", message=f"key {keys}", dry_run=True)
+        return execute_keys(keys)
     if kind not in {"click", "type"}:
         return ExecuteResult(ok=False, method="none", message=f"Unsupported action: {kind}")
 
@@ -101,3 +106,57 @@ def _execute_ydotool(kind: str, x: int, y: int, text: str) -> ExecuteResult:
         return ExecuteResult(ok=True, method="ydotool", message=f"type '{text}' @ ({x}, {y})")
     except subprocess.CalledProcessError as exc:
         return ExecuteResult(ok=False, method="ydotool", message=exc.stderr or str(exc))
+
+
+def execute_keys(keys: str) -> ExecuteResult:
+    """Send keyboard shortcut via xdotool (e.g. ctrl+Return, Return, Tab)."""
+    normalized = _normalize_keys(keys)
+    if not normalized:
+        return ExecuteResult(ok=False, method="none", message=f"Unsupported keys: {keys}")
+    if shutil.which("xdotool"):
+        try:
+            subprocess.run(
+                ["xdotool", "key", "--", normalized],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            return ExecuteResult(ok=True, method="xdotool", message=f"key {normalized}")
+        except subprocess.CalledProcessError as exc:
+            return ExecuteResult(ok=False, method="xdotool", message=exc.stderr or str(exc))
+    return ExecuteResult(
+        ok=False,
+        method="none",
+        message="KEY requires xdotool (ydotool key combos not supported yet)",
+    )
+
+
+def _normalize_keys(keys: str) -> str:
+    text = keys.strip().lower().replace(" ", "")
+    aliases = {
+        "enter": "Return",
+        "return": "Return",
+        "ctrl+enter": "ctrl+Return",
+        "control+enter": "ctrl+Return",
+        "ctrl+return": "ctrl+Return",
+        "shift+enter": "shift+Return",
+        "escape": "Escape",
+        "esc": "Escape",
+        "tab": "Tab",
+    }
+    if text in aliases:
+        return aliases[text]
+    if "+" in text:
+        parts = text.split("+")
+        mapped = []
+        for part in parts:
+            if part in {"ctrl", "control"}:
+                mapped.append("ctrl")
+            elif part in {"shift", "alt", "super", "meta"}:
+                mapped.append(part if part != "meta" else "super")
+            elif part in {"enter", "return"}:
+                mapped.append("Return")
+            else:
+                mapped.append(part.capitalize() if len(part) > 1 else part)
+        return "+".join(mapped)
+    return keys.strip()

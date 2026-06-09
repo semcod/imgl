@@ -1,0 +1,13 @@
+{
+  "$id": "dsl2imgl/commands/key",
+  "type": "object",
+  "required": ["verb", "keys"],
+  "properties": {
+    "verb": { "const": "KEY" },
+    "keys": { "type": "string" },
+    "image": { "type": "string" },
+    "window": { "type": "string" },
+    "execute": { "type": "boolean", "default": true }
+  },
+  "additionalProperties": false
+}

@@ -1,19 +1,19 @@
-# imgl
+![img.png](img.png)
+
+# ImgL - Image to Layout — convert screenshots into semantic UI models with OCR text and element bounding boxes.
 
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.7.1-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$2.05-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.7.2-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$4.29-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.4h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $2.0516 (2 commits)
-- 👤 **Human dev:** ~$200 (2.0h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $4.2871 (3 commits)
+- 👤 **Human dev:** ~$238 (2.4h @ $100/h, 30min dedup)
 
-Generated on 2026-06-08 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
+Generated on 2026-06-09 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
-
-Image to Layout — convert screenshots into semantic UI models with OCR text and element bounding boxes.
 
 ## Installation
 
@@ -50,6 +50,58 @@ Development install:
 
 ```bash
 pip install -e ".[dev]"
+pip install -e ".[llm]"    # vision LLM catalog (OpenRouter)
+```
+
+### Makefile (szybki start)
+
+```bash
+make help              # lista komend
+make install-full      # imgl + capture + llm + control + web
+make capture           # zrzut → screen.png
+make demo-key          # dsl2imgl KEY ctrl+Return (dry-run)
+make demo-chat         # wpisz w Chat input + ctrl+enter (dry-run)
+make serve-rest        # rest2imgl :8219
+make serve-web         # imgl serve :8008
+make test-dsl2imgl     # testy Fazy 4 (Schema/Protobuf/ES)
+```
+
+Integracja z **Koru**: `cd ~/github/semcod/koru && make install-imgl-bridge`
+
+## Documentation
+
+| Temat | Link |
+|-------|------|
+| Indeks | [docs/README.md](docs/README.md) |
+| Architektura (imgl / vql / nlp2uri) | [docs/architecture.md](docs/architecture.md) |
+| Warstwa kontroli `*2imgl` | [docs/control-layer.md](docs/control-layer.md) |
+| NL ze shell (chat input, Enter/Ctrl+Enter) | [docs/nl-shell-examples.md](docs/nl-shell-examples.md) |
+| Głos + przeglądarka | [docs/voice-browser.md](docs/voice-browser.md) |
+| Web UI (port 8008) | [docs/web-ui.md](docs/web-ui.md) |
+| Paczki kontroli | [packages/README.md](packages/README.md) |
+
+## Examples
+
+Pełna dokumentacja z przykładami dla różnych systemów, aplikacji i konfiguracji:
+
+**[examples/README.md](examples/README.md)**
+
+| Temat | Link |
+|-------|------|
+| GNOME/Wayland | [examples/platforms/gnome-wayland](examples/platforms/gnome-wayland/README.md) |
+| Wybór okna / wycinki | [examples/workflows/window-picker](examples/workflows/window-picker/README.md) |
+| GitHub w przeglądarce | [examples/applications/github-browser](examples/applications/github-browser/README.md) |
+| IDE (Windsurf/VS Code) | [examples/applications/ide-editor](examples/applications/ide-editor/README.md) |
+| LLM per okno | [examples/configurations/per-window-llm](examples/configurations/per-window-llm/README.md) |
+| NL → URI (nlp2uri) | [examples/integrations/nlp2uri](examples/integrations/nlp2uri/README.md) |
+| Pętla agenta | [examples/workflows/multi-step-agent](examples/workflows/multi-step-agent/README.md) |
+| Web UI (port 8008) | [examples/workflows/web-ui](examples/workflows/web-ui/README.md) |
+
+Szybkie demo:
+
+```bash
+examples/scripts/demo-windows.sh screen.png
+examples/scripts/demo-nlp2uri.py screen.png region-top
 ```
 
 ## Usage
@@ -84,20 +136,80 @@ imgl svg screen.png --mode wireframe -o screen.svg
 imgl vql screen.png -o layout.vql.json --with-grid
 ```
 
+### Web UI (manual + agent, port 8008)
+
+```bash
+pip install -e ".[web,llm,capture]"
+imgl serve --port 8008
+# z wykonaniem na pulpicie i LLM:
+imgl serve --port 8008 --execute --llm --capture-on-start
+```
+
+Otwórz http://127.0.0.1:8008 — podgląd zrzutu z numerami, lista akcji z miniaturkami, NL i pętla agenta (capture → act → capture).
+
+Szczegóły: [docs/web-ui.md](docs/web-ui.md), [docs/voice-browser.md](docs/voice-browser.md).
+
+### Control layer (REST / DSL / NL, port 8219)
+
+Sterowanie z zewnątrz (shell, curl, MCP, asystent głosowy):
+
+```bash
+make install-control   # lub: pip install -e packages/dsl2imgl packages/nlp2imgl packages/rest2imgl
+make capture
+make serve-rest        # http://127.0.0.1:8219
+
+# DSL
+dsl2imgl exec 'KEY ctrl+Return EXECUTE 0'
+dsl2imgl exec 'TYPE "hello" IN "Chat input" IMAGE screen.png WINDOW region-bottom EXECUTE 0'
+
+# NL
+nlp2imgl apply "wpisz opisz projekt w Chat input" --image screen.png --window region-bottom
+nlp2imgl apply "naciśnij ctrl+enter" --execute
+```
+
+Z **Koru** (w `koru/.venv`, nie `imgl/.venv`):
+
+```bash
+cd ~/github/semcod/koru && make install-imgl-bridge
+make imgl-capture imgl-chat
+koru imgl execute "wpisz test w Chat input" --window region-bottom --dry-run
+```
+
+Pełne przykłady: [docs/nl-shell-examples.md](docs/nl-shell-examples.md), [docs/control-layer.md](docs/control-layer.md).
+
+### Window discovery (regiony na zrzucie)
+
+Na złożonych zrzutach (przeglądarka + IDE) najpierw wybierz region:
+
+```bash
+imgl windows screen.png --export-crops --annotate --open
+# → screen.region-top.png, screen.region-bottom.png (+ .numbered.png)
+
+imgl interact screen.png --llm --window region-top    # GitHub
+imgl interact screen.png --llm --window region-bottom # IDE
+```
+
+Interaktywny wybór okna (gdy jest >1 region):
+
+```bash
+imgl interact screen.png --llm
+# → lista okien → wpisz numer (1, 2) lub "podglad"
+```
+
 ### Interactive shell (pick action from catalog)
 
 ```bash
 imgl interact /tmp/screen.png -o layout.vql.json
-# numer opcji, NL: "kliknij Save", "mapa", "lista", "quit"
-# obraz z numerami jak w shellu:
+# numer opcji, NL: "kliknij Save", "mapa", "lista", "okna", "quit"
+# obraz z numerami:
 imgl annotate screen.png --open
 imgl interact screen.png --annotate --open
-# lepsza lista (filtr szumu OCR):
+# filtr szumu OCR (domyślnie włączony):
 imgl interact screen.png
-# vision LLM (wymaga OPENROUTER_API_KEY + pip install -e ".[llm]"):
-imgl interact screen.png --llm --annotate --open
-# opcjonalnie wykonaj na pulpicie:
-imgl interact /tmp/screen.png --execute   # wymaga xdotool lub ydotool
+# vision LLM (OPENROUTER_API_KEY + pip install -e ".[llm]"):
+imgl interact screen.png --llm --window region-top --annotate --open
+# wykonanie na pulpicie (Linux, xdotool/ydotool):
+imgl interact /tmp/screen.png --execute
 ```
 
 URI DSL (`vql://window/imgl?action=...`):
@@ -218,7 +330,11 @@ imgl find screen.png --list
 
 ## Roadmap
 
-- `nlp2uri` phrases for `vql://window/imgl`
+Zobacz [TODO.md](TODO.md).
+
+- uri2vql: `window_scope` w handlerze `vql://window/imgl`
+- `dsl2imgl` Faza 4: JSON Schema + Protobuf + EventStore
+- Web UI: mikrofon (Web Speech API), akcja KEY w panelu
 - koru desktop bridge for action execution
 
 ## License

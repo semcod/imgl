@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import statistics
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -227,31 +228,27 @@ def _split_monolithic_window(scene: Scene) -> list[Window]:
         window.title = window.title or _guess_window_title(window, scene.ocr_boxes)
         return [window]
 
-    vertical_split = _best_vertical_split(elements, window.bbox, scene.width)
-    columns: list[BBox]
-    if vertical_split is not None:
-        split_x = vertical_split
-        columns = [
-            BBox(x=window.bbox.x, y=window.bbox.y, w=split_x - window.bbox.x, h=window.bbox.h),
-            BBox(x=split_x, y=window.bbox.y, w=window.bbox.x + window.bbox.w - split_x, h=window.bbox.h),
-        ]
+    region_boxes: list[BBox]
+    layout = _detect_layout_mode(elements, window.bbox)
+    if layout == "side_by_side":
+        region_boxes = _split_side_by_side(window.bbox, elements)
     else:
-        columns = [window.bbox]
+        region_boxes = _split_stacked(
+            window.bbox,
+            elements,
+            image_path=scene.source_image,
+        )
 
-    regions: list[Window] = []
-    for column_index, column_bbox in enumerate(columns):
-        horizontal = _split_horizontal_by_gaps(column_bbox, elements)
-        for row_index, row_bbox in enumerate(horizontal):
-            region_id = _region_id(column_index, row_index, len(columns), len(horizontal))
-            regions.append(
-                Window(
-                    id=region_id,
-                    bbox=row_bbox,
-                    title=None,
-                    z=len(regions) + 1,
-                    elements=[],
-                )
-            )
+    regions = [
+        Window(
+            id=_region_id_for_boxes(index, len(region_boxes), layout),
+            bbox=box,
+            title=None,
+            z=len(region_boxes) - index,
+            elements=[],
+        )
+        for index, box in enumerate(region_boxes)
+    ]
 
     for element in elements:
         target = find_containing_window(element.bbox, regions)
@@ -272,11 +269,199 @@ def _collect_elements(scene: Scene) -> list[Element]:
     return elements
 
 
-def _best_vertical_split(
-    elements: Iterable[Element],
+def _detect_layout_mode(elements: Iterable[Element], window_bbox: BBox) -> str:
+    """Return 'side_by_side' or 'stacked' based on element x-cluster separation."""
+    items = list(elements)
+    if len(items) < 8:
+        return "stacked"
+
+    x0, _, x1, _ = window_bbox.as_xyxy()
+    width = max(1, x1 - x0)
+    mid = x0 + width // 2
+    left = [element for element in items if element.bbox.x + element.bbox.w // 2 < mid]
+    right = [element for element in items if element.bbox.x + element.bbox.w // 2 >= mid]
+    if len(left) < 8 or len(right) < 8:
+        return "stacked"
+
+    left_max = max(element.bbox.x + element.bbox.w for element in left)
+    right_min = min(element.bbox.x for element in right)
+    gap = right_min - left_max
+    balance = min(len(left), len(right)) / max(len(left), len(right))
+    if gap >= max(50, int(width * 0.02)) and balance >= 0.3:
+        return "side_by_side"
+    return "stacked"
+
+
+def _split_side_by_side(window_bbox: BBox, elements: Iterable[Element]) -> list[BBox]:
+    split_x = _best_vertical_split(elements, window_bbox)
+    if split_x is None:
+        return [window_bbox]
+    x0, y0, x1, y1 = window_bbox.as_xyxy()
+    return [
+        BBox(x=x0, y=y0, w=split_x - x0, h=y1 - y0),
+        BBox(x=split_x, y=y0, w=x1 - split_x, h=y1 - y0),
+    ]
+
+
+def _split_stacked(
     window_bbox: BBox,
-    scene_width: int,
-) -> int | None:
+    elements: Iterable[Element],
+    *,
+    image_path: str | None,
+) -> list[BBox]:
+    items = [element for element in elements if center_in(element.bbox, window_bbox)]
+    candidates = _element_gap_gutters(window_bbox, items)
+    if image_path and Path(image_path).is_file():
+        candidates.extend(_image_gutter_candidates(image_path, window_bbox))
+    boxes = _regions_from_balanced_gutters(window_bbox, items, candidates)
+    if boxes:
+        return boxes
+    return _split_by_element_y_gaps(window_bbox, items)
+
+
+def _image_gutter_candidates(image_path: str, window_bbox: BBox) -> list[tuple[int, int, int]]:
+    """Find dark/uniform horizontal bands that separate stacked windows."""
+    image = Image.open(resolve_image_path(image_path)).convert("L")
+    x0, y0, x1, y1 = window_bbox.as_xyxy()
+    width = max(1, x1 - x0)
+    height = max(1, y1 - y0)
+    step_y = max(3, height // 600)
+    step_x = max(3, width // 80)
+
+    gutters: list[tuple[int, int, int]] = []
+    run_start: int | None = None
+    run_end: int | None = None
+
+    for y in range(y0, y1, step_y):
+        samples = [
+            image.getpixel((x, min(y, y1 - 1)))
+            for x in range(x0, x1, step_x)
+        ]
+        if not samples:
+            continue
+        if statistics.pstdev(samples) <= 9:
+            if run_start is None:
+                run_start = y
+            run_end = y
+            continue
+        if run_start is not None and run_end is not None:
+            gutters.append((run_start, run_end + step_y, run_end + step_y - run_start))
+        run_start = None
+        run_end = None
+
+    if run_start is not None and run_end is not None:
+        gutters.append((run_start, run_end + step_y, run_end + step_y - run_start))
+
+    min_gutter = max(40, int(height * 0.03))
+    min_region = max(120, int(height * 0.1))
+    return [
+        gutter
+        for gutter in gutters
+        if gutter[2] >= min_gutter
+        and gutter[0] - y0 >= min_region
+        and y1 - gutter[1] >= min_region
+    ]
+
+
+def _element_gap_gutters(window_bbox: BBox, elements: list[Element]) -> list[tuple[int, int, int]]:
+    if len(elements) < 8:
+        return []
+    spans = sorted((element.bbox.y, element.bbox.y + element.bbox.h) for element in elements)
+    x0, y0, x1, y1 = window_bbox.as_xyxy()
+    min_gap = max(120, int(window_bbox.h * 0.05))
+    gutters: list[tuple[int, int, int]] = []
+    for (_, y1_span), (y2_span, _) in zip(spans, spans[1:]):
+        gap = y2_span - y1_span
+        if gap < min_gap:
+            continue
+        start = max(y0, y1_span)
+        end = min(y1, y2_span)
+        if end - start >= min_gap // 2:
+            gutters.append((start, end, end - start))
+    return gutters
+
+
+def _regions_from_balanced_gutters(
+    window_bbox: BBox,
+    elements: list[Element],
+    candidates: list[tuple[int, int, int]],
+) -> list[BBox]:
+    if not candidates:
+        return []
+
+    x0, y0, x1, y1 = window_bbox.as_xyxy()
+    width = x1 - x0
+    min_region = max(120, int(window_bbox.h * 0.1))
+
+    scored: list[tuple[float, tuple[int, int, int]]] = []
+    for gutter_start, gutter_end, _ in candidates:
+        above = sum(
+            1
+            for element in elements
+            if element.bbox.y + element.bbox.h // 2 < gutter_start
+        )
+        below = sum(
+            1
+            for element in elements
+            if element.bbox.y + element.bbox.h // 2 > gutter_end
+        )
+        if above < 8 or below < 8:
+            continue
+        balance = min(above, below) / max(above, below)
+        if balance < 0.18:
+            continue
+        if gutter_start - y0 < min_region or y1 - gutter_end < min_region:
+            continue
+        scored.append((balance, (gutter_start, gutter_end, gutter_end - gutter_start)))
+
+    if not scored:
+        return []
+
+    scored.sort(key=lambda item: item[0], reverse=True)
+    chosen = [item[1] for item in scored[:2]]
+    chosen.sort(key=lambda item: item[0])
+
+    bounds = [y0]
+    for gutter_start, gutter_end, _ in chosen:
+        bounds.extend([gutter_start, gutter_end])
+    bounds.append(y1)
+
+    boxes: list[BBox] = []
+    for index in range(0, len(bounds) - 1, 2):
+        top = bounds[index]
+        bottom = bounds[index + 1]
+        if bottom - top < min_region:
+            continue
+        boxes.append(BBox(x=x0, y=top, w=width, h=bottom - top))
+    return boxes if len(boxes) >= 2 else []
+
+
+def _split_by_element_y_gaps(window_bbox: BBox, elements: Iterable[Element]) -> list[BBox]:
+    inside = [element for element in elements if center_in(element.bbox, window_bbox)]
+    if len(inside) < 8:
+        return [window_bbox]
+
+    spans = sorted((element.bbox.y, element.bbox.y + element.bbox.h) for element in inside)
+    gaps: list[tuple[int, int, int]] = []
+    for (_, y1), (y2, _) in zip(spans, spans[1:]):
+        gap = y2 - y1
+        if gap >= max(160, window_bbox.h // 8):
+            gaps.append((y1, y2, gap))
+    if not gaps:
+        return [window_bbox]
+
+    split_y = max(gaps, key=lambda item: item[2])[1]
+    x0, y0, x1, y1 = window_bbox.as_xyxy()
+    min_region = max(120, int(window_bbox.h * 0.1))
+    if split_y - y0 < min_region or y1 - split_y < min_region:
+        return [window_bbox]
+    return [
+        BBox(x=x0, y=y0, w=x1 - x0, h=split_y - y0),
+        BBox(x=x0, y=split_y, w=x1 - x0, h=y1 - split_y),
+    ]
+
+
+def _best_vertical_split(elements: Iterable[Element], window_bbox: BBox) -> int | None:
     centers = [element.bbox.x + element.bbox.w // 2 for element in elements]
     if len(centers) < 8:
         return None
@@ -298,49 +483,16 @@ def _best_vertical_split(
     return best[1]
 
 
-def _split_horizontal_by_gaps(column_bbox: BBox, elements: Iterable[Element]) -> list[BBox]:
-    inside = [
-        element
-        for element in elements
-        if center_in(element.bbox, column_bbox)
-    ]
-    if len(inside) < 8:
-        return [column_bbox]
-
-    spans = sorted((element.bbox.y, element.bbox.y + element.bbox.h) for element in inside)
-    gaps: list[tuple[int, int, int]] = []
-    for (_, y1), (y2, _) in zip(spans, spans[1:]):
-        gap = y2 - y1
-        if gap >= max(120, column_bbox.h // 12):
-            gaps.append((y1, y2, gap))
-
-    if not gaps:
-        return [column_bbox]
-
-    split_y = max(gaps, key=lambda item: item[2])[0]
-    _, top_y1 = spans[0]
-    bottom_y0, _ = spans[-1]
-    if split_y - column_bbox.y < column_bbox.h * 0.12:
-        return [column_bbox]
-    if column_bbox.y + column_bbox.h - split_y < column_bbox.h * 0.12:
-        return [column_bbox]
-
-    return [
-        BBox(x=column_bbox.x, y=column_bbox.y, w=column_bbox.w, h=split_y - column_bbox.y),
-        BBox(x=column_bbox.x, y=split_y, w=column_bbox.w, h=column_bbox.y + column_bbox.h - split_y),
-    ]
-
-
-def _region_id(column_index: int, row_index: int, columns: int, rows: int) -> str:
-    if columns == 1 and rows == 1:
+def _region_id_for_boxes(index: int, count: int, layout: str) -> str:
+    if count == 1:
         return "window_0"
-    if columns > 1 and rows == 1:
-        return "region-left" if column_index == 0 else "region-right"
-    if columns == 1 and rows > 1:
-        return "region-top" if row_index == 0 else "region-bottom"
-    col = "left" if column_index == 0 else "right"
-    row = "top" if row_index == 0 else "bottom"
-    return f"region-{col}-{row}"
+    if layout == "side_by_side":
+        return "region-left" if index == 0 else "region-right"
+    if count == 2:
+        return "region-top" if index == 0 else "region-bottom"
+    if count == 3:
+        return ("region-top", "region-middle", "region-bottom")[index]
+    return f"region-{index + 1}"
 
 
 def _guess_window_title(window: Window, ocr_boxes: list[OcrBox]) -> str | None:

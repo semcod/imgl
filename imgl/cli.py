@@ -298,6 +298,42 @@ def build_parser() -> argparse.ArgumentParser:
         help="Open result in default image viewer",
     )
 
+    serve_parser = subparsers.add_parser(
+        "serve",
+        help="Start web UI for manual and autonomous screen control",
+    )
+    serve_parser.add_argument("--host", default="127.0.0.1", help="Bind host (default: 127.0.0.1)")
+    serve_parser.add_argument("--port", type=int, default=8008, help="Bind port (default: 8008)")
+    serve_parser.add_argument(
+        "--work-dir",
+        type=Path,
+        help="Session directory for captures and layout (default: ~/.imgl/web)",
+    )
+    serve_parser.add_argument(
+        "--image",
+        type=Path,
+        help="Initial screenshot PNG (optional)",
+    )
+    serve_parser.add_argument(
+        "--execute",
+        action="store_true",
+        help="Enable desktop execution by default (xdotool/ydotool)",
+    )
+    serve_parser.add_argument(
+        "--llm",
+        action="store_true",
+        help="Use vision LLM catalog by default",
+    )
+    serve_parser.add_argument(
+        "--capture-on-start",
+        action="store_true",
+        help="Capture desktop screenshot when server starts",
+    )
+    serve_parser.add_argument(
+        "--window",
+        help="Scope catalog to window id (e.g. region-top, region-bottom)",
+    )
+
     return parser
 
 
@@ -313,6 +349,60 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     config = ImglConfig()
+
+    if args.command == "serve":
+        try:
+            import uvicorn
+        except ImportError:
+            print(
+                "Web server requires: pip install -e '.[web]'",
+                file=sys.stderr,
+            )
+            return 1
+        from imgl.web.app import create_app
+        from imgl.web.session import WebSettings
+
+        work_dir = args.work_dir or (Path.home() / ".imgl" / "web")
+        image_path = args.image
+        if image_path is None:
+            local_screen = Path.cwd() / "screen.png"
+            if local_screen.is_file():
+                image_path = local_screen
+
+        settings = WebSettings(
+            use_llm=args.llm,
+            execute=args.execute,
+            selected_window_id=args.window,
+        )
+        app = create_app(
+            work_dir=work_dir,
+            image_path=image_path,
+            settings=settings,
+            auto_select_window=not args.window,
+        )
+        session = app.state.manager.session
+        if args.capture_on_start:
+            try:
+                session.capture(interactive=True)
+                print(f"Captured: {session.image_path}", file=sys.stderr)
+            except (BlankCaptureError, CaptureError) as exc:
+                print(f"Capture skipped: {exc}", file=sys.stderr)
+                if Path(session.image_path).is_file():
+                    print(f"Using existing screenshot: {session.image_path}", file=sys.stderr)
+                    session.analyze(refresh=False)
+                else:
+                    print(
+                        "No screenshot yet — use 📷 Zrzut ekranu in UI or:\n"
+                        "  imgl capture --interactive -o screen.png\n"
+                        "  imgl serve --image screen.png",
+                        file=sys.stderr,
+                    )
+        elif image_path and Path(session.image_path).is_file():
+            print(f"Loaded screenshot: {session.image_path}", file=sys.stderr)
+
+        print(f"imgl web: http://{args.host}:{args.port}", file=sys.stderr)
+        uvicorn.run(app, host=args.host, port=args.port)
+        return 0
 
     if args.command == "diagnose":
         try:

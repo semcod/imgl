@@ -43,8 +43,13 @@ _CLICK_RE = re.compile(
     re.IGNORECASE,
 )
 _TYPE_RE = re.compile(
-    r'\b(wpisz|type|wprowadź|wprowadz|enter|wpisz tekst)\b\s+["\']?([^"\']+?)["\']?'
+    r'^(?:wpisz|wprowadź|wprowadz|enter|wpisz tekst)\b\s+["\']?([^"\']+?)["\']?'
     r"(?:\s+(?:w|in|do|into|pole|field)\s+(.+))?\s*$",
+    re.IGNORECASE,
+)
+_TYPE_EN_RE = re.compile(
+    r'^type\s+["\']?([^"\']+?)["\']?'
+    r"(?:\s+(?:in|into|field)\s+(.+))?\s*$",
     re.IGNORECASE,
 )
 _LIST_RE = re.compile(
@@ -118,26 +123,6 @@ def prompt_to_imgl_uri(
             match_reason="analyze",
         )
 
-    type_match = _TYPE_RE.search(text)
-    if type_match:
-        value = type_match.group(2).strip()
-        field_hint = (type_match.group(3) or "").strip() or None
-        payload = None
-        if catalog and field_hint:
-            payload = _match_catalog_action(catalog, field_hint, action="type")
-        return ResolvedImglUri(
-            uri=uri_for_imgl_type(
-                image=image,
-                file=file,
-                value=value,
-                label=field_hint,
-                lang=lang,
-            ),
-            confidence=0.92 if field_hint else 0.75,
-            match_reason="type",
-            action_payload=payload,
-        )
-
     click_match = _CLICK_RE.search(text)
     if click_match:
         target_text = click_match.group(2).strip().strip('"\'')
@@ -166,6 +151,33 @@ def prompt_to_imgl_uri(
             match_reason="click",
             action_payload=payload,
             option_index=option_index,
+        )
+
+    type_match = _TYPE_RE.match(text) or _TYPE_EN_RE.match(text)
+    if type_match:
+        value = type_match.group(1).strip()
+        field_hint = (type_match.group(2) or "").strip() or None
+        matched_input = _find_catalog_input(catalog, field_hint) if catalog and field_hint else None
+        payload = None
+        if matched_input:
+            payload = dict(matched_input.action_payload)
+            payload["action"] = "type"
+            payload["text"] = value
+        return ResolvedImglUri(
+            uri=uri_for_imgl_type(
+                image=image,
+                file=file,
+                value=value,
+                label=field_hint,
+                text=matched_input.label if matched_input else None,
+                element_id=matched_input.element_id if matched_input else None,
+                window=matched_input.window_id if matched_input else None,
+                lang=lang,
+            ),
+            confidence=0.95 if matched_input else (0.92 if field_hint else 0.75),
+            match_reason="type",
+            action_payload=payload,
+            option_index=matched_input.index if matched_input else None,
         )
 
     if catalog:
@@ -233,12 +245,34 @@ def _find_catalog_by_text(
     return None
 
 
+def _find_catalog_input(
+    catalog: list[InteractiveOption],
+    hint: str,
+) -> InteractiveOption | None:
+    hint_cf = hint.casefold().strip()
+    if not hint_cf:
+        return None
+    for option in catalog:
+        if option.category != "input":
+            continue
+        for candidate in (option.label, option.text):
+            if not candidate:
+                continue
+            cand_cf = candidate.casefold().strip()
+            if hint_cf == cand_cf or hint_cf in cand_cf or cand_cf in hint_cf:
+                return option
+    return None
+
+
 def _match_catalog_action(
     catalog: list[InteractiveOption],
     hint: str,
     *,
     action: str,
 ) -> dict[str, Any] | None:
+    if action == "type":
+        matched = _find_catalog_input(catalog, hint)
+        return matched.action_payload if matched else None
     for option in catalog:
         if option.primary_action != action:
             continue

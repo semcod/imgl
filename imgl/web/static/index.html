@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>imgl web — sterowanie ekranem</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a2332;
+      --border: #2d3a4f;
+      --text: #e7edf5;
+      --muted: #8b9cb3;
+      --accent: #3b82f6;
+      --accent2: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --card: #152030;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+    .badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #243044;
+      color: var(--muted);
+    }
+    .badge.on { background: #14532d; color: #bbf7d0; }
+    .badge.warn { background: #78350f; color: #fde68a; }
+    button, select, input, textarea {
+      font: inherit;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #111827;
+      color: var(--text);
+      padding: 8px 12px;
+    }
+    button {
+      cursor: pointer;
+      background: #1e293b;
+    }
+    button:hover { border-color: var(--accent); }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.success { background: #166534; border-color: #166534; color: #fff; }
+    button.danger { background: #7f1d1d; border-color: #7f1d1d; color: #fff; }
+    main {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 14px;
+      padding: 14px;
+      align-items: start;
+    }
+    @media (max-width: 1100px) {
+      main { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .panel h2 {
+      margin: 0;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      border-bottom: 1px solid var(--border);
+      background: #121a26;
+    }
+    .panel-body { padding: 12px 14px; }
+    .viewer {
+      position: relative;
+      background: #000;
+      border-radius: 8px;
+      overflow: auto;
+      max-height: 70vh;
+    }
+    .viewer img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      max-height: 52vh;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .action-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .action-card img {
+      width: 100%;
+      height: 72px;
+      object-fit: contain;
+      background: #0b1220;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+    }
+    .action-meta { font-size: 0.78rem; color: var(--muted); }
+    .action-title { font-size: 0.85rem; font-weight: 600; line-height: 1.2; }
+    .num {
+      display: inline-block;
+      min-width: 1.6rem;
+      text-align: center;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 2px 6px;
+    }
+    .cat-button .num { background: #ea580c; }
+    .cat-input .num { background: #16a34a; }
+    .cat-window .num { background: #2563eb; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .grow { flex: 1; min-width: 180px; }
+    .log {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.78rem;
+      max-height: 180px;
+      overflow: auto;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      white-space: pre-wrap;
+    }
+    .settings label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .settings { display: flex; flex-wrap: wrap; gap: 12px; }
+    .status-line { font-size: 0.82rem; color: var(--muted); }
+    .error-line { font-size: 0.82rem; color: #fca5a5; max-width: 100%; }
+    .window-previews {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .window-chip {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      cursor: pointer;
+      min-width: 120px;
+      max-width: 180px;
+    }
+    .window-chip.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+    .window-chip img {
+      width: 100%;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #000;
+    }
+    .window-chip span { font-size: 0.75rem; color: var(--muted); }
+    .busy { opacity: 0.55; pointer-events: none; }
+    #busyBadge.badge { background: #1e3a5f; color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>imgl web</h1>
+    <span id="statusBadge" class="badge">ładowanie…</span>
+    <span id="busyBadge" class="badge hidden">przetwarzanie…</span>
+    <span id="actionCount" class="badge">0 akcji</span>
+    <button id="btnCapture" class="primary">📷 Zrzut ekranu</button>
+    <button id="btnRefresh">↻ Analizuj</button>
+    <select id="windowSelect" title="Region okna">
+      <option value="">Cały ekran</option>
+    </select>
+    <div class="settings">
+      <label><input type="checkbox" id="chkLlm" /> LLM katalog</label>
+      <label><input type="checkbox" id="chkExecute" /> Wykonuj na pulpicie</label>
+      <label><input type="checkbox" id="chkRecapture" checked /> Zrzut po akcji</label>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Podgląd ekranu</h2>
+      <div class="panel-body">
+        <div class="toolbar">
+          <button id="btnViewAnnotated" class="primary">Mapa numerów</button>
+          <button id="btnViewRaw">Surowy zrzut</button>
+          <span class="status-line" id="imageInfo"></span>
+        </div>
+        <div class="window-previews" id="windowPreviews"></div>
+        <div class="error-line hidden" id="errorLine"></div>
+        <div class="viewer">
+          <img id="screenImg" alt="screenshot" />
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Tryb manualny</h2>
+      <div class="panel-body">
+        <div class="row" style="margin-bottom:10px">
+          <input id="nlPrompt" class="grow" placeholder="np. kliknij Projects, wpisz hello w Type to search" />
+          <button id="btnNl" class="primary">Wykonaj NL</button>
+        </div>
+        <div class="actions-grid" id="actionsGrid"></div>
+      </div>
+    </section>
+
+    <section class="panel" style="grid-column: 1 / -1">
+      <h2>Tryb autonomiczny (agent)</h2>
+      <div class="panel-body">
+        <div class="row" style="margin-bottom:10px">
+          <textarea id="agentGoal" class="grow" rows="2" placeholder="Cel agenta, np. Otwórz zakładkę Projects na GitHub"></textarea>
+          <input id="agentMax" type="number" min="1" max="100" value="8" style="width:72px" title="Max kroków" />
+          <button id="btnAgentStart" class="success">▶ Start</button>
+          <button id="btnAgentStep">1 krok</button>
+          <button id="btnAgentRun" class="primary">Pętla</button>
+          <button id="btnAgentStop" class="danger">Stop</button>
+        </div>
+        <div class="status-line" id="agentStatus">Agent zatrzymany</div>
+        <div class="log" id="historyLog">Brak kroków.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let state = null;
+    let viewMode = "annotated";
+    let agentTimer = null;
+    let busyCount = 0;
+
+    function setBusy(on) {
+      busyCount = Math.max(0, busyCount + (on ? 1 : -1));
+      const busy = busyCount > 0;
+      document.body.classList.toggle("busy", busy);
+      $("busyBadge").classList.toggle("hidden", !busy);
+    }
+
+    async function api(path, opts = {}) {
+      const res = await fetch(path, {
+        headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+        ...opts,
+      });
+      const text = await res.text();
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch { data = { raw: text }; }
+      if (!res.ok) throw new Error(data?.detail || data?.error || res.statusText);
+      return data;
+    }
+
+    function cacheBust(url) {
+      return url + (url.includes("?") ? "&" : "?") + "t=" + Date.now();
+    }
+
+    function renderViewer() {
+      const url = viewMode === "annotated" ? "/api/annotated" : "/api/screenshot";
+      $("screenImg").src = cacheBust(url);
+      if (state?.scene_size) {
+        $("imageInfo").textContent = `${state.scene_size.width}×${state.scene_size.height}px · ${state.image_path || ""}`;
+      }
+    }
+
+    function renderActions() {
+      const grid = $("actionsGrid");
+      grid.innerHTML = "";
+      (state?.actions || []).forEach((a) => {
+        const card = document.createElement("div");
+        card.className = `action-card cat-${a.category}`;
+        card.innerHTML = `
+          <img src="${cacheBust(a.thumb_url)}" alt="" loading="lazy" />
+          <div><span class="num">${a.index}</span> <span class="action-title">${escapeHtml(a.label || a.text || a.element_id)}</span></div>
+          <div class="action-meta">${a.category} · ${a.element_type} · (${a.position?.x},${a.position?.y})</div>
+          <button data-index="${a.index}">Kliknij #${a.index}</button>
+        `;
+        card.querySelector("button").onclick = () => act({ index: a.index });
+        grid.appendChild(card);
+      });
+    }
+
+    function renderWindows() {
+      const sel = $("windowSelect");
+      const current = state?.settings?.selected_window_id || "";
+      sel.innerHTML = '<option value="">Cały ekran</option>';
+      const previews = $("windowPreviews");
+      previews.innerHTML = "";
+      (state?.windows || []).forEach((w) => {
+        const opt = document.createElement("option");
+        opt.value = w.id;
+        opt.textContent = `${w.index}. ${w.title || w.id} (${w.interactive_count})`;
+        if (w.id === current) opt.selected = true;
+        sel.appendChild(opt);
+
+        const chip = document.createElement("div");
+        chip.className = "window-chip" + (w.id === current ? " active" : "");
+        chip.innerHTML = `
+          <img src="${cacheBust(w.crop_url)}" alt="" loading="lazy" />
+          <span>${w.index}. ${escapeHtml(w.title || w.id)}</span>
+        `;
+        chip.onclick = async () => {
+          setBusy(true);
+          try {
+            state = await api("/api/window", { method: "POST", body: JSON.stringify({ window_id: w.id }) });
+            renderAll();
+          } finally { setBusy(false); }
+        };
+        previews.appendChild(chip);
+      });
+    }
+
+    function renderHistory() {
+      const lines = (state?.history || []).slice().reverse().map((s) => {
+        const ts = new Date(s.timestamp * 1000).toLocaleTimeString();
+        return `[${ts}] ${s.mode} ${s.prompt || s.action_index || ""} → ${s.message}`;
+      });
+      $("historyLog").textContent = lines.length ? lines.join("\n") : "Brak kroków.";
+    }
+
+    function renderStatus() {
+      $("actionCount").textContent = `${state?.action_count || 0} akcji`;
+      const exec = state?.settings?.execute;
+      $("statusBadge").textContent = exec ? "WYKONUJE na pulpicie" : "dry-run";
+      $("statusBadge").className = "badge " + (exec ? "warn" : "on");
+      $("chkLlm").checked = !!state?.settings?.use_llm;
+      $("chkExecute").checked = !!state?.settings?.execute;
+      $("chkRecapture").checked = state?.settings?.capture_after_action !== false;
+      const err = state?.last_error;
+      $("errorLine").textContent = err ? `⚠ ${err}` : "";
+      $("errorLine").classList.toggle("hidden", !err);
+      const ag = state?.agent || {};
+      $("agentStatus").textContent = ag.running
+        ? `Agent: krok ${ag.step_count}/${ag.max_steps} — ${ag.last_reason || ag.goal}`
+        : (ag.finished ? `Agent zakończony: ${ag.last_reason || "done"}` : "Agent zatrzymany");
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[c]);
+    }
+
+    async function loadState() {
+      setBusy(true);
+      try {
+        state = await api("/api/state");
+        renderAll();
+      } finally { setBusy(false); }
+    }
+
+    async function patchSettings(patch) {
+      setBusy(true);
+      try {
+        state = await api("/api/settings", { method: "POST", body: JSON.stringify(patch) });
+        renderAll();
+      } finally { setBusy(false); }
+    }
+
+    async function act(body) {
+      setBusy(true);
+      try {
+        const payload = await api("/api/act", {
+          method: "POST",
+          body: JSON.stringify({
+            ...body,
+            execute: $("chkExecute").checked,
+            recapture: $("chkRecapture").checked,
+          }),
+        });
+        state = payload.state;
+        renderAll();
+      } finally { setBusy(false); }
+    }
+
+    $("btnViewAnnotated").onclick = () => { viewMode = "annotated"; renderViewer(); };
+    $("btnViewRaw").onclick = () => { viewMode = "raw"; renderViewer(); };
+
+    $("btnCapture").onclick = async () => {
+      setBusy(true);
+      try {
+        const payload = await api("/api/capture", { method: "POST", body: JSON.stringify({ interactive: true }) });
+        state = payload.state;
+        if (!payload.ok) $("statusBadge").textContent = "capture failed";
+        renderAll();
+      } finally { setBusy(false); }
+    };
+    $("btnRefresh").onclick = async () => {
+      setBusy(true);
+      try {
+        state = await api("/api/analyze", { method: "POST", body: "{}" });
+        renderAll();
+      } finally { setBusy(false); }
+    };
+    $("btnNl").onclick = () => {
+      const prompt = $("nlPrompt").value.trim();
+      if (prompt) act({ prompt });
+    };
+    $("nlPrompt").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") $("btnNl").click();
+    });
+
+    $("windowSelect").onchange = async () => {
+      setBusy(true);
+      try {
+        const window_id = $("windowSelect").value || null;
+        state = await api("/api/window", { method: "POST", body: JSON.stringify({ window_id }) });
+        renderAll();
+      } finally { setBusy(false); }
+    };
+
+    $("chkLlm").onchange = () => patchSettings({ use_llm: $("chkLlm").checked });
+    $("chkExecute").onchange = () => patchSettings({ execute: $("chkExecute").checked });
+    $("chkRecapture").onchange = () => patchSettings({ capture_after_action: $("chkRecapture").checked });
+
+    $("btnAgentStart").onclick = async () => {
+      const goal = $("agentGoal").value.trim();
+      if (!goal) return alert("Podaj cel agenta");
+      state = await api("/api/agent/start", {
+        method: "POST",
+        body: JSON.stringify({
+          goal,
+          max_steps: Number($("agentMax").value) || 8,
+          execute: $("chkExecute").checked,
+        }),
+      });
+      renderStatus();
+    };
+
+    $("btnAgentStop").onclick = async () => {
+      if (agentTimer) { clearInterval(agentTimer); agentTimer = null; }
+      state = await api("/api/agent/stop", { method: "POST", body: "{}" });
+      renderStatus();
+    };
+
+    async function agentStepOnce() {
+      const payload = await api("/api/agent/step", {
+        method: "POST",
+        body: JSON.stringify({ execute: $("chkExecute").checked }),
+      });
+      state = payload.state;
+      renderAll();
+      return payload;
+    }
+
+    $("btnAgentStep").onclick = () => agentStepOnce().catch((e) => alert(e.message));
+
+    $("btnAgentRun").onclick = async () => {
+      const goal = $("agentGoal").value.trim();
+      if (!goal) return alert("Podaj cel agenta");
+      $("btnAgentStart").click();
+      const max = Number($("agentMax").value) || 8;
+      for (let i = 0; i < max; i++) {
+        const payload = await agentStepOnce();
+        if (!state.agent?.running) break;
+        if (payload.decision?.status === "done") break;
+        await new Promise((r) => setTimeout(r, 400));
+      }
+    };
+
+    function renderAll() {
+      renderViewer();
+      renderActions();
+      renderWindows();
+      renderHistory();
+      renderStatus();
+    }
+
+    document.body.classList.remove("busy");
+
+    loadState().catch((e) => {
+      $("statusBadge").textContent = "błąd: " + e.message;
+      $("statusBadge").className = "badge warn";
+    });
+  </script>
+</body>
+</html>

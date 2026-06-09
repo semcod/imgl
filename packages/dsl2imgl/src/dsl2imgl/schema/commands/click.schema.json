@@ -1,0 +1,14 @@
+{
+  "$id": "dsl2imgl/commands/click",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "CLICK" },
+    "index": { "type": "integer", "minimum": 1 },
+    "prompt": { "type": "string" },
+    "image": { "type": "string" },
+    "window": { "type": "string" },
+    "execute": { "type": "boolean", "default": true }
+  },
+  "additionalProperties": false
+}

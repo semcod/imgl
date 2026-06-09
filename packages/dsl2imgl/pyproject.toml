@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsl2imgl"
+version = "0.1.0"
+description = "DSL control bus for imgl screen automation"
+requires-python = ">=3.10"
+dependencies = [
+    "imgl[capture]>=0.7.1",
+    "jsonschema>=4.0",
+    "protobuf>=5.0",
+]
+
+[project.optional-dependencies]
+codegen = ["grpcio-tools>=1.60"]
+dev = ["pytest>=8.0", "grpcio-tools>=1.60"]
+
+[project.scripts]
+dsl2imgl = "dsl2imgl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"dsl2imgl" = ["schema/commands/*.json"]

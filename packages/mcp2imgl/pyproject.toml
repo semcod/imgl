@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp2imgl"
+version = "0.1.0"
+description = "MCP server for imgl control DSL"
+requires-python = ">=3.10"
+dependencies = ["dsl2imgl>=0.1.0", "nlp2imgl>=0.1.0"]
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.0"]
+
+[project.scripts]
+mcp2imgl = "mcp2imgl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

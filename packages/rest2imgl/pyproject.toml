@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rest2imgl"
+version = "0.1.0"
+description = "REST API for imgl control DSL"
+requires-python = ">=3.10"
+dependencies = [
+    "dsl2imgl>=0.1.0",
+    "nlp2imgl>=0.1.0",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.30",
+]
+
+[project.scripts]
+rest2imgl = "rest2imgl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

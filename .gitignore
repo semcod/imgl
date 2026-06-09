@@ -1,11 +1,7 @@
 # Byte-compiled / optimized / DLL files
 .idea/pyLspTools.xml
 .env.example
-.idea/imgl.iml
-.idea/inspectionProfiles/Project_Default.xml
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/modules.xml
-.idea/vcs.xml
+.idea/
 __pycache__/
 *.py[codz]
 *$py.class

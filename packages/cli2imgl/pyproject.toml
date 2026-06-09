@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cli2imgl"
+version = "0.1.0"
+description = "Interactive shell for imgl control DSL"
+requires-python = ">=3.10"
+dependencies = ["dsl2imgl>=0.1.0", "nlp2imgl>=0.1.0"]
+
+[project.scripts]
+cli2imgl = "cli2imgl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

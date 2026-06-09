@@ -1,0 +1,13 @@
+{
+  "$id": "dsl2imgl/commands/execute",
+  "type": "object",
+  "required": ["verb", "prompt"],
+  "properties": {
+    "verb": { "const": "EXECUTE" },
+    "prompt": { "type": "string" },
+    "image": { "type": "string" },
+    "window": { "type": "string" },
+    "execute": { "type": "boolean", "default": true }
+  },
+  "additionalProperties": false
+}

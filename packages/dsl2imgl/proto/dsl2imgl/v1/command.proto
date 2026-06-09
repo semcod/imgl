@@ -1,0 +1,83 @@
+syntax = "proto3";
+package dsl2imgl.v1;
+
+message HealthQuery {}
+
+message CaptureCommand {
+  string out = 1;
+  bool interactive = 2;
+}
+
+message AnalyzeQuery {
+  string image = 1;
+  string file = 2;
+  string window = 3;
+  bool llm = 4;
+}
+
+message ActionsQuery {
+  string image = 1;
+  string window = 2;
+  bool llm = 3;
+}
+
+message ResolveQuery {
+  string prompt = 1;
+  string image = 2;
+  string window = 3;
+}
+
+message ClickCommand {
+  int32 index = 1;
+  string prompt = 2;
+  string image = 3;
+  string window = 4;
+  bool execute = 5;
+}
+
+message TypeCommand {
+  string value = 1;
+  string field = 2;
+  string image = 3;
+  string window = 4;
+  bool execute = 5;
+}
+
+message KeyCommand {
+  string keys = 1;
+  string image = 2;
+  string window = 3;
+  bool execute = 4;
+}
+
+message ExecuteCommand {
+  string prompt = 1;
+  string image = 2;
+  string window = 3;
+  bool execute = 4;
+}
+
+message AgentCommand {
+  string goal = 1;
+  int32 max_steps = 2;
+  string image = 3;
+  string window = 4;
+}
+
+message DslEnvelope {
+  string verb = 1;
+  oneof body {
+    HealthQuery health = 10;
+    CaptureCommand capture = 11;
+    AnalyzeQuery analyze = 12;
+    ActionsQuery actions = 13;
+    ResolveQuery resolve = 14;
+    ClickCommand click = 15;
+    TypeCommand type = 16;
+    KeyCommand key = 17;
+    ExecuteCommand execute = 18;
+    AgentCommand agent = 19;
+  }
+  string default_file = 30;
+  string correlation_id = 31;
+}

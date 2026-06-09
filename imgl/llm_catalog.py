@@ -17,17 +17,24 @@ from imgl.types import BBox, Scene, Window
 from imgl.uri import uri_for_imgl_click
 from imgl.window_scope import crop_window_image, scene_for_window
 
-DEFAULT_VISION_MODEL = "openrouter/google/gemini-2.5-flash"
+DEFAULT_VISION_MODEL = "openrouter/google/gemini-3.1-flash-image-preview"
 
 _SYSTEM_PROMPT = """You analyze desktop screenshots and list ONLY truly interactive UI elements
 that a user can click or type into (buttons, links, tabs, menus, text fields, search boxes).
 Ignore plain text, code lines, labels, icons without clear affordance, and window chrome noise.
 
+CRITICAL — text entry areas MUST use type "input":
+- search bars ("Type to search", "Search")
+- chat/composer boxes ("Add a follow-up", "Ask anything", prompt areas)
+- terminal/shell command line at bottom of IDE
+- form fields and editable text areas
+Do NOT classify text entry areas as "button". Reserve at least 5 slots for inputs.
+
 Return strict JSON:
 {
   "elements": [
     {
-      "label": "short visible name",
+      "label": "short visible name or placeholder text",
       "type": "button|input|link|tab|menu",
       "x_pct": 0.0-1.0,
       "y_pct": 0.0-1.0,
@@ -148,9 +155,19 @@ def refine_catalog_with_llm(
             window=window,
         )
         options = _snap_options_to_scene(options, scene, window=window)
+        options = _merge_heuristic_inputs(
+            options,
+            scene,
+            image_path=image_path,
+            vql_file=vql_file,
+            lang=lang,
+            window=window,
+            max_total=max_elements + 15,
+        )
         if options:
             meta["source"] = "llm"
             meta["element_count"] = len(options)
+            meta["input_count"] = sum(1 for opt in options if opt.category == "input")
             return options, meta
         meta["error"] = "LLM returned no elements"
     except Exception as exc:
@@ -201,9 +218,12 @@ def _call_vision_llm(
     crop_bbox: BBox | None = None,
     window_title: str | None = None,
 ) -> dict[str, Any]:
+    os.environ.setdefault("LITELLM_LOG", "ERROR")
     import litellm  # type: ignore
 
     litellm.set_verbose = False
+    if hasattr(litellm, "suppress_debug_info"):
+        litellm.suppress_debug_info = True
     image_b64 = _image_to_base64(image_path, crop_bbox=crop_bbox)
     scope_hint = (
         f"This image shows one application window{f' ({window_title})' if window_title else ''}. "
@@ -223,7 +243,8 @@ def _call_vision_llm(
                     "text": (
                         f"{scope_hint} "
                         f"List up to {max_elements} interactive elements. "
-                        "Prefer navigation tabs, search fields, primary buttons, and form inputs."
+                        "Include ALL text fields (search, chat composer, terminal line, inputs). "
+                        "Mark text entry areas as type=input."
                     ),
                 },
             ],
@@ -299,7 +320,7 @@ def _llm_json_to_options(
         x = origin_x + int(round(x_pct * width))
         y = origin_y + int(round(y_pct * height))
         element_type = str(item.get("type") or "button").lower()
-        category = "input" if element_type == "input" else "button"
+        category = "input" if element_type in {"input", "textfield", "text_field", "search"} else "button"
         bbox = {
             "x": max(0, x - 40),
             "y": max(0, y - 14),
@@ -375,12 +396,14 @@ def _snap_options_to_scene(
         payload = dict(match.action_payload)
         payload["text"] = option.label
         payload["llm_snapped_from"] = option.element_id
+        category = match.category if match.category == "input" else option.category
+        element_type = match.element_type if category == "input" else option.element_type
         snapped.append(
             InteractiveOption(
                 index=index,
-                category=match.category,
+                category=category,
                 element_id=match.element_id,
-                element_type=match.element_type,
+                element_type=element_type,
                 label=option.label,
                 text=option.label,
                 window_id=match.window_id,
@@ -395,6 +418,81 @@ def _snap_options_to_scene(
             )
         )
     return snapped
+
+
+def _merge_heuristic_inputs(
+    llm_options: list[InteractiveOption],
+    scene: Scene,
+    *,
+    image_path: str,
+    vql_file: str,
+    lang: str,
+    window: Window | None,
+    max_total: int = 40,
+) -> list[InteractiveOption]:
+    """Append OCR/geometry input fields missing from the LLM catalog."""
+    heuristic = _heuristic_fallback(
+        scene,
+        image_path=image_path,
+        vql_file=vql_file,
+        lang=lang,
+        window=window,
+    )
+    merged = list(llm_options)
+    for option in heuristic:
+        if option.category != "input":
+            continue
+        if _overlaps_catalog(option, merged):
+            continue
+        merged.append(option)
+    return _renumber_options(merged)[:max_total]
+
+
+def _overlaps_catalog(
+    option: InteractiveOption,
+    others: list[InteractiveOption],
+    *,
+    min_iou: float = 0.15,
+    max_center_dist: int = 80,
+) -> bool:
+    from imgl.geometry import iou
+    from imgl.types import BBox
+
+    box = BBox(**option.bbox)
+    cx, cy = option.position
+    for other in others:
+        other_box = BBox(**other.bbox)
+        if iou(box, other_box) >= min_iou:
+            return True
+        ox, oy = other.position
+        if abs(cx - ox) + abs(cy - oy) <= max_center_dist:
+            return True
+    return False
+
+
+def _renumber_options(options: list[InteractiveOption]) -> list[InteractiveOption]:
+    renumbered: list[InteractiveOption] = []
+    for index, option in enumerate(options, start=1):
+        renumbered.append(
+            InteractiveOption(
+                index=index,
+                category=option.category,
+                element_id=option.element_id,
+                element_type=option.element_type,
+                label=option.label,
+                text=option.text,
+                window_id=option.window_id,
+                window_title=option.window_title,
+                position=option.position,
+                bbox=option.bbox,
+                mouse_actions=option.mouse_actions,
+                keyboard_actions=option.keyboard_actions,
+                primary_action=option.primary_action,
+                action_uri=option.action_uri,
+                action_payload=option.action_payload,
+            )
+        )
+    return renumbered
 
 
 def _best_label_match(

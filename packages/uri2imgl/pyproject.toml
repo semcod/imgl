@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uri2imgl"
+version = "0.1.0"
+description = "vql://window/imgl and imgl:// URIs to DSL dispatch"
+requires-python = ">=3.10"
+dependencies = ["dsl2imgl>=0.1.0", "imgl>=0.7.1"]
+
+[project.scripts]
+uri2imgl = "uri2imgl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

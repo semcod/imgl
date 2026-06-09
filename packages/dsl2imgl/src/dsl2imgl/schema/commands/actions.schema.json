@@ -1,0 +1,12 @@
+{
+  "$id": "dsl2imgl/commands/actions",
+  "type": "object",
+  "required": ["verb", "image"],
+  "properties": {
+    "verb": { "const": "ACTIONS" },
+    "image": { "type": "string" },
+    "window": { "type": "string" },
+    "llm": { "type": "boolean", "default": false }
+  },
+  "additionalProperties": false
+}

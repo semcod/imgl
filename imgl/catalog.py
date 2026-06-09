@@ -236,7 +236,7 @@ def _element_option(
         )
 
     if element.type == "input":
-        input_label = element.metadata.get("label")
+        input_label = element.metadata.get("label") or _infer_input_label(element, window)
         click_payload = target.to_click_action()
         click_payload["element_type"] = "input"
         if input_label:
@@ -297,6 +297,22 @@ def _element_option(
         )
 
     return None
+
+
+def _infer_input_label(element: Element, window: Window | None) -> str:
+    """Guess a human label for geometry-only input frames (no OCR placeholder)."""
+    rel_y = element.bbox.y - (window.bbox.y if window else 0)
+    width = element.bbox.w
+    height = element.bbox.h
+    if width >= 280 and height <= 70 and rel_y >= 900:
+        return "Chat input"
+    if width >= 200 and height <= 50 and rel_y >= 1100:
+        return "Terminal"
+    if width >= 350 and height <= 90 and rel_y <= 250:
+        return "Editor"
+    if width >= 120 and height <= 60:
+        return "Pole tekstowe"
+    return "Input"
 
 
 def _find_window(scene: Scene, window_id: str | None) -> Window | None:
