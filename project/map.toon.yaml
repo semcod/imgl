@@ -1,28 +1,29 @@
-# imgl | 122f 15705L | python:114,shell:7,less:1 | 2026-06-09
-# stats: 622 func | 38 cls | 122 mod | CC̄=4.6 | critical:61 | cycles:0
-# alerts[5]: CC main=62; CC _derive_current_next=32; CC _resolve_type=30; CC prompt_to_imgl_uri=28; CC classify_scene_elements=27
-# hotspots[5]: main fan=54; create_app fan=38; _run_image_command fan=28; capture_screen fan=21; smart_capture fan=21
+# imgl | 124f 16278L | python:116,shell:7,less:1 | 2026-06-09
+# stats: 643 func | 38 cls | 124 mod | CC̄=4.6 | critical:63 | cycles:0
+# alerts[5]: CC main=64; CC _derive_current_next=32; CC _resolve_type=30; CC prompt_to_imgl_uri=28; CC classify_scene_elements=27
+# hotspots[5]: main fan=57; create_app fan=38; _run_image_command fan=28; capture_screen fan=21; smart_capture fan=21
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[122]:
-  app.doql.less,209
+M[124]:
+  app.doql.less,216
   examples/img2nl-vql-flow.sh,11
-  examples/scripts/demo-agent-loop.sh,38
-  examples/scripts/demo-github.sh,22
+  examples/scripts/demo-agent-loop.sh,49
+  examples/scripts/demo-github.sh,23
   examples/scripts/demo-nlp2uri.py,80
-  examples/scripts/demo-windows.sh,23
+  examples/scripts/demo-windows.sh,24
   imgl/__init__.py,52
   imgl/__main__.py,7
   imgl/actions.py,272
   imgl/autodiag.py,531
-  imgl/capture.py,551
+  imgl/capture.py,560
+  imgl/capture_provenance.py,115
   imgl/catalog.py,92
   imgl/catalog_filter.py,139
   imgl/catalog_heuristic.py,257
   imgl/catalog_types.py,47
   imgl/classify/__init__.py,6
   imgl/classify/gui_heuristics.py,262
-  imgl/cli.py,934
+  imgl/cli.py,959
   imgl/config.py,24
   imgl/control.py,358
   imgl/coords.py,71
@@ -31,18 +32,18 @@ M[122]:
   imgl/detect/local.py,375
   imgl/detect/rectangles.py,97
   imgl/diagnose.py,248
-  imgl/execute.py,163
+  imgl/execute.py,206
   imgl/export/__init__.py,31
   imgl/export/_escape.py,20
   imgl/export/annotate_export.py,300
   imgl/export/html_export.py,150
   imgl/export/json_export.py,23
   imgl/export/svg_export.py,138
-  imgl/export/vql_adapter.py,245
+  imgl/export/vql_adapter.py,363
   imgl/freshness.py,152
   imgl/geometry.py,38
   imgl/installs.py,126
-  imgl/interact.py,660
+  imgl/interact.py,666
   imgl/layout.py,109
   imgl/llm_catalog.py,522
   imgl/nlp2uri.py,283
@@ -51,7 +52,7 @@ M[122]:
   imgl/ocr/lang.py,33
   imgl/ocr/tesseract.py,95
   imgl/paths.py,42
-  imgl/pipeline.py,117
+  imgl/pipeline.py,120
   imgl/preprocess.py,64
   imgl/scene_cache.py,64
   imgl/terminal_md.py,211
@@ -72,16 +73,16 @@ M[122]:
   packages/dsl2imgl/src/dsl2imgl/codec.py,58
   packages/dsl2imgl/src/dsl2imgl/engine.py,6
   packages/dsl2imgl/src/dsl2imgl/events.py,169
-  packages/dsl2imgl/src/dsl2imgl/grammar.py,187
+  packages/dsl2imgl/src/dsl2imgl/grammar.py,191
   packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py,2
-  packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py,221
+  packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py,235
   packages/dsl2imgl/src/dsl2imgl/pb_codec.py,285
   packages/dsl2imgl/src/dsl2imgl/result.py,35
   packages/dsl2imgl/src/dsl2imgl/schema_registry.py,45
   packages/dsl2imgl/src/dsl2imgl/v1/__init__.py,2
   packages/dsl2imgl/src/dsl2imgl/v1/command_pb2.py,57
   packages/dsl2imgl/src/dsl2imgl/v1/result_pb2.py,40
-  packages/dsl2imgl/tests/test_dsl2imgl.py,38
+  packages/dsl2imgl/tests/test_dsl2imgl.py,39
   packages/dsl2imgl/tests/test_dsl2imgl_phase4.py,71
   packages/mcp2imgl/src/mcp2imgl/cli.py,23
   packages/mcp2imgl/src/mcp2imgl/server.py,36
@@ -102,6 +103,7 @@ M[122]:
   tests/test_annotate.py,59
   tests/test_autodiag.py,149
   tests/test_capture_paths.py,106
+  tests/test_capture_provenance.py,201
   tests/test_capture_vdisplay.py,40
   tests/test_capture_vdisplay_priority.py,100
   tests/test_catalog_filter.py,73
@@ -123,7 +125,7 @@ M[122]:
   tests/test_scene_cache.py,90
   tests/test_terminal_md.py,49
   tests/test_vdisplay_bridge.py,51
-  tests/test_vql_export.py,106
+  tests/test_vql_export.py,120
   tests/test_web.py,121
   tests/test_window_scope.py,221
   tree.sh,2
@@ -175,9 +177,10 @@ D:
     _parse_typed_text(message)
     _parse_keys(message)
   imgl/capture.py:
-    e: last_capture_meta,_prefer_mirror,_vql_capture_enabled,_portal_fallback_enabled,_vdisplay_portal_in_chain_enabled,default_capture_path,_is_wayland,capture_screen,_screen_recording_denied,_capture_failure_hint,_try_vdisplay_capture,_try_vql_capture,_discard_capture_file,_non_portal_backends,_portal_backends,_try_portal_backends,_run_command,_capture_with_gnome_shell,_capture_with_grim,_capture_with_gnome_screenshot,_capture_with_scrot,_portal_python,_portal_script,_capture_with_portal,_capture_with_mss,_is_blank_image,capture_status_message,CaptureError,BlankCaptureError
+    e: _finalize_capture,last_capture_meta,_prefer_mirror,_vql_capture_enabled,_portal_fallback_enabled,_vdisplay_portal_in_chain_enabled,default_capture_path,_is_wayland,capture_screen,_screen_recording_denied,_capture_failure_hint,_try_vdisplay_capture,_try_vql_capture,_discard_capture_file,_non_portal_backends,_portal_backends,_try_portal_backends,_run_command,_capture_with_gnome_shell,_capture_with_grim,_capture_with_gnome_screenshot,_capture_with_scrot,_portal_python,_portal_script,_capture_with_portal,_capture_with_mss,_is_blank_image,capture_status_message,CaptureError,BlankCaptureError
     CaptureError:  # Raised when screen capture fails.
     BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
+    _finalize_capture(path;meta)
     last_capture_meta()
     _prefer_mirror()
     _vql_capture_enabled()
@@ -205,6 +208,13 @@ D:
     _capture_with_mss(path)
     _is_blank_image(path)
     capture_status_message(path)
+  imgl/capture_provenance.py:
+    e: capture_meta_path,save_capture_meta,load_capture_meta,enrich_scene_provenance,_correlate_os_windows
+    capture_meta_path(image)
+    save_capture_meta(image;meta)
+    load_capture_meta(image)
+    enrich_scene_provenance(scene)
+    _correlate_os_windows(scene)
   imgl/catalog.py:
     e: build_interactive_catalog,format_catalog_table,_truncate
     build_interactive_catalog(scene)
@@ -327,9 +337,11 @@ D:
     _has_ui_signals(diag)
     _recommendation(diag)
   imgl/execute.py:
-    e: execute_action,_execute_xdotool,_execute_ydotool,execute_keys,_normalize_keys,ExecuteResult
+    e: execute_action,_display_mismatch_warning,_append_display_warning,_execute_xdotool,_execute_ydotool,execute_keys,_normalize_keys,ExecuteResult
     ExecuteResult: to_dict(0)
     execute_action(action)
+    _display_mismatch_warning(action)
+    _append_display_warning(result;warning)
     _execute_xdotool(kind;x;y;text)
     _execute_ydotool(kind;x;y;text)
     execute_keys(keys)
@@ -378,14 +390,17 @@ D:
     _render_element_svg(element)
     _element_css_class(element_type)
   imgl/export/vql_adapter.py:
-    e: scene_to_vql,scene_to_vql_json,write_vql_program,_grid_layer,_bbox_norm,_location_label,_object_from_bbox,_window_to_object,_element_to_object,_ocr_to_object
+    e: scene_to_vql,scene_to_vql_json,validate_vql_export,write_vql_program,_grid_layer,_bbox_norm,_location_label,_object_from_bbox,_build_contains_relations,_bbox_contains,_window_to_object,_element_to_object,_ocr_to_object
     scene_to_vql(scene)
     scene_to_vql_json(scene)
+    validate_vql_export(program)
     write_vql_program(scene;path)
     _grid_layer(image_path)
     _bbox_norm(bbox;width;height)
     _location_label(cx;cy;width;height)
     _object_from_bbox()
+    _build_contains_relations(objects)
+    _bbox_contains(outer;inner)
     _window_to_object(window;width;height)
     _element_to_object(element;width;height)
     _ocr_to_object(box;width;height)
@@ -418,10 +433,11 @@ D:
     install_vql()
     install_control()
   imgl/interact.py:
-    e: _build_session_catalog,resolve_imgl_uri,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,_prepare_interactive_session,_show_initial_shell_views,_print_actions_phase_hints,_read_shell_prompt,_handle_resolved_shell_action,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt,InteractSession
+    e: _build_session_catalog,resolve_imgl_uri,_attach_image_path,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,_prepare_interactive_session,_show_initial_shell_views,_print_actions_phase_hints,_read_shell_prompt,_handle_resolved_shell_action,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt,InteractSession
     InteractSession:
     _build_session_catalog(session)
     resolve_imgl_uri(uri;session)
+    _attach_image_path(payload;session)
     _resolve_click(qs;finder;session)
     _resolve_type(qs;finder;session)
     _annotate_catalog(session)
@@ -712,11 +728,11 @@ D:
   packages/dsl2imgl/src/dsl2imgl/v1/command_pb2.py:
   packages/dsl2imgl/src/dsl2imgl/v1/result_pb2.py:
   packages/dsl2imgl/tests/test_dsl2imgl.py:
-    e: test_health,test_grammar_roundtrip,test_key_dry_run,test_key_parses_trailing_image_window
+    e: test_health,test_grammar_roundtrip,test_key_dry_run,test_capture_analyze_flags
     test_health()
     test_grammar_roundtrip()
     test_key_dry_run()
-    test_key_parses_trailing_image_window()
+    test_capture_analyze_flags()
   packages/dsl2imgl/tests/test_dsl2imgl_phase4.py:
     e: test_schema_registry_covers_all_verbs,test_parse_text_validates_health,test_protobuf_roundtrip_type,test_codec_roundtrip_text,test_dispatch_bytes_envelope,test_event_store_append_command,test_command_dispatch_records_event_id
     test_schema_registry_covers_all_verbs()
@@ -817,6 +833,16 @@ D:
     test_cli_vql_aborts_on_blank(tmp_path)
     test_cli_vql_allows_blank_with_flag(tmp_path)
     test_capture_screen_with_mock_vql(tmp_path;monkeypatch)
+  tests/test_capture_provenance.py:
+    e: test_save_and_load_capture_meta,test_enrich_scene_attaches_capture_meta,test_scene_to_vql_includes_capture_and_relations,test_execute_display_mismatch_warning,test_execute_display_mismatch_strict,test_enrich_scene_correlates_os_windows,test_clear_vql_cache_keeps_capture_meta,test_finalize_capture_enriches_display
+    test_save_and_load_capture_meta(tmp_path)
+    test_enrich_scene_attaches_capture_meta(tmp_path)
+    test_scene_to_vql_includes_capture_and_relations(tmp_path)
+    test_execute_display_mismatch_warning(tmp_path;monkeypatch)
+    test_execute_display_mismatch_strict(tmp_path;monkeypatch)
+    test_enrich_scene_correlates_os_windows(tmp_path)
+    test_clear_vql_cache_keeps_capture_meta(tmp_path)
+    test_finalize_capture_enriches_display(monkeypatch;tmp_path)
   tests/test_capture_vdisplay.py:
     e: test_capture_screen_prefers_vdisplay
     test_capture_screen_prefers_vdisplay(tmp_path)
@@ -973,11 +999,12 @@ D:
     test_correlate_windows_finds_overlap()
     test_vdisplay_available_is_bool()
   tests/test_vql_export.py:
-    e: _sample_scene,test_scene_to_vql_structure,test_scene_to_vql_json_roundtrip,test_write_vql_program,test_cli_vql_command
+    e: _sample_scene,test_scene_to_vql_structure,test_scene_to_vql_json_roundtrip,test_write_vql_program,test_validate_vql_export_when_vql_installed,test_cli_vql_command
     _sample_scene()
     test_scene_to_vql_structure()
     test_scene_to_vql_json_roundtrip()
     test_write_vql_program(tmp_path)
+    test_validate_vql_export_when_vql_installed()
     test_cli_vql_command(tmp_path;capsys)
   tests/test_web.py:
     e: _write_ui_fixture,web_client,test_health,test_index_html,test_state_and_screenshot,test_act_dry_run_by_index,test_action_thumb,test_settings_update,test_capture_error_returns_state,test_agent_start_without_llm

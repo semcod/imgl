@@ -1,12 +1,12 @@
-# redup/duplication | 10 groups | 83f 12199L | 2026-06-09
+# redup/duplication | 10 groups | 84f 12535L | 2026-06-09
 
 SUMMARY:
-  files_scanned: 83
-  total_lines:   12199
+  files_scanned: 84
+  total_lines:   12535
   dup_groups:    10
   dup_fragments: 21
   saved_lines:   80
-  scan_ms:       3635
+  scan_ms:       2501
 
 HOTSPOTS[7] (files with most duplication):
   imgl/installs.py  dup=34L  groups=3  frags=4  (0.3%)
@@ -47,7 +47,7 @@ DUPLICATES[10] (ranked by impact):
       imgl/control.py:332-335  (install_img2nl)
       imgl/control.py:338-341  (install_vdisplay)
   [2d7b9210c1b65241]   STRU  _prefer_mirror  L=3 N=2 saved=3 sim=1.00
-      imgl/capture.py:29-31  (_prefer_mirror)
+      imgl/capture.py:50-52  (_prefer_mirror)
       imgl/installs.py:30-32  (_auto_install_vdisplay_enabled)
 
 REFACTOR[10] (ranked by priority):

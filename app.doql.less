@@ -2,7 +2,7 @@
 
 app {
   name: imgl;
-  version: 0.7.3;
+  version: 0.7.7;
 }
 
 dependencies {
@@ -83,10 +83,17 @@ workflow[name="capture"] {
 
 workflow[name="capture-interactive"] {
   trigger: manual;
-  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
+  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.capture.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
   step-2: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify;
   step-3: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)";
   step-4: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
+}
+
+workflow[name="capture-analyze"] {
+  trigger: manual;
+  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.capture.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
+  step-2: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify --analyze;
+  step-3: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
 }
 
 workflow[name="verify-capture"] {
@@ -112,21 +119,21 @@ workflow[name="doctor-full"] {
 
 workflow[name="execute"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
+  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute PROMPT='wpisz test w Chat input'" && exit 1);
   step-3: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)";
 }
 
 workflow[name="execute-dry"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
+  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute-dry PROMPT='wpisz test w Chat input'" && exit 1);
   step-3: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --dry-run --format "$(FORMAT)";
 }
 
 workflow[name="execute-llm"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
+  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute-llm PROMPT='wpisz test w Chat input'" && exit 1);
   step-3: run cmd=test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY" && exit 1);
   step-4: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --llm --format "$(FORMAT)";

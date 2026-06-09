@@ -17,12 +17,12 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `imgl`
-- **version**: `0.7.3`
+- **version**: `0.7.7`
 - **python_requires**: `>=3.10,<3.14`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Makefile, testql(3), app.doql.less, goal.yaml, .env.example, src(29 mod), project/(5 analysis files)
+- **generated_from**: pyproject.toml, Makefile, testql(3), app.doql.less, goal.yaml, .env.example, src(30 mod), project/(5 analysis files)
 
 ## Architecture
 
@@ -37,7 +37,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: imgl;
-  version: 0.7.3;
+  version: 0.7.7;
 }
 
 dependencies {
@@ -118,10 +118,17 @@ workflow[name="capture"] {
 
 workflow[name="capture-interactive"] {
   trigger: manual;
-  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
+  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.capture.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
   step-2: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify;
   step-3: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)";
   step-4: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
+}
+
+workflow[name="capture-analyze"] {
+  trigger: manual;
+  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.capture.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
+  step-2: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify --analyze;
+  step-3: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
 }
 
 workflow[name="verify-capture"] {
@@ -147,21 +154,21 @@ workflow[name="doctor-full"] {
 
 workflow[name="execute"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
+  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute PROMPT='wpisz test w Chat input'" && exit 1);
   step-3: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)";
 }
 
 workflow[name="execute-dry"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
+  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute-dry PROMPT='wpisz test w Chat input'" && exit 1);
   step-3: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --dry-run --format "$(FORMAT)";
 }
 
 workflow[name="execute-llm"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
+  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute-llm PROMPT='wpisz test w Chat input'" && exit 1);
   step-3: run cmd=test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY" && exit 1);
   step-4: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --llm --format "$(FORMAT)";
@@ -248,6 +255,7 @@ environment[name="local"] {
 - `imgl.actions`
 - `imgl.autodiag`
 - `imgl.capture`
+- `imgl.capture_provenance`
 - `imgl.catalog`
 - `imgl.catalog_filter`
 - `imgl.catalog_heuristic`
@@ -337,6 +345,41 @@ class WindowSummary:  # One discoverable window region with stats for the picker
     def bbox()  # CC=1
 ```
 
+### `imgl.capture` (`imgl/capture.py`)
+
+```python
+def _finalize_capture(path, meta)  # CC=6, fan=4
+def last_capture_meta()  # CC=1, fan=1
+def _prefer_mirror()  # CC=1, fan=3
+def _vql_capture_enabled()  # CC=1, fan=3
+def _portal_fallback_enabled()  # CC=2, fan=4
+def _vdisplay_portal_in_chain_enabled()  # CC=2, fan=4
+def default_capture_path(out)  # CC=2, fan=6
+def _is_wayland()  # CC=3, fan=3
+def capture_screen(out)  # CC=26, fan=21 ⚠
+def _screen_recording_denied(errors)  # CC=2, fan=2
+def _capture_failure_hint()  # CC=5, fan=2
+def _try_vdisplay_capture(path)  # CC=10, fan=12 ⚠
+def _try_vql_capture(path)  # CC=8, fan=9
+def _discard_capture_file(path)  # CC=3, fan=3
+def _non_portal_backends()  # CC=2, fan=2
+def _portal_backends()  # CC=1, fan=1
+def _try_portal_backends(path)  # CC=8, fan=8
+def _run_command(cmd, path)  # CC=3, fan=4
+def _capture_with_gnome_shell(path)  # CC=11, fan=9 ⚠
+def _capture_with_grim(path)  # CC=10, fan=7 ⚠
+def _capture_with_gnome_screenshot(path)  # CC=2, fan=3
+def _capture_with_scrot(path)  # CC=2, fan=3
+def _portal_python()  # CC=7, fan=5
+def _portal_script()  # CC=5, fan=3
+def _capture_with_portal(path)  # CC=16, fan=12 ⚠
+def _capture_with_mss(path)  # CC=1, fan=8
+def _is_blank_image(path)  # CC=6, fan=13
+def capture_status_message(path)  # CC=2, fan=1
+class CaptureError:  # Raised when screen capture fails.
+class BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
+```
+
 ### `imgl.autodiag` (`imgl/autodiag.py`)
 
 ```python
@@ -369,38 +412,27 @@ def _parse_typed_text(message)  # CC=2, fan=2
 def _parse_keys(message)  # CC=2, fan=3
 ```
 
-### `imgl.capture` (`imgl/capture.py`)
+### `imgl.interact` (`imgl/interact.py`)
 
 ```python
-def last_capture_meta()  # CC=1, fan=1
-def _prefer_mirror()  # CC=1, fan=3
-def _vql_capture_enabled()  # CC=1, fan=3
-def _portal_fallback_enabled()  # CC=2, fan=4
-def _vdisplay_portal_in_chain_enabled()  # CC=2, fan=4
-def default_capture_path(out)  # CC=2, fan=6
-def _is_wayland()  # CC=3, fan=3
-def capture_screen(out)  # CC=26, fan=21 ⚠
-def _screen_recording_denied(errors)  # CC=2, fan=2
-def _capture_failure_hint()  # CC=5, fan=2
-def _try_vdisplay_capture(path)  # CC=10, fan=12 ⚠
-def _try_vql_capture(path)  # CC=8, fan=9
-def _discard_capture_file(path)  # CC=3, fan=3
-def _non_portal_backends()  # CC=2, fan=2
-def _portal_backends()  # CC=1, fan=1
-def _try_portal_backends(path)  # CC=8, fan=8
-def _run_command(cmd, path)  # CC=3, fan=4
-def _capture_with_gnome_shell(path)  # CC=11, fan=9 ⚠
-def _capture_with_grim(path)  # CC=10, fan=7 ⚠
-def _capture_with_gnome_screenshot(path)  # CC=2, fan=3
-def _capture_with_scrot(path)  # CC=2, fan=3
-def _portal_python()  # CC=7, fan=5
-def _portal_script()  # CC=5, fan=3
-def _capture_with_portal(path)  # CC=16, fan=12 ⚠
-def _capture_with_mss(path)  # CC=1, fan=8
-def _is_blank_image(path)  # CC=6, fan=13
-def capture_status_message(path)  # CC=2, fan=1
-class CaptureError:  # Raised when screen capture fails.
-class BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
+def _build_session_catalog(session)  # CC=2, fan=1
+def resolve_imgl_uri(uri, session)  # CC=13, fan=16 ⚠
+def _attach_image_path(payload, session)  # CC=1, fan=1
+def _resolve_click(qs, finder, session)  # CC=17, fan=5 ⚠
+def _resolve_type(qs, finder, session)  # CC=30, fan=6 ⚠
+def _annotate_catalog(session)  # CC=6, fan=7
+def _select_window(session, window_ref)  # CC=6, fan=6
+def _export_window_previews(session)  # CC=4, fan=5
+def _prepare_interactive_session(image_path)  # CC=4, fan=12
+def _show_initial_shell_views()  # CC=8, fan=7
+def _print_actions_phase_hints()  # CC=9, fan=6
+def _read_shell_prompt(stdin, stderr)  # CC=4, fan=4
+def _handle_resolved_shell_action()  # CC=11, fan=7 ⚠
+def run_interactive_shell(image_path)  # CC=15, fan=12 ⚠
+def describe_resolution(resolved)  # CC=1, fan=0
+def _print_catalog_banner(session, cfg, use_llm, no_filter, stderr)  # CC=8, fan=4
+def _handle_window_phase_prompt(prompt)  # CC=9, fan=12
+class InteractSession:
 ```
 
 ### `imgl.actions` (`imgl/actions.py`)
@@ -428,69 +460,48 @@ class SceneActions:  # Find and interact with elements in a Scene.
 class ElementNotFoundError:  # Raised when no element matches the query.
 ```
 
-### `imgl.control` (`imgl/control.py`)
-
-```python
-def default_image_path()  # CC=3, fan=5
-def default_window()  # CC=3, fan=2
-def _vql_cache_paths(image)  # CC=1, fan=1
-def clear_ocr_cache(image)  # CC=1, fan=1
-def screen_usable(image)  # CC=2, fan=3
-def smart_capture(image)  # CC=25, fan=21 ⚠
-def capture_interactive(image)  # CC=16, fan=17 ⚠
-def verify_capture(image)  # CC=4, fan=6
-def run_doctor(image)  # CC=7, fan=7
-def run_map(image)  # CC=3, fan=5
-def _control_packages_present()  # CC=2, fan=3
-def _require_nlp2imgl()  # CC=4, fan=3
-def run_execute(prompt)  # CC=13, fan=16 ⚠
-def run_shot(prompt)  # CC=1, fan=2
-def install_img2nl()  # CC=1, fan=1
-def install_vdisplay()  # CC=1, fan=1
-```
-
 ## Call Graph
 
-*379 nodes · 500 edges · 61 modules · CC̄=4.8*
+*381 nodes · 500 edges · 63 modules · CC̄=4.8*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `main` *(in imgl.cli)* | 62 ⚠ | 0 | 124 | **124** |
-| `build_parser` *(in imgl.cli)* | 1 | 1 | 113 | **114** |
+| `main` *(in imgl.cli)* | 64 ⚠ | 0 | 131 | **131** |
+| `build_parser` *(in imgl.cli)* | 1 | 1 | 116 | **117** |
 | `diagnose_capture` *(in imgl.autodiag)* | 16 ⚠ | 5 | 41 | **46** |
 | `_run_image_command` *(in imgl.cli)* | 19 ⚠ | 1 | 43 | **44** |
 | `smart_capture` *(in imgl.control)* | 25 ⚠ | 1 | 42 | **43** |
-| `prompt_to_imgl_uri` *(in imgl.nlp2uri)* | 28 ⚠ | 4 | 37 | **41** |
 | `colorize_markdown` *(in imgl.terminal_md)* | 18 ⚠ | 1 | 40 | **41** |
+| `prompt_to_imgl_uri` *(in imgl.nlp2uri)* | 28 ⚠ | 4 | 37 | **41** |
 | `_derive_current_next` *(in imgl.autodiag)* | 32 ⚠ | 2 | 39 | **41** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/imgl
-# generated in 0.17s
-# nodes: 379 | edges: 500 | modules: 61
+# generated in 0.16s
+# nodes: 381 | edges: 500 | modules: 63
 # CC̄=4.8
 
 HUBS[20]:
   imgl.cli.main
-    CC=62  in:0  out:124  total:124
+    CC=64  in:0  out:131  total:131
   imgl.cli.build_parser
-    CC=1  in:1  out:113  total:114
+    CC=1  in:1  out:116  total:117
   imgl.autodiag.diagnose_capture
     CC=16  in:5  out:41  total:46
   imgl.cli._run_image_command
     CC=19  in:1  out:43  total:44
   imgl.control.smart_capture
     CC=25  in:1  out:42  total:43
-  imgl.nlp2uri.prompt_to_imgl_uri
-    CC=28  in:4  out:37  total:41
   imgl.terminal_md.colorize_markdown
     CC=18  in:1  out:40  total:41
+  imgl.nlp2uri.prompt_to_imgl_uri
+    CC=28  in:4  out:37  total:41
   imgl.autodiag._derive_current_next
     CC=32  in:2  out:39  total:41
   imgl.capture.capture_screen
-    CC=26  in:6  out:32  total:38
+    CC=26  in:6  out:33  total:39
   packages.rest2imgl.src.rest2imgl.app.create_app
     CC=1  in:2  out:36  total:38
   packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
@@ -499,20 +510,20 @@ HUBS[20]:
     CC=19  in:3  out:32  total:35
   packages.dsl2imgl.src.dsl2imgl.bus.dispatch
     CC=10  in:14  out:21  total:35
+  imgl.vdisplay_bridge.correlate_windows
+    CC=18  in:2  out:32  total:34
   imgl.autodiag.build_operation_step
     CC=19  in:1  out:33  total:34
   imgl.autodiag._actionable_hints
     CC=19  in:1  out:31  total:32
+  imgl.pipeline.analyze
+    CC=11  in:10  out:22  total:32
+  imgl.detect.local._detect_panels_simple
+    CC=23  in:1  out:31  total:32
+  imgl.execute.execute_action
+    CC=13  in:5  out:27  total:32
   imgl.control.capture_interactive
     CC=16  in:2  out:28  total:30
-  imgl.coords.scale_scene_to_screen
-    CC=6  in:1  out:29  total:30
-  imgl.classify.gui_heuristics.classify_scene_elements
-    CC=27  in:1  out:29  total:30
-  imgl.pipeline.analyze
-    CC=11  in:8  out:21  total:29
-  imgl.export.vql_adapter.scene_to_vql
-    CC=16  in:1  out:27  total:28
 
 MODULES:
   examples.scripts.demo-nlp2uri  [1 funcs]
@@ -539,17 +550,14 @@ MODULES:
     _shell_quote  CC=3  out:2
     _yaml_codeblock  CC=1  out:2
     build_execute_report  CC=8  out:17
-  imgl.capture  [23 funcs]
-    _capture_failure_hint  CC=5  out:2
-    _capture_with_gnome_screenshot  CC=2  out:3
-    _capture_with_portal  CC=16  out:18
-    _capture_with_scrot  CC=2  out:3
-    _discard_capture_file  CC=3  out:3
-    _is_blank_image  CC=6  out:13
-    _is_wayland  CC=3  out:4
-    _non_portal_backends  CC=2  out:2
-    _portal_backends  CC=1  out:2
-    _portal_fallback_enabled  CC=2  out:4
+  imgl.capture  [1 funcs]
+    capture_screen  CC=26  out:33
+  imgl.capture_provenance  [5 funcs]
+    _correlate_os_windows  CC=10  out:13
+    capture_meta_path  CC=1  out:2
+    enrich_scene_provenance  CC=4  out:4
+    load_capture_meta  CC=4  out:5
+    save_capture_meta  CC=1  out:7
   imgl.catalog  [3 funcs]
     _truncate  CC=2  out:3
     build_interactive_catalog  CC=3  out:3
@@ -561,8 +569,11 @@ MODULES:
     _replace_index_in_uri  CC=1  out:0
     _window_score  CC=5  out:1
     filter_catalog  CC=8  out:7
-  imgl.catalog_heuristic  [2 funcs]
+  imgl.catalog_heuristic  [5 funcs]
+    _element_option  CC=13  out:19
     _find_window  CC=2  out:1
+    _iter_interactive_elements  CC=9  out:2
+    _window_option  CC=2  out:5
     build_heuristic_catalog  CC=10  out:9
   imgl.classify.gui_heuristics  [9 funcs]
     _build_inputs  CC=7  out:10
@@ -581,9 +592,9 @@ MODULES:
     _output_format  CC=1  out:1
     _run_image_command  CC=19  out:43
     _write_output  CC=2  out:3
-    build_parser  CC=1  out:113
-    main  CC=62  out:124
-  imgl.control  [13 funcs]
+    build_parser  CC=1  out:116
+    main  CC=64  out:131
+  imgl.control  [14 funcs]
     _control_packages_present  CC=2  out:4
     _require_nlp2imgl  CC=4  out:4
     _vql_cache_paths  CC=1  out:2
@@ -601,6 +612,17 @@ MODULES:
     detect_ui_merged  CC=4  out:2
     detect_with_img2vql  CC=4  out:5
     img2vql_available  CC=2  out:0
+  imgl.detect.local  [20 funcs]
+    _avg_color  CC=5  out:8
+    _build_contrast_mask  CC=5  out:7
+    _button_blob_area_limits  CC=1  out:4
+    _button_confidence  CC=4  out:0
+    _button_from_blob_rect  CC=3  out:11
+    _button_role  CC=4  out:0
+    _dedupe  CC=8  out:10
+    _detect_buttons  CC=3  out:12
+    _detect_panels_simple  CC=23  out:31
+    _detect_titlebar  CC=5  out:11
   imgl.detect.rectangles  [5 funcs]
     _column_has_edge  CC=2  out:3
     _find_rectangular_frames  CC=11  out:8
@@ -618,10 +640,8 @@ MODULES:
     diagnose_content  CC=3  out:7
     img2nl_available  CC=2  out:0
     worth_analyzing  CC=6  out:5
-  imgl.execute  [3 funcs]
-    _normalize_keys  CC=9  out:12
-    execute_action  CC=9  out:19
-    execute_keys  CC=5  out:8
+  imgl.execute  [1 funcs]
+    execute_action  CC=13  out:27
   imgl.export._escape  [2 funcs]
     escape_html  CC=1  out:1
     escape_xml  CC=1  out:5
@@ -655,17 +675,8 @@ MODULES:
     _render_window_svg  CC=3  out:5
     _svg_css  CC=1  out:0
     scene_to_svg  CC=4  out:9
-  imgl.export.vql_adapter  [10 funcs]
-    _bbox_norm  CC=5  out:5
-    _element_to_object  CC=4  out:2
-    _grid_layer  CC=4  out:2
-    _location_label  CC=9  out:2
-    _object_from_bbox  CC=2  out:11
-    _ocr_to_object  CC=2  out:2
-    _window_to_object  CC=2  out:1
-    scene_to_vql  CC=16  out:27
-    scene_to_vql_json  CC=1  out:2
-    write_vql_program  CC=1  out:3
+  imgl.export.vql_adapter  [1 funcs]
+    write_vql_program  CC=4  out:10
   imgl.freshness  [9 funcs]
     capture_sidecar_path  CC=1  out:1
     clear_vql_cache  CC=3  out:5
@@ -691,17 +702,17 @@ MODULES:
     install_vdisplay  CC=2  out:5
     install_vql  CC=1  out:4
     vdisplay_available  CC=2  out:0
-  imgl.interact  [13 funcs]
+  imgl.interact  [11 funcs]
     _annotate_catalog  CC=6  out:8
+    _attach_image_path  CC=1  out:1
     _build_session_catalog  CC=2  out:1
     _export_window_previews  CC=4  out:6
-    _handle_resolved_shell_action  CC=11  out:27
-    _handle_window_phase_prompt  CC=9  out:21
     _prepare_interactive_session  CC=4  out:16
-    _print_actions_phase_hints  CC=9  out:12
     _print_catalog_banner  CC=8  out:10
-    _read_shell_prompt  CC=4  out:5
+    _resolve_click  CC=17  out:10
+    _resolve_type  CC=30  out:15
     _select_window  CC=6  out:6
+    _show_initial_shell_views  CC=8  out:16
   imgl.layout  [6 funcs]
     _best_titlebar_for_window  CC=5  out:3
     _overlaps_top  CC=2  out:2
@@ -738,7 +749,7 @@ MODULES:
   imgl.pipeline  [3 funcs]
     _content_metadata  CC=1  out:6
     _count_roles  CC=4  out:2
-    analyze  CC=11  out:21
+    analyze  CC=11  out:22
   imgl.preprocess  [2 funcs]
     load_image  CC=2  out:8
     preprocess  CC=3  out:8
@@ -765,8 +776,17 @@ MODULES:
     uri_for_imgl_click  CC=5  out:1
     uri_for_imgl_list  CC=1  out:1
     uri_for_imgl_type  CC=5  out:1
-  imgl.vdisplay_bridge  [1 funcs]
+  imgl.vdisplay_bridge  [10 funcs]
+    _norm  CC=1  out:2
     build_window_control_report  CC=19  out:32
+    correlate_windows  CC=18  out:32
+    default_display  CC=2  out:3
+    diagnose_os_display  CC=4  out:5
+    find_os_window  CC=6  out:5
+    list_os_monitors  CC=3  out:3
+    list_os_windows  CC=3  out:3
+    list_vision_windows  CC=4  out:11
+    vdisplay_missing_message  CC=2  out:4
   imgl.web.agent  [2 funcs]
     _parse_agent_json  CC=6  out:7
     pick_agent_action  CC=20  out:23
@@ -780,7 +800,7 @@ MODULES:
   imgl.web.thumbs  [2 funcs]
     _clamp_box  CC=3  out:6
     crop_bbox_png  CC=2  out:15
-  imgl.window_scope  [28 funcs]
+  imgl.window_scope  [27 funcs]
     _best_vertical_split  CC=12  out:10
     _collect_elements  CC=2  out:2
     _detect_layout_mode  CC=12  out:16
@@ -815,7 +835,7 @@ MODULES:
     _parse_actions  CC=4  out:1
     _parse_agent  CC=3  out:7
     _parse_analyze  CC=5  out:2
-    _parse_capture  CC=3  out:2
+    _parse_capture  CC=5  out:3
     _parse_click  CC=3  out:5
     _parse_execute  CC=1  out:3
     _parse_interaction_verb  CC=5  out:8
@@ -826,7 +846,7 @@ MODULES:
     _run_prompt_act  CC=8  out:15
     handle_actions  CC=4  out:11
     handle_analyze  CC=4  out:10
-    handle_capture  CC=3  out:9
+    handle_capture  CC=5  out:21
     handle_execute  CC=14  out:35
     handle_resolve  CC=7  out:14
   packages.dsl2imgl.src.dsl2imgl.pb_codec  [31 funcs]
@@ -899,36 +919,36 @@ EDGES:
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb → packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl → packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl → packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
-  packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
-  packages.dsl2imgl.src.dsl2imgl.schema_registry.all_verbs → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
-  packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
-  packages.dsl2imgl.src.dsl2imgl.codec.validate_payload → packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb
-  packages.dsl2imgl.src.dsl2imgl.codec.parse_text → packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
-  packages.dsl2imgl.src.dsl2imgl.codec.parse_text → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes → packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes → packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_json → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_json → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.codec.parse_text
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.grammar.to_text
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.scene_cache.load_or_analyze
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.window_scope.apply_discovered_windows
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.interact._build_session_catalog
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.window_scope.summarize_windows
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.nlp2uri.prompt_to_imgl_uri
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.interact.resolve_imgl_uri
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.execute.execute_action
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture → imgl.capture.capture_screen
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_capture_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_analyze_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_actions_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_resolve_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_agent_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_capture_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_analyze_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_actions_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_resolve_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_agent_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope → packages.dsl2imgl.src.dsl2imgl.pb_codec._set_body
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.envelope_to_dict
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf → packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
 ```
 
 ## Test Contracts
@@ -961,29 +981,29 @@ EDGES:
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/imgl
-# generated in 0.17s
-# nodes: 379 | edges: 500 | modules: 61
+# generated in 0.16s
+# nodes: 381 | edges: 500 | modules: 63
 # CC̄=4.8
 
 HUBS[20]:
   imgl.cli.main
-    CC=62  in:0  out:124  total:124
+    CC=64  in:0  out:131  total:131
   imgl.cli.build_parser
-    CC=1  in:1  out:113  total:114
+    CC=1  in:1  out:116  total:117
   imgl.autodiag.diagnose_capture
     CC=16  in:5  out:41  total:46
   imgl.cli._run_image_command
     CC=19  in:1  out:43  total:44
   imgl.control.smart_capture
     CC=25  in:1  out:42  total:43
-  imgl.nlp2uri.prompt_to_imgl_uri
-    CC=28  in:4  out:37  total:41
   imgl.terminal_md.colorize_markdown
     CC=18  in:1  out:40  total:41
+  imgl.nlp2uri.prompt_to_imgl_uri
+    CC=28  in:4  out:37  total:41
   imgl.autodiag._derive_current_next
     CC=32  in:2  out:39  total:41
   imgl.capture.capture_screen
-    CC=26  in:6  out:32  total:38
+    CC=26  in:6  out:33  total:39
   packages.rest2imgl.src.rest2imgl.app.create_app
     CC=1  in:2  out:36  total:38
   packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
@@ -992,20 +1012,20 @@ HUBS[20]:
     CC=19  in:3  out:32  total:35
   packages.dsl2imgl.src.dsl2imgl.bus.dispatch
     CC=10  in:14  out:21  total:35
+  imgl.vdisplay_bridge.correlate_windows
+    CC=18  in:2  out:32  total:34
   imgl.autodiag.build_operation_step
     CC=19  in:1  out:33  total:34
   imgl.autodiag._actionable_hints
     CC=19  in:1  out:31  total:32
+  imgl.pipeline.analyze
+    CC=11  in:10  out:22  total:32
+  imgl.detect.local._detect_panels_simple
+    CC=23  in:1  out:31  total:32
+  imgl.execute.execute_action
+    CC=13  in:5  out:27  total:32
   imgl.control.capture_interactive
     CC=16  in:2  out:28  total:30
-  imgl.coords.scale_scene_to_screen
-    CC=6  in:1  out:29  total:30
-  imgl.classify.gui_heuristics.classify_scene_elements
-    CC=27  in:1  out:29  total:30
-  imgl.pipeline.analyze
-    CC=11  in:8  out:21  total:29
-  imgl.export.vql_adapter.scene_to_vql
-    CC=16  in:1  out:27  total:28
 
 MODULES:
   examples.scripts.demo-nlp2uri  [1 funcs]
@@ -1032,17 +1052,14 @@ MODULES:
     _shell_quote  CC=3  out:2
     _yaml_codeblock  CC=1  out:2
     build_execute_report  CC=8  out:17
-  imgl.capture  [23 funcs]
-    _capture_failure_hint  CC=5  out:2
-    _capture_with_gnome_screenshot  CC=2  out:3
-    _capture_with_portal  CC=16  out:18
-    _capture_with_scrot  CC=2  out:3
-    _discard_capture_file  CC=3  out:3
-    _is_blank_image  CC=6  out:13
-    _is_wayland  CC=3  out:4
-    _non_portal_backends  CC=2  out:2
-    _portal_backends  CC=1  out:2
-    _portal_fallback_enabled  CC=2  out:4
+  imgl.capture  [1 funcs]
+    capture_screen  CC=26  out:33
+  imgl.capture_provenance  [5 funcs]
+    _correlate_os_windows  CC=10  out:13
+    capture_meta_path  CC=1  out:2
+    enrich_scene_provenance  CC=4  out:4
+    load_capture_meta  CC=4  out:5
+    save_capture_meta  CC=1  out:7
   imgl.catalog  [3 funcs]
     _truncate  CC=2  out:3
     build_interactive_catalog  CC=3  out:3
@@ -1054,8 +1071,11 @@ MODULES:
     _replace_index_in_uri  CC=1  out:0
     _window_score  CC=5  out:1
     filter_catalog  CC=8  out:7
-  imgl.catalog_heuristic  [2 funcs]
+  imgl.catalog_heuristic  [5 funcs]
+    _element_option  CC=13  out:19
     _find_window  CC=2  out:1
+    _iter_interactive_elements  CC=9  out:2
+    _window_option  CC=2  out:5
     build_heuristic_catalog  CC=10  out:9
   imgl.classify.gui_heuristics  [9 funcs]
     _build_inputs  CC=7  out:10
@@ -1074,9 +1094,9 @@ MODULES:
     _output_format  CC=1  out:1
     _run_image_command  CC=19  out:43
     _write_output  CC=2  out:3
-    build_parser  CC=1  out:113
-    main  CC=62  out:124
-  imgl.control  [13 funcs]
+    build_parser  CC=1  out:116
+    main  CC=64  out:131
+  imgl.control  [14 funcs]
     _control_packages_present  CC=2  out:4
     _require_nlp2imgl  CC=4  out:4
     _vql_cache_paths  CC=1  out:2
@@ -1094,6 +1114,17 @@ MODULES:
     detect_ui_merged  CC=4  out:2
     detect_with_img2vql  CC=4  out:5
     img2vql_available  CC=2  out:0
+  imgl.detect.local  [20 funcs]
+    _avg_color  CC=5  out:8
+    _build_contrast_mask  CC=5  out:7
+    _button_blob_area_limits  CC=1  out:4
+    _button_confidence  CC=4  out:0
+    _button_from_blob_rect  CC=3  out:11
+    _button_role  CC=4  out:0
+    _dedupe  CC=8  out:10
+    _detect_buttons  CC=3  out:12
+    _detect_panels_simple  CC=23  out:31
+    _detect_titlebar  CC=5  out:11
   imgl.detect.rectangles  [5 funcs]
     _column_has_edge  CC=2  out:3
     _find_rectangular_frames  CC=11  out:8
@@ -1111,10 +1142,8 @@ MODULES:
     diagnose_content  CC=3  out:7
     img2nl_available  CC=2  out:0
     worth_analyzing  CC=6  out:5
-  imgl.execute  [3 funcs]
-    _normalize_keys  CC=9  out:12
-    execute_action  CC=9  out:19
-    execute_keys  CC=5  out:8
+  imgl.execute  [1 funcs]
+    execute_action  CC=13  out:27
   imgl.export._escape  [2 funcs]
     escape_html  CC=1  out:1
     escape_xml  CC=1  out:5
@@ -1148,17 +1177,8 @@ MODULES:
     _render_window_svg  CC=3  out:5
     _svg_css  CC=1  out:0
     scene_to_svg  CC=4  out:9
-  imgl.export.vql_adapter  [10 funcs]
-    _bbox_norm  CC=5  out:5
-    _element_to_object  CC=4  out:2
-    _grid_layer  CC=4  out:2
-    _location_label  CC=9  out:2
-    _object_from_bbox  CC=2  out:11
-    _ocr_to_object  CC=2  out:2
-    _window_to_object  CC=2  out:1
-    scene_to_vql  CC=16  out:27
-    scene_to_vql_json  CC=1  out:2
-    write_vql_program  CC=1  out:3
+  imgl.export.vql_adapter  [1 funcs]
+    write_vql_program  CC=4  out:10
   imgl.freshness  [9 funcs]
     capture_sidecar_path  CC=1  out:1
     clear_vql_cache  CC=3  out:5
@@ -1184,17 +1204,17 @@ MODULES:
     install_vdisplay  CC=2  out:5
     install_vql  CC=1  out:4
     vdisplay_available  CC=2  out:0
-  imgl.interact  [13 funcs]
+  imgl.interact  [11 funcs]
     _annotate_catalog  CC=6  out:8
+    _attach_image_path  CC=1  out:1
     _build_session_catalog  CC=2  out:1
     _export_window_previews  CC=4  out:6
-    _handle_resolved_shell_action  CC=11  out:27
-    _handle_window_phase_prompt  CC=9  out:21
     _prepare_interactive_session  CC=4  out:16
-    _print_actions_phase_hints  CC=9  out:12
     _print_catalog_banner  CC=8  out:10
-    _read_shell_prompt  CC=4  out:5
+    _resolve_click  CC=17  out:10
+    _resolve_type  CC=30  out:15
     _select_window  CC=6  out:6
+    _show_initial_shell_views  CC=8  out:16
   imgl.layout  [6 funcs]
     _best_titlebar_for_window  CC=5  out:3
     _overlaps_top  CC=2  out:2
@@ -1231,7 +1251,7 @@ MODULES:
   imgl.pipeline  [3 funcs]
     _content_metadata  CC=1  out:6
     _count_roles  CC=4  out:2
-    analyze  CC=11  out:21
+    analyze  CC=11  out:22
   imgl.preprocess  [2 funcs]
     load_image  CC=2  out:8
     preprocess  CC=3  out:8
@@ -1258,8 +1278,17 @@ MODULES:
     uri_for_imgl_click  CC=5  out:1
     uri_for_imgl_list  CC=1  out:1
     uri_for_imgl_type  CC=5  out:1
-  imgl.vdisplay_bridge  [1 funcs]
+  imgl.vdisplay_bridge  [10 funcs]
+    _norm  CC=1  out:2
     build_window_control_report  CC=19  out:32
+    correlate_windows  CC=18  out:32
+    default_display  CC=2  out:3
+    diagnose_os_display  CC=4  out:5
+    find_os_window  CC=6  out:5
+    list_os_monitors  CC=3  out:3
+    list_os_windows  CC=3  out:3
+    list_vision_windows  CC=4  out:11
+    vdisplay_missing_message  CC=2  out:4
   imgl.web.agent  [2 funcs]
     _parse_agent_json  CC=6  out:7
     pick_agent_action  CC=20  out:23
@@ -1273,7 +1302,7 @@ MODULES:
   imgl.web.thumbs  [2 funcs]
     _clamp_box  CC=3  out:6
     crop_bbox_png  CC=2  out:15
-  imgl.window_scope  [28 funcs]
+  imgl.window_scope  [27 funcs]
     _best_vertical_split  CC=12  out:10
     _collect_elements  CC=2  out:2
     _detect_layout_mode  CC=12  out:16
@@ -1308,7 +1337,7 @@ MODULES:
     _parse_actions  CC=4  out:1
     _parse_agent  CC=3  out:7
     _parse_analyze  CC=5  out:2
-    _parse_capture  CC=3  out:2
+    _parse_capture  CC=5  out:3
     _parse_click  CC=3  out:5
     _parse_execute  CC=1  out:3
     _parse_interaction_verb  CC=5  out:8
@@ -1319,7 +1348,7 @@ MODULES:
     _run_prompt_act  CC=8  out:15
     handle_actions  CC=4  out:11
     handle_analyze  CC=4  out:10
-    handle_capture  CC=3  out:9
+    handle_capture  CC=5  out:21
     handle_execute  CC=14  out:35
     handle_resolve  CC=7  out:14
   packages.dsl2imgl.src.dsl2imgl.pb_codec  [31 funcs]
@@ -1392,66 +1421,66 @@ EDGES:
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb → packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl → packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl → packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
-  packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
-  packages.dsl2imgl.src.dsl2imgl.schema_registry.all_verbs → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
-  packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
-  packages.dsl2imgl.src.dsl2imgl.codec.validate_payload → packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb
-  packages.dsl2imgl.src.dsl2imgl.codec.parse_text → packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
-  packages.dsl2imgl.src.dsl2imgl.codec.parse_text → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes → packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes → packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_json → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_json → packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.codec.parse_text
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.codec.envelope_from_bytes
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.grammar.to_text
-  packages.dsl2imgl.src.dsl2imgl.codec.roundtrip_text → packages.dsl2imgl.src.dsl2imgl.codec.envelope_to_bytes
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.scene_cache.load_or_analyze
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.window_scope.apply_discovered_windows
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.interact._build_session_catalog
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.window_scope.summarize_windows
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.nlp2uri.prompt_to_imgl_uri
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.interact.resolve_imgl_uri
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.execute.execute_action
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture → imgl.capture.capture_screen
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
-  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_capture_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_analyze_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_actions_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_resolve_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_agent_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._assign_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_capture_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_analyze_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_actions_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_resolve_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_click_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_type_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_key_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_execute_flag
+  packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_agent_body → packages.dsl2imgl.src.dsl2imgl.pb_codec._dict_optional_str
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope → packages.dsl2imgl.src.dsl2imgl.pb_codec._set_body
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.envelope_to_dict
+  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf → packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
 ```
 
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 119f 61472L | python:83,json:12,yaml:7,shell:7,toml:7,proto:2 | 2026-06-09
-# generated in 0.03s
-# CC̅=4.8 | critical:29/491 | dups:0 | cycles:0
+# code2llm | 122f 155168L | python:84,json:14,yaml:7,shell:7,toml:7,proto:2 | 2026-06-09
+# generated in 0.04s
+# CC̅=4.8 | critical:29/503 | dups:0 | cycles:0
 
 HEALTH[20]:
   🟡 CC    uri_to_dsl CC=18 (limit:15)
-  🟡 CC    apply_nl_with_diag CC=17 (limit:15)
-  🟡 CC    prompt_to_imgl_uri CC=28 (limit:15)
-  🟡 CC    find CC=21 (limit:15)
-  🟡 CC    scene_to_vql CC=16 (limit:15)
-  🟡 CC    act CC=29 (limit:15)
-  🟡 CC    pick_agent_action CC=20 (limit:15)
-  🟡 CC    classify_scene_elements CC=27 (limit:15)
   🟡 CC    to_dsl CC=15 (limit:15)
+  🟡 CC    apply_nl_with_diag CC=17 (limit:15)
   🟡 CC    diagnose_capture CC=16 (limit:15)
   🟡 CC    build_operation_step CC=19 (limit:15)
   🟡 CC    _derive_current_next CC=32 (limit:15)
   🟡 CC    _markdown_payload CC=18 (limit:15)
   🟡 CC    _actionable_hints CC=19 (limit:15)
-  🟡 CC    main CC=62 (limit:15)
-  🟡 CC    _run_image_command CC=19 (limit:15)
-  🟡 CC    _resolve_click CC=17 (limit:15)
-  🟡 CC    _resolve_type CC=30 (limit:15)
-  🟡 CC    run_interactive_shell CC=15 (limit:15)
-  🟡 CC    capture_screen CC=26 (limit:15)
+  🟡 CC    prompt_to_imgl_uri CC=28 (limit:15)
+  🟡 CC    find CC=21 (limit:15)
+  🟡 CC    colorize_markdown CC=18 (limit:15)
+  🟡 CC    _regions_from_balanced_gutters CC=18 (limit:15)
+  🟡 CC    _keep_element CC=17 (limit:15)
+  🟡 CC    smart_capture CC=25 (limit:15)
+  🟡 CC    capture_interactive CC=16 (limit:15)
+  🟡 CC    correlate_windows CC=18 (limit:15)
+  🟡 CC    build_window_control_report CC=19 (limit:15)
+  🟡 CC    _detect_panels_simple CC=23 (limit:15)
+  🟡 CC    act CC=29 (limit:15)
+  🟡 CC    pick_agent_action CC=20 (limit:15)
 
 REFACTOR[1]:
   1. split 20 high-CC methods  (CC>15)
@@ -1485,96 +1514,97 @@ PIPELINES[107]:
       PURITY: 100% pure
   [14] Src [replay]: replay
       PURITY: 100% pure
-  [15] Src [all_verbs]: all_verbs → _load_schemas
+  [15] Src [_set_capture_body]: _set_capture_body → _assign_optional_str
       PURITY: 100% pure
-  [16] Src [validate_schemas]: validate_schemas → _load_schemas
+  [16] Src [_set_analyze_body]: _set_analyze_body → _assign_optional_str
       PURITY: 100% pure
-  [17] Src [envelope_to_json]: envelope_to_json → validate_payload → schema_for_verb → _load_schemas
+  [17] Src [_set_actions_body]: _set_actions_body → _assign_optional_str
       PURITY: 100% pure
-  [18] Src [roundtrip_text]: roundtrip_text → parse_text → parse_line → split_command
+  [18] Src [_set_resolve_body]: _set_resolve_body → _assign_optional_str
       PURITY: 100% pure
-  [19] Src [to_json]: to_json
+  [19] Src [_set_click_body]: _set_click_body → _assign_optional_str
       PURITY: 100% pure
-  [20] Src [handle_health]: handle_health
+  [20] Src [_set_type_body]: _set_type_body → _assign_optional_str
       PURITY: 100% pure
-  [21] Src [handle_capture]: handle_capture → capture_screen → default_capture_path
+  [21] Src [_set_key_body]: _set_key_body → _assign_optional_str
       PURITY: 100% pure
-  [22] Src [handle_analyze]: handle_analyze → _build_interact_session → load_or_analyze → analyze → ...(3 more)
+  [22] Src [_set_execute_body]: _set_execute_body → _assign_optional_str
       PURITY: 100% pure
-  [23] Src [handle_actions]: handle_actions → _build_interact_session → load_or_analyze → analyze → ...(3 more)
+  [23] Src [_set_agent_body]: _set_agent_body → _assign_optional_str
       PURITY: 100% pure
-  [24] Src [handle_resolve]: handle_resolve → _build_interact_session → load_or_analyze → analyze → ...(3 more)
+  [24] Src [_dict_capture_body]: _dict_capture_body → _dict_optional_str
       PURITY: 100% pure
-  [25] Src [handle_execute]: handle_execute → _build_interact_session → load_or_analyze → analyze → ...(3 more)
+  [25] Src [_dict_analyze_body]: _dict_analyze_body → _dict_optional_str
       PURITY: 100% pure
-  [26] Src [main]: main → analyze → preprocess → load_image → ...(1 more)
+  [26] Src [_dict_actions_body]: _dict_actions_body → _dict_optional_str
       PURITY: 100% pure
-  [27] Src [_match_catalog_action]: _match_catalog_action → _find_catalog_input
+  [27] Src [_dict_resolve_body]: _dict_resolve_body → _dict_optional_str
       PURITY: 100% pure
-  [28] Src [click_coords]: click_coords
+  [28] Src [_dict_click_body]: _dict_click_body → _dict_optional_str
       PURITY: 100% pure
-  [29] Src [to_click_action]: to_click_action
+  [29] Src [_dict_type_body]: _dict_type_body → _dict_optional_str
       PURITY: 100% pure
-  [30] Src [coords]: coords
+  [30] Src [_dict_key_body]: _dict_key_body → _dict_optional_str
       PURITY: 100% pure
-  [31] Src [to_dict]: to_dict
+  [31] Src [_dict_execute_body]: _dict_execute_body → _dict_optional_str
       PURITY: 100% pure
-  [32] Src [find]: find → _iter_elements → get_discovered_window → discover_windows → ...(1 more)
+  [32] Src [_dict_agent_body]: _dict_agent_body → _dict_optional_str
       PURITY: 100% pure
-  [33] Src [find_one]: find_one
+  [33] Src [encode_text_to_protobuf]: encode_text_to_protobuf → parse_line → split_command
       PURITY: 100% pure
-  [34] Src [click]: click → _format_query
+  [34] Src [decode_protobuf_to_text]: decode_protobuf_to_text → to_text
       PURITY: 100% pure
-  [35] Src [type_into]: type_into → _format_query
+  [35] Src [all_verbs]: all_verbs → _load_schemas
       PURITY: 100% pure
-  [36] Src [list_actions]: list_actions → _iter_elements → get_discovered_window → discover_windows → ...(1 more)
+  [36] Src [validate_schemas]: validate_schemas → _load_schemas
       PURITY: 100% pure
-  [37] Src [assign_ocr_to_windows]: assign_ocr_to_windows → find_containing_window → center_in
+  [37] Src [envelope_to_json]: envelope_to_json → validate_payload → schema_for_verb → _load_schemas
       PURITY: 100% pure
-  [38] Src [uri_for_imgl_action]: uri_for_imgl_action → _imgl_uri
+  [38] Src [roundtrip_text]: roundtrip_text → parse_text → parse_line → split_command
       PURITY: 100% pure
-  [39] Src [resolve_image_path_optional]: resolve_image_path_optional → resolve_image_path
+  [39] Src [to_json]: to_json
       PURITY: 100% pure
-  [40] Src [contains]: contains
+  [40] Src [main]: main → build_parser
       PURITY: 100% pure
-  [41] Src [from_xyxy]: from_xyxy
+  [41] Src [run_to_dsl]: run_to_dsl → to_dsl → use_llm_enabled → _load_env_files → ...(1 more)
       PURITY: 100% pure
-  [42] Src [to_dict]: to_dict
+  [42] Src [run_apply]: run_apply → apply_nl_with_diag → apply_nl → to_dsl → ...(3 more)
       PURITY: 100% pure
-  [43] Src [to_dict]: to_dict
+  [43] Src [main]: main → analyze → preprocess → load_image → ...(1 more)
       PURITY: 100% pure
-  [44] Src [to_dict]: to_dict
+  [44] Src [_match_catalog_action]: _match_catalog_action → _find_catalog_input
       PURITY: 100% pure
-  [45] Src [to_dict]: to_dict
+  [45] Src [click_coords]: click_coords
       PURITY: 100% pure
-  [46] Src [from_dict]: from_dict
+  [46] Src [to_click_action]: to_click_action
       PURITY: 100% pure
-  [47] Src [dataclass_to_dict]: dataclass_to_dict
+  [47] Src [coords]: coords
       PURITY: 100% pure
-  [48] Src [write_annotated_images_per_window]: write_annotated_images_per_window → write_annotated_image → scene_to_annotated_image → _load_fonts → ...(1 more)
+  [48] Src [to_dict]: to_dict
       PURITY: 100% pure
-  [49] Src [run]: run → ocr_lang_attempts → normalize_ocr_lang
+  [49] Src [find]: find → _iter_elements → get_discovered_window → discover_windows → ...(1 more)
       PURITY: 100% pure
-  [50] Src [create_app]: create_app → pick_agent_action → _load_env_files → _env_file_candidates
+  [50] Src [find_one]: find_one
       PURITY: 100% pure
 
 LAYERS:
   examples/                       CC̄=7.0    ←in:0  →out:0
   │ demo-nlp2uri                79L  0C    1m  CC=7      ←0
-  │ demo-agent-loop.sh          37L  0C    0m  CC=0.0    ←0
-  │ demo-windows.sh             22L  0C    0m  CC=0.0    ←0
-  │ demo-github.sh              21L  0C    0m  CC=0.0    ←0
+  │ demo-agent-loop.sh          48L  0C    0m  CC=0.0    ←0
+  │ demo-windows.sh             23L  0C    0m  CC=0.0    ←0
+  │ demo-github.sh              22L  0C    0m  CC=0.0    ←0
   │ img2nl-vql-flow.sh          10L  0C    0m  CC=0.0    ←0
   │
-  imgl/                           CC̄=5.2    ←in:68  →out:32  !! split
-  │ !! cli                        933L  0C    9m  CC=62     ←0
+  imgl/                           CC̄=5.2    ←in:70  →out:33  !! split
+  │ !! cli                        958L  0C    9m  CC=64     ←0
   │ !! window_scope               698L  1C   29m  CC=18     ←10
-  │ !! interact                   659L  1C   16m  CC=30     ←4
-  │ !! capture                    550L  2C   27m  CC=26     ←4
+  │ !! interact                   665L  1C   17m  CC=30     ←4
+  │ !! capture                    559L  2C   28m  CC=26     ←4
   │ !! autodiag                   530L  0C   27m  CC=32     ←5
   │ !! llm_catalog                521L  0C   16m  CC=14     ←4
   │ !! session                    452L  5C   18m  CC=29     ←0
   │ !! local                      374L  1C   20m  CC=23     ←0
+  │ !! vql_adapter                362L  0C   13m  CC=19     ←4
   │ !! control                    357L  0C   16m  CC=25     ←1
   │ annotate_export            299L  0C   14m  CC=8      ←3
   │ app                        286L  6C    1m  CC=4      ←0
@@ -1582,20 +1612,20 @@ LAYERS:
   │ !! actions                    271L  4C   16m  CC=21     ←3
   │ !! gui_heuristics             261L  0C    9m  CC=27     ←1
   │ catalog_heuristic          256L  0C    6m  CC=13     ←2
-  │ !! vdisplay_bridge            253L  0C   12m  CC=19     ←2
+  │ !! vdisplay_bridge            253L  0C   12m  CC=19     ←3
   │ diagnose                   247L  1C   10m  CC=10     ←5
-  │ !! vql_adapter                244L  0C   10m  CC=16     ←3
   │ !! terminal_md                210L  0C    9m  CC=18     ←2
+  │ execute                    205L  1C    8m  CC=13     ←3
   │ types                      170L  5C   10m  CC=5      ←0
-  │ execute                    162L  1C    6m  CC=9      ←3
   │ !! agent                      152L  0C    4m  CC=20     ←1
   │ freshness                  151L  0C    9m  CC=5      ←3
   │ html_export                149L  0C    7m  CC=8      ←1
   │ !! catalog_filter             138L  0C    6m  CC=17     ←2
   │ svg_export                 137L  0C    7m  CC=4      ←1
-  │ installs                   125L  0C    9m  CC=5      ←3
+  │ installs                   125L  0C    9m  CC=5      ←4
+  │ pipeline                   119L  0C    3m  CC=11     ←5
   │ uri                        118L  0C    7m  CC=5      ←4
-  │ pipeline                   116L  0C    3m  CC=11     ←4
+  │ capture_provenance         114L  0C    5m  CC=10     ←3
   │ layout                     108L  0C    6m  CC=10     ←2
   │ rectangles                  96L  0C    5m  CC=14     ←1
   │ tesseract                   94L  1C    2m  CC=13     ←0
@@ -1623,8 +1653,8 @@ LAYERS:
   │
   packages/                       CC̄=3.3    ←in:0  →out:0
   │ pb_codec                   284L  0C   32m  CC=5      ←3
-  │ runtime                    220L  0C    8m  CC=14     ←0
-  │ grammar                    186L  0C   16m  CC=10     ←3
+  │ runtime                    234L  0C    8m  CC=14     ←0
+  │ grammar                    190L  0C   16m  CC=10     ←3
   │ events                     168L  2C    8m  CC=6      ←0
   │ !! control                    150L  0C    5m  CC=17     ←4
   │ app                        125L  2C    1m  CC=1      ←2
@@ -1659,9 +1689,9 @@ LAYERS:
   │ agent.schema.json           13L  0C    0m  CC=0.0    ←0
   │ analyze.schema.json         13L  0C    0m  CC=0.0    ←0
   │ key.schema.json             13L  0C    0m  CC=0.0    ←0
+  │ capture.schema.json         13L  0C    0m  CC=0.0    ←0
   │ resolve.schema.json         12L  0C    0m  CC=0.0    ←0
   │ actions.schema.json         12L  0C    0m  CC=0.0    ←0
-  │ capture.schema.json         11L  0C    0m  CC=0.0    ←0
   │ health.schema.json           9L  0C    0m  CC=0.0    ←0
   │ __init__                     6L  0C    0m  CC=0.0    ←0
   │ generate-proto.sh            6L  0C    0m  CC=0.0    ←0
@@ -1672,14 +1702,16 @@ LAYERS:
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! layout.vql.json          46316L  0C    0m  CC=0.0    ←0
+  │ !! layout.vql.json          63208L  0C    0m  CC=0.0    ←0
+  │ !! screen.vql.json          51347L  0C    0m  CC=0.0    ←0
+  │ !! layout.vql.imgl.json     13915L  0C    0m  CC=0.0    ←0
+  │ !! screen.vql.imgl.json     11260L  0C    0m  CC=0.0    ←0
   │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  511L  0C    0m  CC=0.0    ←0
-  │ Makefile                   142L  0C    0m  CC=0.0    ←0
+  │ Makefile                   148L  0C    0m  CC=0.0    ←0
   │ koru.yaml                  141L  0C    0m  CC=0.0    ←0
   │ pyproject.toml             103L  0C    0m  CC=0.0    ←0
   │ prefact.yaml                94L  0C    0m  CC=0.0    ←0
-  │ layout.vql.imgl.json        75L  0C    0m  CC=0.0    ←0
   │ project.sh                  59L  0C    0m  CC=0.0    ←0
   │ tree.sh                      1L  0C    0m  CC=0.0    ←0
   │
@@ -1691,10 +1723,10 @@ LAYERS:
 
 COUPLING:
                                     imgl   packages.nlp2imgl         imgl.export   packages.dsl2imgl            imgl.web       imgl.classify  packages.rest2imgl         imgl.detect    examples.scripts   packages.cli2imgl   packages.mcp2imgl   packages.uri2imgl
-                imgl                  ──                   7                  21                  ←9                 ←14                   1                   1                   2                  ←5                                                              hub
+                imgl                  ──                   7                  22                 ←11                 ←14                   1                   1                   2                  ←5                                                              hub
    packages.nlp2imgl                  18                  ──                                       3                                                          ←5                                                          ←2                  ←2                      hub
-         imgl.export                   7                                      ──                                      ←2                                                                                                                                              hub
-   packages.dsl2imgl                   9                  ←3                                      ──                                                          ←4                                                          ←1                  ←1                  ←1  hub
+         imgl.export                   7                                      ──                  ←1                  ←2                                                                                                                                              hub
+   packages.dsl2imgl                  11                  ←3                   1                  ──                                                          ←4                                                          ←1                  ←1                  ←1  hub
             imgl.web                  14                                       2                                      ──                                                                                                                                              !! fan-out
        imgl.classify                   9                                                                                                  ──                                                                                                                          !! fan-out
   packages.rest2imgl                  ←1                   5                                       4                                                          ──                                                                                                      !! fan-out
@@ -1704,16 +1736,16 @@ COUPLING:
    packages.mcp2imgl                                       2                                       1                                                                                                                                          ──                    
    packages.uri2imgl                                                                               1                                                                                                                                                              ──
   CYCLES: none
-  HUB: imgl/ (fan-in=68)
+  HUB: imgl/ (fan-in=70)
   HUB: packages.nlp2imgl/ (fan-in=16)
+  HUB: imgl.export/ (fan-in=25)
   HUB: packages.dsl2imgl/ (fan-in=10)
-  HUB: imgl.export/ (fan-in=23)
-  SMELL: imgl.web/ fan-out=16 → split needed
-  SMELL: imgl.classify/ fan-out=9 → split needed
-  SMELL: imgl/ fan-out=32 → split needed
+  SMELL: imgl/ fan-out=33 → split needed
   SMELL: packages.nlp2imgl/ fan-out=21 → split needed
-  SMELL: packages.dsl2imgl/ fan-out=9 → split needed
   SMELL: packages.rest2imgl/ fan-out=9 → split needed
+  SMELL: imgl.classify/ fan-out=9 → split needed
+  SMELL: imgl.web/ fan-out=16 → split needed
+  SMELL: packages.dsl2imgl/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
@@ -1723,15 +1755,15 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 10 groups | 83f 12199L | 2026-06-09
+# redup/duplication | 10 groups | 84f 12535L | 2026-06-09
 
 SUMMARY:
-  files_scanned: 83
-  total_lines:   12199
+  files_scanned: 84
+  total_lines:   12535
   dup_groups:    10
   dup_fragments: 21
   saved_lines:   80
-  scan_ms:       3635
+  scan_ms:       2501
 
 HOTSPOTS[7] (files with most duplication):
   imgl/installs.py  dup=34L  groups=3  frags=4  (0.3%)
@@ -1772,7 +1804,7 @@ DUPLICATES[10] (ranked by impact):
       imgl/control.py:332-335  (install_img2nl)
       imgl/control.py:338-341  (install_vdisplay)
   [2d7b9210c1b65241]   STRU  _prefer_mirror  L=3 N=2 saved=3 sim=1.00
-      imgl/capture.py:29-31  (_prefer_mirror)
+      imgl/capture.py:50-52  (_prefer_mirror)
       imgl/installs.py:30-32  (_auto_install_vdisplay_enabled)
 
 REFACTOR[10] (ranked by priority):
@@ -1844,60 +1876,60 @@ METRICS-TARGET:
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 490 func | 68f | 2026-06-09
+# code2llm/evolution | 502 func | 69f | 2026-06-09
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           imgl/cli.py
-      WHY: 933L, 0 classes, max CC=62
-      EFFORT: ~4h  IMPACT: 57846
+  [1] !! SPLIT-FUNC      main  CC=64  fan=61
+      WHY: CC=64 exceeds 15
+      EFFORT: ~1h  IMPACT: 3904
 
-  [2] !! SPLIT-FUNC      main  CC=62  fan=57
-      WHY: CC=62 exceeds 15
-      EFFORT: ~1h  IMPACT: 3534
-
-  [3] !! SPLIT-FUNC      smart_capture  CC=25  fan=28
+  [2] !! SPLIT-FUNC      smart_capture  CC=25  fan=28
       WHY: CC=25 exceeds 15
       EFFORT: ~1h  IMPACT: 700
 
-  [4] !! SPLIT-FUNC      prompt_to_imgl_uri  CC=28  fan=24
+  [3] !! SPLIT-FUNC      prompt_to_imgl_uri  CC=28  fan=24
       WHY: CC=28 exceeds 15
       EFFORT: ~1h  IMPACT: 672
 
-  [5] !! SPLIT-FUNC      capture_screen  CC=26  fan=21
+  [4] !! SPLIT-FUNC      capture_screen  CC=26  fan=21
       WHY: CC=26 exceeds 15
       EFFORT: ~1h  IMPACT: 546
 
-  [6] !  SPLIT-FUNC      _run_image_command  CC=19  fan=28
+  [5] !  SPLIT-FUNC      _run_image_command  CC=19  fan=28
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 532
 
-  [7] !! SPLIT-FUNC      classify_scene_elements  CC=27  fan=17
+  [6] !! SPLIT-FUNC      classify_scene_elements  CC=27  fan=17
       WHY: CC=27 exceeds 15
       EFFORT: ~1h  IMPACT: 459
 
-  [8] !  SPLIT-FUNC      build_window_control_report  CC=19  fan=24
+  [7] !  SPLIT-FUNC      build_window_control_report  CC=19  fan=24
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 456
 
-  [9] !! SPLIT-FUNC      WebSession.act  CC=29  fan=15
+  [8] !! SPLIT-FUNC      WebSession.act  CC=29  fan=15
       WHY: CC=29 exceeds 15
       EFFORT: ~1h  IMPACT: 435
 
-  [10] !  SPLIT-FUNC      _detect_panels_simple  CC=23  fan=16
+  [9] !  SPLIT-FUNC      _detect_panels_simple  CC=23  fan=16
       WHY: CC=23 exceeds 15
       EFFORT: ~1h  IMPACT: 368
+
+  [10] !  SPLIT-FUNC      colorize_markdown  CC=18  fan=20
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 360
 
 
 RISKS[3]:
   ⚠ Splitting layout.vql.json may break 0 import paths
-  ⚠ Splitting planfile.yaml may break 0 import paths
-  ⚠ Splitting imgl/cli.py may break 9 import paths
+  ⚠ Splitting screen.vql.json may break 0 import paths
+  ⚠ Splitting layout.vql.imgl.json may break 0 import paths
 
 METRICS-TARGET:
   CC̄:          4.8 → ≤3.4
-  max-CC:      62 → ≤20
-  god-modules: 9 → 0
+  max-CC:      64 → ≤20
+  god-modules: 12 → 0
   high-CC(≥15): 29 → ≤14
   hub-types:   0 → ≤0
 
@@ -1926,7 +1958,7 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=5.4 → now CC̄=4.8
+  prev CC̄=4.8 → now CC̄=4.8
 ```
 
 ## Intent

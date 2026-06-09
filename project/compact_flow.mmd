@@ -3,7 +3,8 @@ flowchart TD
     examples__scripts["examples.scripts<br/>1 funcs"]
     imgl__actions["imgl.actions<br/>16 funcs"]
     imgl__autodiag["imgl.autodiag<br/>27 funcs"]
-    imgl__capture["imgl.capture<br/>27 funcs"]
+    imgl__capture["imgl.capture<br/>28 funcs"]
+    imgl__capture_provenance["imgl.capture_provenance<br/>5 funcs"]
     imgl__catalog["imgl.catalog<br/>3 funcs"]
     imgl__catalog_filter["imgl.catalog_filter<br/>6 funcs"]
     imgl__catalog_heuristic["imgl.catalog_heuristic<br/>6 funcs"]
@@ -13,12 +14,12 @@ flowchart TD
     imgl__coords["imgl.coords<br/>1 funcs"]
     imgl__detect["imgl.detect<br/>29 funcs"]
     imgl__diagnose["imgl.diagnose<br/>10 funcs"]
-    imgl__execute["imgl.execute<br/>6 funcs"]
-    imgl__export["imgl.export<br/>42 funcs"]
+    imgl__execute["imgl.execute<br/>8 funcs"]
+    imgl__export["imgl.export<br/>45 funcs"]
     imgl__freshness["imgl.freshness<br/>9 funcs"]
     imgl__geometry["imgl.geometry<br/>4 funcs"]
     imgl__installs["imgl.installs<br/>9 funcs"]
-    imgl__interact["imgl.interact<br/>16 funcs"]
+    imgl__interact["imgl.interact<br/>17 funcs"]
     imgl__layout["imgl.layout<br/>6 funcs"]
     imgl__llm_catalog["imgl.llm_catalog<br/>16 funcs"]
     imgl__nlp2uri["imgl.nlp2uri<br/>6 funcs"]
@@ -39,67 +40,67 @@ flowchart TD
     packages__rest2imgl["packages.rest2imgl<br/>2 funcs"]
     packages__uri2imgl["packages.uri2imgl<br/>2 funcs"]
     packages__nlp2imgl ==>|13| imgl__autodiag
-    imgl__cli ==>|11| imgl__export
+    imgl__cli ==>|12| imgl__export
     imgl__control ==>|11| imgl__freshness
     imgl__classify ==>|9| imgl__geometry
     imgl__interact ==>|8| imgl__export
     imgl__interact ==>|8| imgl__window_scope
     imgl__interact ==>|7| imgl__catalog
     imgl__nlp2uri ==>|6| imgl__uri
+    imgl__control ==>|6| imgl__capture
     imgl__export ==>|6| imgl__window_scope
     imgl__detect ==>|6| imgl__geometry
     imgl__cli ==>|6| packages__nlp2imgl
     imgl__cli ==>|6| imgl__control
-    imgl__control ==>|6| imgl__capture
+    imgl__cli ==>|6| imgl__pipeline
     packages__rest2imgl ==>|5| packages__nlp2imgl
     imgl__cli ==>|5| imgl__window_scope
-    imgl__cli ==>|5| imgl__pipeline
     packages__rest2imgl ==>|4| packages__dsl2imgl
     imgl__layout ==>|4| imgl__geometry
-    imgl__web ==>|4| imgl__window_scope
-    imgl__cli ==>|4| imgl__terminal_md
-    imgl__cli ==>|4| imgl__diagnose
-    imgl__cli ==>|4| imgl__paths
-    imgl__cli ==>|4| imgl__installs
-    imgl__interact ==>|4| imgl__scene_cache
-    imgl__capture ==>|4| imgl__freshness
     imgl__window_scope ==>|4| imgl__paths
     imgl__window_scope ==>|4| imgl__geometry
     imgl__control ==>|4| imgl__autodiag
     imgl__catalog_heuristic ==>|4| imgl__uri
-    imgl__pipeline -->|3| imgl__diagnose
+    imgl__web ==>|4| imgl__window_scope
+    imgl__cli ==>|4| imgl__terminal_md
+    imgl__cli ==>|4| imgl__diagnose
+    imgl__cli ==>|4| imgl__scene_cache
+    imgl__cli ==>|4| imgl__paths
+    imgl__cli ==>|4| imgl__installs
+    imgl__interact ==>|4| imgl__scene_cache
     packages__nlp2imgl -->|3| packages__dsl2imgl
     packages__nlp2imgl -->|3| imgl__terminal_md
     imgl__autodiag -->|3| imgl__freshness
     imgl__autodiag -->|3| imgl__diagnose
-    imgl__cli -->|3| imgl__scene_cache
+    imgl__pipeline -->|3| imgl__diagnose
     packages__cli2imgl -->|2| packages__nlp2imgl
     packages__mcp2imgl -->|2| packages__nlp2imgl
-    packages__dsl2imgl -->|2| imgl__window_scope
-    packages__dsl2imgl -->|2| imgl__interact
-    packages__dsl2imgl -->|2| imgl__execute
     imgl__scene_cache -->|2| imgl__export
-    imgl__pipeline -->|2| imgl__detect
-    imgl__pipeline -->|2| imgl__layout
-    imgl__web -->|2| imgl__scene_cache
-    imgl__web -->|2| imgl__export
-    imgl__web -->|2| imgl__llm_catalog
-    imgl__cli -->|2| imgl__capture
-    imgl__interact -->|2| imgl__execute
     imgl__catalog -->|2| imgl__catalog_heuristic
-    imgl__capture -->|2| imgl__diagnose
     imgl__llm_catalog -->|2| imgl__window_scope
     imgl__llm_catalog -->|2| imgl__catalog_heuristic
+    imgl__pipeline -->|2| imgl__detect
+    imgl__pipeline -->|2| imgl__layout
     imgl__control -->|2| imgl__diagnose
     imgl__control -->|2| imgl__installs
     imgl__control -->|2| imgl__vdisplay_bridge
+    imgl__capture_provenance -->|2| imgl__vdisplay_bridge
     imgl__vdisplay_bridge -->|2| imgl__window_scope
+    imgl__web -->|2| imgl__scene_cache
+    imgl__web -->|2| imgl__export
+    imgl__web -->|2| imgl__llm_catalog
+    packages__dsl2imgl -->|2| imgl__scene_cache
+    packages__dsl2imgl -->|2| imgl__window_scope
+    packages__dsl2imgl -->|2| imgl__interact
+    packages__dsl2imgl -->|2| imgl__execute
+    imgl__cli -->|2| imgl__capture
+    imgl__interact -->|2| imgl__execute
+    imgl__capture -->|2| imgl__diagnose
     packages__cli2imgl -->|1| packages__dsl2imgl
     packages__uri2imgl -->|1| packages__dsl2imgl
     packages__mcp2imgl -->|1| packages__dsl2imgl
-    packages__dsl2imgl -->|1| imgl__scene_cache
-    packages__dsl2imgl -->|1| imgl__nlp2uri
-    packages__dsl2imgl -->|1| imgl__capture
+    packages__nlp2imgl -->|1| imgl__llm_catalog
+    packages__nlp2imgl -->|1| imgl__vdisplay_bridge
     examples__scripts -->|1| imgl__pipeline
     examples__scripts -->|1| imgl__window_scope
     examples__scripts -->|1| imgl__catalog
@@ -108,11 +109,27 @@ flowchart TD
     imgl__scene_cache -->|1| imgl__pipeline
     imgl__actions -->|1| imgl__window_scope
     imgl__actions -->|1| imgl__geometry
+    imgl__catalog -->|1| imgl__llm_catalog
     imgl__preprocess -->|1| imgl__paths
+    imgl__llm_catalog -->|1| imgl__catalog_filter
+    imgl__llm_catalog -->|1| imgl__uri
+    imgl__llm_catalog -->|1| imgl__geometry
+    imgl__window_scope -->|1| imgl__pipeline
+    imgl__window_scope -->|1| imgl__layout
     imgl__pipeline -->|1| imgl__preprocess
     imgl__pipeline -->|1| imgl__ocr
     imgl__pipeline -->|1| imgl__classify
     imgl__pipeline -->|1| imgl__coords
+    imgl__pipeline -->|1| imgl__capture_provenance
+    imgl__control -->|1| packages__nlp2imgl
+    imgl__control -->|1| imgl__llm_catalog
+    imgl__capture_provenance -->|1| imgl__installs
+    imgl__vdisplay_bridge -->|1| imgl__scene_cache
+    imgl__vdisplay_bridge -->|1| imgl__paths
+    imgl__vdisplay_bridge -->|1| imgl__autodiag
+    imgl__catalog_heuristic -->|1| imgl__actions
+    imgl__catalog_heuristic -->|1| imgl__catalog_filter
+    imgl__catalog_heuristic -->|1| imgl__window_scope
     imgl__export -->|1| imgl__paths
     imgl__web -->|1| imgl__paths
     imgl__web -->|1| imgl__catalog
@@ -120,8 +137,10 @@ flowchart TD
     imgl__web -->|1| imgl__nlp2uri
     imgl__web -->|1| imgl__interact
     imgl__web -->|1| imgl__execute
-    packages__nlp2imgl -->|1| imgl__llm_catalog
-    packages__nlp2imgl -->|1| imgl__vdisplay_bridge
+    packages__dsl2imgl -->|1| imgl__nlp2uri
+    packages__dsl2imgl -->|1| imgl__capture
+    packages__dsl2imgl -->|1| imgl__pipeline
+    packages__dsl2imgl -->|1| imgl__export
     imgl__cli -->|1| imgl__autodiag
     imgl__cli -->|1| packages__rest2imgl
     imgl__cli -->|1| imgl__interact
@@ -130,18 +149,7 @@ flowchart TD
     imgl__interact -->|1| imgl__actions
     imgl__interact -->|1| imgl__uri
     imgl__interact -->|1| imgl__nlp2uri
-    imgl__catalog -->|1| imgl__llm_catalog
+    imgl__capture -->|1| imgl__freshness
+    imgl__capture -->|1| imgl__capture_provenance
     imgl__capture -->|1| imgl__installs
-    imgl__llm_catalog -->|1| imgl__catalog_filter
-    imgl__llm_catalog -->|1| imgl__uri
-    imgl__llm_catalog -->|1| imgl__geometry
-    imgl__window_scope -->|1| imgl__pipeline
-    imgl__window_scope -->|1| imgl__layout
-    imgl__control -->|1| packages__nlp2imgl
-    imgl__control -->|1| imgl__llm_catalog
-    imgl__vdisplay_bridge -->|1| imgl__scene_cache
-    imgl__vdisplay_bridge -->|1| imgl__paths
-    imgl__vdisplay_bridge -->|1| imgl__autodiag
-    imgl__catalog_heuristic -->|1| imgl__actions
-    imgl__catalog_heuristic -->|1| imgl__catalog_filter
-    imgl__catalog_heuristic -->|1| imgl__window_scope
+    imgl__execute -->|1| imgl__capture_provenance

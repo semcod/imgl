@@ -1,52 +1,52 @@
-# imgl | 491 func | 69f | 61472L | python | 2026-06-09
+# imgl | 503 func | 70f | 155168L | python | 2026-06-09
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.8  critical=60 (limit:10)  dup=0  cycles=0
+  CC̄=4.8  critical=62 (limit:10)  dup=0  cycles=0
 
 ALERTS[20]:
-  !!! cc_exceeded      main = 62 (limit:15)
-  !!! high_fan_out     main = 57 (limit:10)
+  !!! cc_exceeded      main = 64 (limit:15)
+  !!! high_fan_out     main = 61 (limit:10)
   !!! high_fan_out     create_app = 45 (limit:10)
   !!! cc_exceeded      _derive_current_next = 32 (limit:15)
   !!! cc_exceeded      _resolve_type = 30 (limit:15)
   !!! cc_exceeded      WebSession.act = 29 (limit:15)
   !!! cc_exceeded      prompt_to_imgl_uri = 28 (limit:15)
-  !!! high_fan_out     _run_image_command = 28 (limit:10)
   !!! high_fan_out     smart_capture = 28 (limit:10)
+  !!! high_fan_out     _run_image_command = 28 (limit:10)
   !!! cc_exceeded      classify_scene_elements = 27 (limit:15)
 
-MODULES[119] (top by size):
-  M[layout.vql.json] 46316L C:0 F:0 CC↑0 D:0 (json)
+MODULES[122] (top by size):
+  M[layout.vql.json] 63208L C:0 F:0 CC↑0 D:0 (json)
+  M[screen.vql.json] 51347L C:0 F:0 CC↑0 D:0 (json)
+  M[layout.vql.imgl.json] 13915L C:0 F:0 CC↑0 D:0 (json)
+  M[screen.vql.imgl.json] 11260L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
-  M[imgl/cli.py] 933L C:0 F:9 CC↑62 D:0 (python)
+  M[imgl/cli.py] 958L C:0 F:9 CC↑64 D:0 (python)
   M[imgl/window_scope.py] 698L C:1 F:29 CC↑18 D:10 (python)
-  M[imgl/interact.py] 659L C:1 F:16 CC↑30 D:4 (python)
-  M[imgl/capture.py] 550L C:2 F:27 CC↑26 D:4 (python)
+  M[imgl/interact.py] 665L C:1 F:17 CC↑30 D:4 (python)
+  M[imgl/capture.py] 559L C:2 F:28 CC↑26 D:4 (python)
   M[imgl/autodiag.py] 530L C:0 F:27 CC↑32 D:5 (python)
   M[imgl/llm_catalog.py] 521L C:0 F:16 CC↑14 D:4 (python)
   M[goal.yaml] 511L C:0 F:0 CC↑0 D:0 (yaml)
   M[imgl/web/session.py] 452L C:5 F:18 CC↑29 D:0 (python)
   M[imgl/detect/local.py] 374L C:1 F:20 CC↑23 D:0 (python)
-  M[imgl/control.py] 357L C:0 F:16 CC↑25 D:1 (python)
-  M[imgl/export/annotate_export.py] 299L C:0 F:14 CC↑8 D:3 (python)
-  M[imgl/web/app.py] 286L C:6 F:1 CC↑4 D:0 (python)
-  M[packages/dsl2imgl/src/dsl2imgl/pb_codec.py] 284L C:0 F:32 CC↑5 D:3 (python)
-  LANGS: python:83/json:12/shell:7/yaml:7/toml:7/proto:2/other:1
+  M[imgl/export/vql_adapter.py] 362L C:0 F:13 CC↑19 D:4 (python)
+  LANGS: python:84/json:14/shell:7/yaml:7/toml:7/proto:2/other:1
 
 HOTSPOTS[10]:
-  ★ main fan=57  // Orchestrates 57 calls
+  ★ main fan=61  // Orchestrates 61 calls
   ★ create_app fan=45  // Orchestrates 45 calls
-  ★ _run_image_command fan=28  // Orchestrates 28 calls
   ★ smart_capture fan=28  // Capture with cache invalidation and optional vdisplay X11 fallback.
+  ★ _run_image_command fan=28  // Orchestrates 28 calls
   ★ build_parser fan=25  // Orchestrates 25 calls
 
 REFACTOR[15]:
-  [1] H/L Split prompt_to_imgl_uri (CC=28)
-  [2] H/L Split WebSession.act (CC=29)
-  [3] H/L Split classify_scene_elements (CC=27)
-  [4] H/L Split _derive_current_next (CC=32)
-  [5] H/L Split main (CC=62)
+  [1] H/L Split _derive_current_next (CC=32)
+  [2] H/L Split prompt_to_imgl_uri (CC=28)
+  [3] H/L Split smart_capture (CC=25)
+  [4] H/L Split WebSession.act (CC=29)
+  [5] H/L Split classify_scene_elements (CC=27)
 
 EVOLUTION:
-  2026-06-09 CC̄=4.8 crit=60 61472L // Automated analysis
+  2026-06-09 CC̄=4.8 crit=62 155168L // Automated analysis
