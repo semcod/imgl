@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from imgl.catalog import InteractiveOption
+from imgl.catalog_types import InteractiveOption
 
 _CODE_RE = re.compile(
     r"(import\s|from\s+\w+\s+import|def\s|class\s|window_\d+-|"

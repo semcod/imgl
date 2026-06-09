@@ -1,11 +1,12 @@
-# imgl | 113f 13391L | python:99,shell:13,less:1 | 2026-06-09
-# stats: 463 func | 38 cls | 113 mod | CC̄=5.1 | critical:53 | cycles:0
-# alerts[5]: CC main=44; CC parse_line=44; CC run_interactive_shell=43; CC envelope_to_dict=42; CC _set_body=31
-# hotspots[5]: main fan=41; create_app fan=38; run_interactive_shell fan=32; _run_image_command fan=28; _detect_buttons fan=24
+# imgl | 122f 15705L | python:114,shell:7,less:1 | 2026-06-09
+# stats: 622 func | 38 cls | 122 mod | CC̄=4.6 | critical:61 | cycles:0
+# alerts[5]: CC main=62; CC _derive_current_next=32; CC _resolve_type=30; CC prompt_to_imgl_uri=28; CC classify_scene_elements=27
+# hotspots[5]: main fan=54; create_app fan=38; _run_image_command fan=28; capture_screen fan=21; smart_capture fan=21
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[113]:
-  app.doql.less,212
+M[122]:
+  app.doql.less,209
+  examples/img2nl-vql-flow.sh,11
   examples/scripts/demo-agent-loop.sh,38
   examples/scripts/demo-github.sh,22
   examples/scripts/demo-nlp2uri.py,80
@@ -13,18 +14,21 @@ M[113]:
   imgl/__init__.py,52
   imgl/__main__.py,7
   imgl/actions.py,272
-  imgl/autodiag.py,407
-  imgl/capture.py,212
-  imgl/catalog.py,351
+  imgl/autodiag.py,531
+  imgl/capture.py,551
+  imgl/catalog.py,92
   imgl/catalog_filter.py,139
+  imgl/catalog_heuristic.py,257
+  imgl/catalog_types.py,47
   imgl/classify/__init__.py,6
   imgl/classify/gui_heuristics.py,262
-  imgl/cli.py,718
+  imgl/cli.py,934
   imgl/config.py,24
+  imgl/control.py,358
   imgl/coords.py,71
   imgl/detect/__init__.py,12
   imgl/detect/img2vql_bridge.py,65
-  imgl/detect/local.py,279
+  imgl/detect/local.py,375
   imgl/detect/rectangles.py,97
   imgl/diagnose.py,248
   imgl/execute.py,163
@@ -37,9 +41,10 @@ M[113]:
   imgl/export/vql_adapter.py,245
   imgl/freshness.py,152
   imgl/geometry.py,38
-  imgl/interact.py,561
+  imgl/installs.py,126
+  imgl/interact.py,660
   imgl/layout.py,109
-  imgl/llm_catalog.py,521
+  imgl/llm_catalog.py,522
   imgl/nlp2uri.py,283
   imgl/ocr/__init__.py,13
   imgl/ocr/base.py,15
@@ -49,6 +54,7 @@ M[113]:
   imgl/pipeline.py,117
   imgl/preprocess.py,64
   imgl/scene_cache.py,64
+  imgl/terminal_md.py,211
   imgl/types.py,171
   imgl/uri.py,119
   imgl/vdisplay_bridge.py,254
@@ -57,7 +63,7 @@ M[113]:
   imgl/web/app.py,287
   imgl/web/session.py,453
   imgl/web/thumbs.py,56
-  imgl/window_scope.py,576
+  imgl/window_scope.py,699
   packages/cli2imgl/src/cli2imgl/cli.py,35
   packages/dsl2imgl/scripts/generate-proto.sh,7
   packages/dsl2imgl/src/dsl2imgl/__init__.py,7
@@ -66,10 +72,10 @@ M[113]:
   packages/dsl2imgl/src/dsl2imgl/codec.py,58
   packages/dsl2imgl/src/dsl2imgl/engine.py,6
   packages/dsl2imgl/src/dsl2imgl/events.py,169
-  packages/dsl2imgl/src/dsl2imgl/grammar.py,138
+  packages/dsl2imgl/src/dsl2imgl/grammar.py,187
   packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py,2
   packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py,221
-  packages/dsl2imgl/src/dsl2imgl/pb_codec.py,241
+  packages/dsl2imgl/src/dsl2imgl/pb_codec.py,285
   packages/dsl2imgl/src/dsl2imgl/result.py,35
   packages/dsl2imgl/src/dsl2imgl/schema_registry.py,45
   packages/dsl2imgl/src/dsl2imgl/v1/__init__.py,2
@@ -80,36 +86,46 @@ M[113]:
   packages/mcp2imgl/src/mcp2imgl/cli.py,23
   packages/mcp2imgl/src/mcp2imgl/server.py,36
   packages/nlp2imgl/src/nlp2imgl/__init__.py,5
-  packages/nlp2imgl/src/nlp2imgl/cli.py,92
+  packages/nlp2imgl/src/nlp2imgl/cli.py,23
+  packages/nlp2imgl/src/nlp2imgl/cli_commands.py,72
+  packages/nlp2imgl/src/nlp2imgl/cli_parser.py,38
   packages/nlp2imgl/src/nlp2imgl/control.py,151
-  packages/nlp2imgl/src/nlp2imgl/to_dsl.py,94
+  packages/nlp2imgl/src/nlp2imgl/to_dsl.py,100
   packages/rest2imgl/src/rest2imgl/app.py,126
   packages/rest2imgl/src/rest2imgl/cli.py,27
   packages/uri2imgl/src/uri2imgl/__init__.py,4
   packages/uri2imgl/src/uri2imgl/cli.py,37
   packages/uri2imgl/src/uri2imgl/decode.py,36
   project.sh,59
+  tests/conftest.py,12
   tests/test_actions.py,140
   tests/test_annotate.py,59
-  tests/test_autodiag.py,91
-  tests/test_capture_paths.py,105
+  tests/test_autodiag.py,149
+  tests/test_capture_paths.py,106
+  tests/test_capture_vdisplay.py,40
+  tests/test_capture_vdisplay_priority.py,100
   tests/test_catalog_filter.py,73
   tests/test_catalog_interact.py,200
+  tests/test_control_cli.py,144
+  tests/test_detect_buttons.py,78
   tests/test_diagnose.py,147
   tests/test_execute_key.py,17
   tests/test_export.py,218
-  tests/test_imgl.py,202
+  tests/test_imgl.py,204
+  tests/test_installs.py,78
   tests/test_layout_classify.py,176
   tests/test_llm_catalog.py,127
+  tests/test_nlp2imgl_cli.py,92
   tests/test_nlp2imgl_control.py,36
   tests/test_nlp2imgl_llm.py,29
   tests/test_nlp2uri_fixes.py,63
   tests/test_ocr_lang.py,17
   tests/test_scene_cache.py,90
+  tests/test_terminal_md.py,49
   tests/test_vdisplay_bridge.py,51
   tests/test_vql_export.py,106
   tests/test_web.py,121
-  tests/test_window_scope.py,198
+  tests/test_window_scope.py,221
   tree.sh,2
 D:
   examples/scripts/demo-nlp2uri.py:
@@ -130,19 +146,25 @@ D:
     _window_matches(window;query)
     _find_label_for_input(scene;input_element;window)
   imgl/autodiag.py:
-    e: img2nl_root,img2nl_available,diagnose_capture,build_operation_step,_compact_result,build_execute_report,pick_output_format,render_report,_flag_enabled,should_block_blank_capture,should_block_stale_capture,diagnostics_enabled,_render_markdown,_overall_verdict,_actionable_hints,_compact_features,_scene_class,_parse_coords,_coords_from_action,_parse_typed_text,_parse_keys
+    e: img2nl_root,img2nl_available,diagnose_capture,build_operation_step,_compact_result,build_execute_report,resolve_cli_output_format,pick_output_format,render_report,_flag_enabled,should_block_blank_capture,should_block_stale_capture,diagnostics_enabled,_yaml_codeblock,_shell_quote,_capture_next_cmd,_derive_current_next,_markdown_payload,_render_markdown,_overall_verdict,_actionable_hints,_compact_features,_scene_class,_parse_coords,_coords_from_action,_parse_typed_text,_parse_keys
     img2nl_root()
     img2nl_available()
     diagnose_capture(image_path)
     build_operation_step(result)
     _compact_result(result)
     build_execute_report()
+    resolve_cli_output_format()
     pick_output_format(payload;requested)
     render_report(payload;fmt)
     _flag_enabled()
     should_block_blank_capture(capture)
     should_block_stale_capture(capture)
     diagnostics_enabled()
+    _yaml_codeblock(data)
+    _shell_quote(value)
+    _capture_next_cmd(image)
+    _derive_current_next(report)
+    _markdown_payload(report)
     _render_markdown(report)
     _overall_verdict(capture;operation)
     _actionable_hints(report)
@@ -153,32 +175,40 @@ D:
     _parse_typed_text(message)
     _parse_keys(message)
   imgl/capture.py:
-    e: default_capture_path,_is_wayland,capture_screen,_try_vql_capture,_native_backends,_run_command,_capture_with_grim,_capture_with_gnome_screenshot,_capture_with_scrot,_capture_with_portal,_capture_with_mss,_is_blank_image,capture_status_message,CaptureError,BlankCaptureError
+    e: last_capture_meta,_prefer_mirror,_vql_capture_enabled,_portal_fallback_enabled,_vdisplay_portal_in_chain_enabled,default_capture_path,_is_wayland,capture_screen,_screen_recording_denied,_capture_failure_hint,_try_vdisplay_capture,_try_vql_capture,_discard_capture_file,_non_portal_backends,_portal_backends,_try_portal_backends,_run_command,_capture_with_gnome_shell,_capture_with_grim,_capture_with_gnome_screenshot,_capture_with_scrot,_portal_python,_portal_script,_capture_with_portal,_capture_with_mss,_is_blank_image,capture_status_message,CaptureError,BlankCaptureError
     CaptureError:  # Raised when screen capture fails.
     BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
+    last_capture_meta()
+    _prefer_mirror()
+    _vql_capture_enabled()
+    _portal_fallback_enabled()
+    _vdisplay_portal_in_chain_enabled()
     default_capture_path(out)
     _is_wayland()
     capture_screen(out)
+    _screen_recording_denied(errors)
+    _capture_failure_hint()
+    _try_vdisplay_capture(path)
     _try_vql_capture(path)
-    _native_backends()
+    _discard_capture_file(path)
+    _non_portal_backends()
+    _portal_backends()
+    _try_portal_backends(path)
     _run_command(cmd;path)
+    _capture_with_gnome_shell(path)
     _capture_with_grim(path)
     _capture_with_gnome_screenshot(path)
     _capture_with_scrot(path)
+    _portal_python()
+    _portal_script()
     _capture_with_portal(path)
     _capture_with_mss(path)
     _is_blank_image(path)
     capture_status_message(path)
   imgl/catalog.py:
-    e: build_interactive_catalog,format_catalog_table,_window_option,_element_option,_infer_input_label,_find_window,_iter_interactive_elements,_truncate,InteractiveOption
-    InteractiveOption: to_dict(0)  # One selectable UI target with mouse/keyboard affordances.
+    e: build_interactive_catalog,format_catalog_table,_truncate
     build_interactive_catalog(scene)
     format_catalog_table(options)
-    _window_option(index;window)
-    _element_option(index;element)
-    _infer_input_label(element;window)
-    _find_window(scene;window_id)
-    _iter_interactive_elements(scene)
     _truncate(value;max_len)
   imgl/catalog_filter.py:
     e: filter_catalog,_renumber,_replace_index_in_uri,_keep_element,_element_score,_window_score
@@ -188,6 +218,17 @@ D:
     _keep_element(option)
     _element_score(option)
     _window_score(option)
+  imgl/catalog_heuristic.py:
+    e: build_heuristic_catalog,infer_input_label,_window_option,_element_option,_find_window,_iter_interactive_elements
+    build_heuristic_catalog(scene)
+    infer_input_label(element;window)
+    _window_option(index;window)
+    _element_option(index;element)
+    _find_window(scene;window_id)
+    _iter_interactive_elements(scene)
+  imgl/catalog_types.py:
+    e: InteractiveOption
+    InteractiveOption: to_dict(0)  # One selectable UI target with mouse/keyboard affordances.
   imgl/classify/__init__.py:
   imgl/classify/gui_heuristics.py:
     e: classify_scene_elements,_normalize_confidence,_word_count,_text_or_label,_label_candidates,_match_ocr_to_bbox,_nearest_label,_ocr_inside_frame,_build_inputs
@@ -201,7 +242,9 @@ D:
     _ocr_inside_frame(frame;window_ocr;used_ocr)
     _build_inputs()
   imgl/cli.py:
-    e: _add_common_args,build_parser,_write_output,main,_check_blank_before_analyze,_apply_config_overrides,_run_image_command
+    e: _add_output_format_flags,_output_format,_add_common_args,build_parser,_write_output,main,_check_blank_before_analyze,_apply_config_overrides,_run_image_command
+    _add_output_format_flags(parser)
+    _output_format(args)
     _add_common_args(parser)
     build_parser()
     _write_output(content;output)
@@ -212,6 +255,24 @@ D:
   imgl/config.py:
     e: ImglConfig
     ImglConfig:
+  imgl/control.py:
+    e: default_image_path,default_window,_vql_cache_paths,clear_ocr_cache,screen_usable,smart_capture,capture_interactive,verify_capture,run_doctor,run_map,_control_packages_present,_require_nlp2imgl,run_execute,run_shot,install_img2nl,install_vdisplay
+    default_image_path()
+    default_window()
+    _vql_cache_paths(image)
+    clear_ocr_cache(image)
+    screen_usable(image)
+    smart_capture(image)
+    capture_interactive(image)
+    verify_capture(image)
+    run_doctor(image)
+    run_map(image)
+    _control_packages_present()
+    _require_nlp2imgl()
+    run_execute(prompt)
+    run_shot(prompt)
+    install_img2nl()
+    install_vdisplay()
   imgl/coords.py:
     e: scale_scene_to_screen
     scale_scene_to_screen(scene)
@@ -223,13 +284,24 @@ D:
     detect_with_img2vql(image_path)
     detect_ui_merged(image)
   imgl/detect/local.py:
-    e: _hex_color,_avg_color,_iou_xyxy,_detect_titlebar,_flood_rects,_detect_buttons,_detect_panels_simple,_dedupe,detect_ui_elements,DetectedUI
+    e: _hex_color,_avg_color,_iou_xyxy,_detect_titlebar,_flood_rects,_prepare_button_scan,_neighbor_avg_rgb,_build_contrast_mask,_button_blob_area_limits,_valid_button_blob_size,_scale_blob_rect,_overlaps_seen_button,_button_confidence,_button_role,_button_from_blob_rect,_rank_button_detections,_detect_buttons,_detect_panels_simple,_dedupe,detect_ui_elements,DetectedUI
     DetectedUI:
     _hex_color(rgb)
     _avg_color(im;x0;y0;x1;y1)
     _iou_xyxy(a;b)
     _detect_titlebar(im;w;h)
     _flood_rects(mask)
+    _prepare_button_scan(im;w;h)
+    _neighbor_avg_rgb(pixels)
+    _build_contrast_mask(pixels)
+    _button_blob_area_limits(sw;sh)
+    _valid_button_blob_size(rw;rh)
+    _scale_blob_rect(rect;scale)
+    _overlaps_seen_button(box;seen_boxes)
+    _button_confidence(aspect;bw;bh)
+    _button_role(aspect;bw;bh)
+    _button_from_blob_rect(im;rect)
+    _rank_button_detections(elements)
     _detect_buttons(im;w;h)
     _detect_panels_simple(im;w;h)
     _dedupe(elements)
@@ -334,8 +406,19 @@ D:
     center_in(inner;outer)
     bbox_distance(a;b)
     bbox_from_xyxy(x0;y0;x1;y1)
+  imgl/installs.py:
+    e: _repo_root,vdisplay_available,_auto_install_vdisplay_enabled,ensure_vdisplay,_pip_install_editable,install_img2nl,install_vdisplay,install_vql,install_control
+    _repo_root(name;env_key;default)
+    vdisplay_available()
+    _auto_install_vdisplay_enabled()
+    ensure_vdisplay()
+    _pip_install_editable(path)
+    install_img2nl()
+    install_vdisplay()
+    install_vql()
+    install_control()
   imgl/interact.py:
-    e: _build_session_catalog,resolve_imgl_uri,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt,InteractSession
+    e: _build_session_catalog,resolve_imgl_uri,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,_prepare_interactive_session,_show_initial_shell_views,_print_actions_phase_hints,_read_shell_prompt,_handle_resolved_shell_action,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt,InteractSession
     InteractSession:
     _build_session_catalog(session)
     resolve_imgl_uri(uri;session)
@@ -344,6 +427,11 @@ D:
     _annotate_catalog(session)
     _select_window(session;window_ref)
     _export_window_previews(session)
+    _prepare_interactive_session(image_path)
+    _show_initial_shell_views()
+    _print_actions_phase_hints()
+    _read_shell_prompt(stdin;stderr)
+    _handle_resolved_shell_action()
     run_interactive_shell(image_path)
     describe_resolution(resolved)
     _print_catalog_banner(session;cfg;use_llm;no_filter;stderr)
@@ -416,6 +504,17 @@ D:
     load_cached_scene(image_path;vql_file)
     save_scene_cache(scene;vql_file)
     load_or_analyze(image_path)
+  imgl/terminal_md.py:
+    e: _c,stdout_color_enabled,_verdict_color,_highlight_yaml_line,_color_yaml_value,_highlight_bash_line,_highlight_inline,colorize_markdown,print_report
+    _c(name;text)
+    stdout_color_enabled()
+    _verdict_color(verdict)
+    _highlight_yaml_line(line)
+    _color_yaml_value(rest)
+    _highlight_bash_line(line)
+    _highlight_inline(text)
+    colorize_markdown(text)
+    print_report(text;fmt)
   imgl/types.py:
     e: dataclass_to_dict,BBox,OcrBox,Element,Window,Scene
     BBox: as_xyxy(0),contains(1),to_dict(0),from_xyxy(5)
@@ -478,12 +577,16 @@ D:
     crop_bbox_png(image_path;bbox)
     window_bbox_dict(window)
   imgl/window_scope.py:
-    e: is_monolithic_scene,apply_discovered_windows,discover_windows,summarize_windows,format_window_picker,get_discovered_window,scene_for_window,crop_window_image,export_window_crop,default_window_annotated_path,_split_monolithic_window,_collect_elements,_detect_layout_mode,_split_side_by_side,_split_stacked,_image_gutter_candidates,_element_gap_gutters,_regions_from_balanced_gutters,_split_by_element_y_gaps,_best_vertical_split,_region_id_for_boxes,_guess_window_title,_shift_elements,_shift_ocr_boxes,_safe_filename,WindowSummary
+    e: is_monolithic_scene,apply_discovered_windows,discover_windows,summarize_windows,pick_focus_window,should_scope_window,scope_to_focus_window,scope_image_to_focus_window,format_window_picker,get_discovered_window,scene_for_window,crop_window_image,export_window_crop,default_window_annotated_path,_split_monolithic_window,_collect_elements,_detect_layout_mode,_split_side_by_side,_split_stacked,_image_gutter_candidates,_element_gap_gutters,_regions_from_balanced_gutters,_split_by_element_y_gaps,_best_vertical_split,_region_id_for_boxes,_guess_window_title,_shift_elements,_shift_ocr_boxes,_safe_filename,WindowSummary
     WindowSummary: label(0),bbox(0)  # One discoverable window region with stats for the picker UI.
     is_monolithic_scene(scene)
     apply_discovered_windows(scene)
     discover_windows(scene)
     summarize_windows(scene)
+    pick_focus_window(summaries)
+    should_scope_window(scene;summary)
+    scope_to_focus_window(image_path;scene)
+    scope_image_to_focus_window(image_path)
     format_window_picker(summaries)
     get_discovered_window(scene;window_ref)
     scene_for_window(scene;window)
@@ -534,9 +637,21 @@ D:
     StoredEvent: to_dict(0)
     EventStore: __init__(1),for_default(2),append_command(2),_append_pb(1),_append_jsonl(1),replay_pb(0),replay(0)
   packages/dsl2imgl/src/dsl2imgl/grammar.py:
-    e: split_command,pick_flag,parse_line,to_text
+    e: split_command,pick_flag,_strip_prompt_tokens,_apply_image_window_flags,_parse_capture,_parse_analyze,_parse_actions,_parse_resolve,_parse_click,_parse_type,_parse_key,_parse_execute,_parse_interaction_verb,_parse_agent,parse_line,to_text
     split_command(line)
     pick_flag(tokens;flag)
+    _strip_prompt_tokens(rest)
+    _apply_image_window_flags(cmd;rest)
+    _parse_capture(rest;cmd)
+    _parse_analyze(rest;cmd)
+    _parse_actions(rest;cmd)
+    _parse_resolve(rest;cmd)
+    _parse_click(rest;cmd)
+    _parse_type(rest;cmd)
+    _parse_key(rest;cmd)
+    _parse_execute(rest;cmd)
+    _parse_interaction_verb(rest;cmd)
+    _parse_agent(rest;cmd)
     parse_line(line)
     to_text(cmd)
   packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py:
@@ -551,8 +666,30 @@ D:
     handle_resolve(cmd)
     handle_execute(cmd)
   packages/dsl2imgl/src/dsl2imgl/pb_codec.py:
-    e: _set_body,dict_to_envelope,envelope_to_dict,encode_protobuf,decode_protobuf,encode_text_to_protobuf,decode_protobuf_to_text,result_to_pb,pb_to_result,encode_result_protobuf
+    e: _assign_optional_str,_assign_execute_flag,_set_capture_body,_set_analyze_body,_set_actions_body,_set_resolve_body,_set_click_body,_set_type_body,_set_key_body,_set_execute_body,_set_agent_body,_set_body,_dict_optional_str,_dict_execute_flag,_dict_capture_body,_dict_analyze_body,_dict_actions_body,_dict_resolve_body,_dict_click_body,_dict_type_body,_dict_key_body,_dict_execute_body,_dict_agent_body,dict_to_envelope,envelope_to_dict,encode_protobuf,decode_protobuf,encode_text_to_protobuf,decode_protobuf_to_text,result_to_pb,pb_to_result,encode_result_protobuf
+    _assign_optional_str(msg;field;cmd;key)
+    _assign_execute_flag(msg;cmd)
+    _set_capture_body(msg;cmd)
+    _set_analyze_body(msg;cmd)
+    _set_actions_body(msg;cmd)
+    _set_resolve_body(msg;cmd)
+    _set_click_body(msg;cmd)
+    _set_type_body(msg;cmd)
+    _set_key_body(msg;cmd)
+    _set_execute_body(msg;cmd)
+    _set_agent_body(msg;cmd)
     _set_body(envelope;cmd)
+    _dict_optional_str(cmd;msg;key)
+    _dict_execute_flag(cmd;msg)
+    _dict_capture_body(cmd;msg)
+    _dict_analyze_body(cmd;msg)
+    _dict_actions_body(cmd;msg)
+    _dict_resolve_body(cmd;msg)
+    _dict_click_body(cmd;msg)
+    _dict_type_body(cmd;msg)
+    _dict_key_body(cmd;msg)
+    _dict_execute_body(cmd;msg)
+    _dict_agent_body(cmd;msg)
     dict_to_envelope(cmd)
     envelope_to_dict(envelope)
     encode_protobuf(cmd)
@@ -599,6 +736,16 @@ D:
   packages/nlp2imgl/src/nlp2imgl/cli.py:
     e: main
     main(argv)
+  packages/nlp2imgl/src/nlp2imgl/cli_commands.py:
+    e: output_format,run_to_dsl,run_doctor,_print_apply_payload,run_apply
+    output_format(args)
+    run_to_dsl(args)
+    run_doctor(args)
+    _print_apply_payload(payload;fmt)
+    run_apply(args)
+  packages/nlp2imgl/src/nlp2imgl/cli_parser.py:
+    e: build_parser
+    build_parser()
   packages/nlp2imgl/src/nlp2imgl/control.py:
     e: default_image_path,default_window,_result_to_dict,doctor_capture,apply_nl_with_diag
     default_image_path()
@@ -626,6 +773,9 @@ D:
   packages/uri2imgl/src/uri2imgl/decode.py:
     e: uri_to_dsl
     uri_to_dsl(uri)
+  tests/conftest.py:
+    e: _disable_vdisplay_auto_install
+    _disable_vdisplay_auto_install(monkeypatch)
   tests/test_actions.py:
     e: _dialog_scene,test_find_button_by_text,test_find_input_by_label,test_click_coords,test_click_action,test_type_into_by_label,test_find_in_window,test_find_one_not_found,test_click_raises_when_missing,test_list_actions,test_cli_find_command
     _dialog_scene()
@@ -646,10 +796,13 @@ D:
     test_write_annotated_image(tmp_path)
     test_nlp2uri_mapa()
   tests/test_autodiag.py:
-    e: test_image_freshness_sidecar,test_verify_capture_updated_fails_on_stale,test_build_execute_report_json,test_diagnose_capture_stale,test_is_valid_png_rejects_empty,test_vql_cache_path_names
+    e: test_image_freshness_sidecar,test_verify_capture_updated_fails_on_stale,test_build_execute_report_json,test_render_report_markdown_uses_yaml_codeblock,test_pick_output_format_defaults_to_markdown,test_build_execute_report_stale_has_current_and_next_cmd,test_diagnose_capture_stale,test_is_valid_png_rejects_empty,test_vql_cache_path_names
     test_image_freshness_sidecar(tmp_path)
     test_verify_capture_updated_fails_on_stale(tmp_path)
     test_build_execute_report_json()
+    test_render_report_markdown_uses_yaml_codeblock()
+    test_pick_output_format_defaults_to_markdown()
+    test_build_execute_report_stale_has_current_and_next_cmd()
     test_diagnose_capture_stale(tmp_path;monkeypatch)
     test_is_valid_png_rejects_empty(tmp_path)
     test_vql_cache_path_names()
@@ -663,7 +816,15 @@ D:
     test_capture_default_path(tmp_path)
     test_cli_vql_aborts_on_blank(tmp_path)
     test_cli_vql_allows_blank_with_flag(tmp_path)
-    test_capture_screen_with_mock_vql(tmp_path)
+    test_capture_screen_with_mock_vql(tmp_path;monkeypatch)
+  tests/test_capture_vdisplay.py:
+    e: test_capture_screen_prefers_vdisplay
+    test_capture_screen_prefers_vdisplay(tmp_path)
+  tests/test_capture_vdisplay_priority.py:
+    e: test_capture_prefers_vdisplay_over_portal,test_capture_interactive_uses_mirror_not_portal,test_capture_interactive_portal_fallback_on_wayland
+    test_capture_prefers_vdisplay_over_portal(tmp_path;monkeypatch)
+    test_capture_interactive_uses_mirror_not_portal(tmp_path)
+    test_capture_interactive_portal_fallback_on_wayland(tmp_path;monkeypatch)
   tests/test_catalog_filter.py:
     e: _noisy_scene,test_filter_catalog_drops_code_and_generic,test_build_interactive_catalog_filtered_by_default
     _noisy_scene()
@@ -682,6 +843,26 @@ D:
     test_resolve_imgl_uri_type()
     test_catalog_input_number_is_click()
     test_interactive_shell_quit(monkeypatch)
+  tests/test_control_cli.py:
+    e: test_default_image_path_env,test_default_window_env,test_run_doctor,test_run_execute_missing_image,test_run_execute_loads_openrouter_key_from_dotenv,test_cli_doctor_help,test_cli_execute_help,test_require_nlp2imgl_auto_installs_from_local_packages,test_cli_default_output_is_markdown
+    test_default_image_path_env(monkeypatch;tmp_path)
+    test_default_window_env(monkeypatch)
+    test_run_doctor(tmp_path;monkeypatch)
+    test_run_execute_missing_image(tmp_path;monkeypatch)
+    test_run_execute_loads_openrouter_key_from_dotenv(tmp_path;monkeypatch)
+    test_cli_doctor_help()
+    test_cli_execute_help()
+    test_require_nlp2imgl_auto_installs_from_local_packages(monkeypatch)
+    test_cli_default_output_is_markdown()
+  tests/test_detect_buttons.py:
+    e: test_valid_button_blob_size_filters_extremes,test_button_role_classifies_icon_vs_button,test_button_confidence_prefers_typical_toolbar_shape,test_overlaps_seen_button_dedupes_high_iou,test_button_from_blob_rect_returns_none_for_invalid_blob,test_detect_buttons_finds_contrast_blob,test_detect_ui_elements_still_includes_buttons
+    test_valid_button_blob_size_filters_extremes()
+    test_button_role_classifies_icon_vs_button()
+    test_button_confidence_prefers_typical_toolbar_shape()
+    test_overlaps_seen_button_dedupes_high_iou()
+    test_button_from_blob_rect_returns_none_for_invalid_blob()
+    test_detect_buttons_finds_contrast_blob()
+    test_detect_ui_elements_still_includes_buttons(tmp_path)
   tests/test_diagnose.py:
     e: _black_image,_ui_like_image,test_worth_analyzing_blank_scene,test_worth_analyzing_ui_scene,test_diagnose_black_image_fallback,test_diagnose_with_img2nl_black,test_diagnose_with_img2nl_ui,test_pipeline_skip_blank_raises,test_pipeline_includes_content_metadata,test_cli_diagnose_command
     _black_image(path;size)
@@ -723,6 +904,15 @@ D:
     test_analyze_e2e_with_tesseract(tmp_path)
     test_cli_analyze_stdout(tmp_path;capsys)
     test_cli_analyze_output_file(tmp_path)
+  tests/test_installs.py:
+    e: test_install_img2nl_missing_repo,test_install_img2nl_calls_pip,test_install_vdisplay_calls_pip,test_install_vql_calls_pip,test_install_control_calls_pip,test_ensure_vdisplay_skips_when_installed,test_ensure_vdisplay_auto_installs
+    test_install_img2nl_missing_repo(tmp_path;monkeypatch)
+    test_install_img2nl_calls_pip(tmp_path;monkeypatch)
+    test_install_vdisplay_calls_pip(tmp_path;monkeypatch)
+    test_install_vql_calls_pip(tmp_path;monkeypatch)
+    test_install_control_calls_pip()
+    test_ensure_vdisplay_skips_when_installed(monkeypatch)
+    test_ensure_vdisplay_auto_installs(monkeypatch)
   tests/test_layout_classify.py:
     e: _font,_make_dialog_fixture,test_iou_and_center_in,test_build_windows_fallback,test_build_windows_from_panels,test_find_containing_window,test_extract_window_titles,test_classify_button_with_geometry,test_classify_label_input_pair,test_detect_ui_elements_on_fixture,test_analyze_classifies_dialog
     _font(size)
@@ -741,6 +931,13 @@ D:
     test_load_env_files_reads_dotenv(tmp_path;monkeypatch)
     test_snap_options_to_scene()
     test_merge_heuristic_inputs_appends_missing_fields()
+  tests/test_nlp2imgl_cli.py:
+    e: test_build_parser_registers_subcommands,test_run_to_dsl_prints_line,test_run_apply_uses_json_when_requested,test_run_doctor_exits_nonzero_on_stale_capture,test_main_dispatches_apply
+    test_build_parser_registers_subcommands()
+    test_run_to_dsl_prints_line(monkeypatch;capsys)
+    test_run_apply_uses_json_when_requested(monkeypatch;capsys)
+    test_run_doctor_exits_nonzero_on_stale_capture(monkeypatch)
+    test_main_dispatches_apply(monkeypatch)
   tests/test_nlp2imgl_control.py:
     e: test_apply_nl_with_diag_blocks_stale
     test_apply_nl_with_diag_blocks_stale(monkeypatch)
@@ -763,6 +960,12 @@ D:
     test_scale_scene_to_screen_doubles_coords()
     test_scene_cache_roundtrip(tmp_path)
     test_load_or_analyze_uses_cache(tmp_path;monkeypatch)
+  tests/test_terminal_md.py:
+    e: test_stdout_color_disabled_with_no_color,test_colorize_markdown_adds_ansi_when_forced,test_colorize_markdown_plain_when_disabled,test_resolve_cli_output_format_flags
+    test_stdout_color_disabled_with_no_color(monkeypatch)
+    test_colorize_markdown_adds_ansi_when_forced()
+    test_colorize_markdown_plain_when_disabled()
+    test_resolve_cli_output_format_flags()
   tests/test_vdisplay_bridge.py:
     e: test_suggest_imgl_region_bottom,test_suggest_imgl_region_top,test_correlate_windows_finds_overlap,test_vdisplay_available_is_bool
     test_suggest_imgl_region_bottom()
@@ -789,7 +992,7 @@ D:
     test_capture_error_returns_state(web_client;monkeypatch)
     test_agent_start_without_llm(web_client)
   tests/test_window_scope.py:
-    e: _wide_scene,test_discover_windows_splits_monolithic_scene,test_scene_for_window_shifts_coordinates,test_build_catalog_scoped_to_window,test_export_window_crop_and_preview,test_stacked_layout_splits_horizontally_not_grid,test_format_window_picker_lists_regions,test_single_monitor_region_bottom_alias
+    e: _wide_scene,test_discover_windows_splits_monolithic_scene,test_scene_for_window_shifts_coordinates,test_build_catalog_scoped_to_window,test_export_window_crop_and_preview,test_stacked_layout_splits_horizontally_not_grid,test_format_window_picker_lists_regions,test_single_monitor_region_bottom_alias,test_pick_focus_window_prefers_interactive_region,test_scope_to_focus_window_exports_crop
     _wide_scene()
     test_discover_windows_splits_monolithic_scene()
     test_scene_for_window_shifts_coordinates()
@@ -798,3 +1001,5 @@ D:
     test_stacked_layout_splits_horizontally_not_grid(tmp_path)
     test_format_window_picker_lists_regions()
     test_single_monitor_region_bottom_alias()
+    test_pick_focus_window_prefers_interactive_region()
+    test_scope_to_focus_window_exports_crop(tmp_path)

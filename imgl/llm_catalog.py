@@ -12,7 +12,8 @@ from typing import Any
 
 from PIL import Image
 
-from imgl.catalog import InteractiveOption, build_interactive_catalog
+from imgl.catalog_heuristic import build_heuristic_catalog
+from imgl.catalog_types import InteractiveOption
 from imgl.types import BBox, Scene, Window
 from imgl.uri import uri_for_imgl_click
 from imgl.window_scope import crop_window_image, scene_for_window
@@ -192,7 +193,7 @@ def _heuristic_fallback(
 ) -> list[InteractiveOption]:
     from imgl.catalog_filter import filter_catalog
 
-    base = build_interactive_catalog(
+    base = build_heuristic_catalog(
         scene,
         image_path=image_path,
         vql_file=vql_file,
@@ -377,7 +378,7 @@ def _snap_options_to_scene(
     if not scene.source_image:
         return options
 
-    candidates = build_interactive_catalog(
+    candidates = build_heuristic_catalog(
         scene,
         image_path=scene.source_image,
         filter_noise=False,

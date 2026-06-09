@@ -32,7 +32,7 @@ pip install -e ~/github/oqlos/vql    # vql backend (tylko gdy IMGL_CAPTURE_ALLOW
 
 1. **vdisplay mirror** (`prefer_mirror=True`) — bez portalu, wymaga grupy `video` dla driver-level
 2. **vdisplay + portal** w łańcuchu (gdy `IMGL_CAPTURE_VDISPLAY_PORTAL=1` lub portal fallback)
-3. **grim** / **gnome-screenshot** / **scrot**
+3. **gnome-shell** (D-Bus) / **grim** / **gnome-screenshot** / **scrot**
 4. **vql** — tylko gdy `IMGL_CAPTURE_ALLOW_VQL=1`
 5. **GNOME portal** — `--portal` lub auto fallback na Wayland
 
@@ -52,7 +52,8 @@ pip install -e ~/github/oqlos/vql    # vql backend (tylko gdy IMGL_CAPTURE_ALLOW
 |-------|-----------|-------------|
 | `Driver-level capture failed` | Brak grupy `video` | `sudo usermod -aG video $USER` + re-login |
 | Czarny zrzut | framebuffer niedostępny | `imgl capture --portal` lub portal fallback |
-| `grim` / `gnome-screenshot` failed | brak narzędzi / timeout | portal lub vdisplay mirror |
+| `grim` / `gnome-screenshot` failed | brak narzędzi / timeout / Mutter | portal lub włącz Screen Recording |
+| `AccessDenied` / portal response=2 | brak Screen Recording dla aplikacji | Settings → Privacy → Screen Recording → Cursor/terminal |
 | Dialog GNOME | portal fallback | normalne — wybierz region ekranu |
 
 ## Weryfikacja zrzutu

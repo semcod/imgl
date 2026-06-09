@@ -1,234 +1,248 @@
 flowchart LR
-%% generated in 0.02s
+%% generated in 0.03s
     subgraph examples__scripts
         examples__scripts__demo_nlp2uri__main["main"]
     end
     subgraph imgl__actions
-        imgl__actions___format_query["_format_query"]
-        imgl__actions___text_matches["_text_matches"]
         imgl__actions__SceneActions__type_into["type_into"]
+        imgl__actions___format_query["_format_query"]
         imgl__actions__SceneActions__click["click"]
-        imgl__actions__SceneActions__find["find"]
-        imgl__actions__SceneActions__list_actions["list_actions"]
-        imgl__actions___find_label_for_input["_find_label_for_input"]
-        imgl__actions___iter_elements["_iter_elements"]
         imgl__actions__actions["actions"]
         imgl__actions___window_matches["_window_matches"]
+        imgl__actions___iter_elements["_iter_elements"]
+        imgl__actions___text_matches["_text_matches"]
+        imgl__actions__SceneActions__list_actions["list_actions"]
+        imgl__actions__SceneActions__find["find"]
+        imgl__actions___find_label_for_input["_find_label_for_input"]
     end
     subgraph imgl__autodiag
-        imgl__autodiag__should_block_blank_capture["should_block_blank_capture"]
         imgl__autodiag__build_operation_step["build_operation_step"]
         imgl__autodiag___overall_verdict["_overall_verdict"]
+        imgl__autodiag___capture_next_cmd["_capture_next_cmd"]
+        imgl__autodiag__render_report["render_report"]
+        imgl__autodiag__pick_output_format["pick_output_format"]
+        imgl__autodiag__build_execute_report["build_execute_report"]
+        imgl__autodiag___yaml_codeblock["_yaml_codeblock"]
+        imgl__autodiag___shell_quote["_shell_quote"]
+        imgl__autodiag__resolve_cli_output_format["resolve_cli_output_format"]
+        imgl__autodiag__should_block_stale_capture["should_block_stale_capture"]
+        imgl__autodiag__should_block_blank_capture["should_block_blank_capture"]
+        imgl__autodiag___actionable_hints["_actionable_hints"]
+        imgl__autodiag___compact_result["_compact_result"]
         imgl__autodiag__diagnostics_enabled["diagnostics_enabled"]
         imgl__autodiag___flag_enabled["_flag_enabled"]
-        imgl__autodiag___actionable_hints["_actionable_hints"]
-        imgl__autodiag__render_report["render_report"]
-        imgl__autodiag___compact_result["_compact_result"]
         imgl__autodiag__diagnose_capture["diagnose_capture"]
-        imgl__autodiag__build_execute_report["build_execute_report"]
-        imgl__autodiag__pick_output_format["pick_output_format"]
+        imgl__autodiag___derive_current_next["_derive_current_next"]
         imgl__autodiag___render_markdown["_render_markdown"]
-        imgl__autodiag__should_block_stale_capture["should_block_stale_capture"]
     end
     subgraph imgl__capture
+        imgl__capture___discard_capture_file["_discard_capture_file"]
+        imgl__capture__default_capture_path["default_capture_path"]
+        imgl__capture__capture_status_message["capture_status_message"]
+        imgl__capture___capture_failure_hint["_capture_failure_hint"]
+        imgl__capture___vql_capture_enabled["_vql_capture_enabled"]
+        imgl__capture___try_portal_backends["_try_portal_backends"]
+        imgl__capture___run_command["_run_command"]
+        imgl__capture___portal_backends["_portal_backends"]
+        imgl__capture___capture_with_scrot["_capture_with_scrot"]
+        imgl__capture___screen_recording_denied["_screen_recording_denied"]
+        imgl__capture___capture_with_portal["_capture_with_portal"]
+        imgl__capture___is_wayland["_is_wayland"]
         imgl__capture___capture_with_gnome_screenshot["_capture_with_gnome_screenshot"]
         imgl__capture___try_vql_capture["_try_vql_capture"]
-        imgl__capture___is_wayland["_is_wayland"]
-        imgl__capture___capture_with_grim["_capture_with_grim"]
-        imgl__capture__capture_status_message["capture_status_message"]
-        imgl__capture___is_blank_image["_is_blank_image"]
-        imgl__capture___capture_with_scrot["_capture_with_scrot"]
-        imgl__capture__default_capture_path["default_capture_path"]
-        imgl__capture___native_backends["_native_backends"]
-        imgl__capture___run_command["_run_command"]
+        imgl__capture___try_vdisplay_capture["_try_vdisplay_capture"]
+        imgl__capture___portal_python["_portal_python"]
+        imgl__capture___non_portal_backends["_non_portal_backends"]
         imgl__capture__capture_screen["capture_screen"]
-        imgl__capture___capture_with_mss["_capture_with_mss"]
+        imgl__capture___is_blank_image["_is_blank_image"]
+        imgl__capture___portal_script["_portal_script"]
+        imgl__capture___prefer_mirror["_prefer_mirror"]
+        imgl__capture___vdisplay_portal_in_chain_enabled["_vdisplay_portal_in_chain_enab"]
+        imgl__capture___portal_fallback_enabled["_portal_fallback_enabled"]
     end
     subgraph imgl__catalog
-        imgl__catalog___window_option["_window_option"]
         imgl__catalog__build_interactive_catalog["build_interactive_catalog"]
-        imgl__catalog__format_catalog_table["format_catalog_table"]
-        imgl__catalog___infer_input_label["_infer_input_label"]
-        imgl__catalog___iter_interactive_elements["_iter_interactive_elements"]
-        imgl__catalog___find_window["_find_window"]
-        imgl__catalog___element_option["_element_option"]
         imgl__catalog___truncate["_truncate"]
+        imgl__catalog__format_catalog_table["format_catalog_table"]
     end
     subgraph imgl__catalog_filter
-        imgl__catalog_filter___keep_element["_keep_element"]
-        imgl__catalog_filter___renumber["_renumber"]
         imgl__catalog_filter__filter_catalog["filter_catalog"]
-        imgl__catalog_filter___replace_index_in_uri["_replace_index_in_uri"]
-        imgl__catalog_filter___window_score["_window_score"]
-        imgl__catalog_filter___element_score["_element_score"]
+    end
+    subgraph imgl__catalog_heuristic
+        imgl__catalog_heuristic__build_heuristic_catalog["build_heuristic_catalog"]
+        imgl__catalog_heuristic___find_window["_find_window"]
     end
     subgraph imgl__classify
-        imgl__classify__gui_heuristics___word_count["_word_count"]
-        imgl__classify__gui_heuristics___nearest_label["_nearest_label"]
         imgl__classify__gui_heuristics___ocr_inside_frame["_ocr_inside_frame"]
+        imgl__classify__gui_heuristics___word_count["_word_count"]
         imgl__classify__gui_heuristics___normalize_confidence["_normalize_confidence"]
+        imgl__classify__gui_heuristics___match_ocr_to_bbox["_match_ocr_to_bbox"]
+        imgl__classify__gui_heuristics___nearest_label["_nearest_label"]
+        imgl__classify__gui_heuristics___build_inputs["_build_inputs"]
         imgl__classify__gui_heuristics___label_candidates["_label_candidates"]
         imgl__classify__gui_heuristics___text_or_label["_text_or_label"]
         imgl__classify__gui_heuristics__classify_scene_elements["classify_scene_elements"]
-        imgl__classify__gui_heuristics___build_inputs["_build_inputs"]
-        imgl__classify__gui_heuristics___match_ocr_to_bbox["_match_ocr_to_bbox"]
     end
     subgraph imgl__cli
+        imgl__cli___write_output["_write_output"]
+        imgl__cli__main["main"]
         imgl__cli___check_blank_before_analyze["_check_blank_before_analyze"]
         imgl__cli___apply_config_overrides["_apply_config_overrides"]
-        imgl__cli__main["main"]
-        imgl__cli__build_parser["build_parser"]
+        imgl__cli___output_format["_output_format"]
         imgl__cli___run_image_command["_run_image_command"]
-        imgl__cli___write_output["_write_output"]
         imgl__cli___add_common_args["_add_common_args"]
+        imgl__cli__build_parser["build_parser"]
+    end
+    subgraph imgl__control
+        imgl__control__run_map["run_map"]
     end
     subgraph imgl__coords
         imgl__coords__scale_scene_to_screen["scale_scene_to_screen"]
     end
     subgraph imgl__detect
-        imgl__detect__local___iou_xyxy["_iou_xyxy"]
-        imgl__detect__rectangles___row_has_edge["_row_has_edge"]
-        imgl__detect__local___detect_buttons["_detect_buttons"]
-        imgl__detect__img2vql_bridge__detect_with_img2vql["detect_with_img2vql"]
-        imgl__detect__rectangles__detect_input_frames["detect_input_frames"]
-        imgl__detect__rectangles___looks_like_frame["_looks_like_frame"]
-        imgl__detect__local___dedupe["_dedupe"]
-        imgl__detect__rectangles___find_rectangular_frames["_find_rectangular_frames"]
         imgl__detect__img2vql_bridge__img2vql_available["img2vql_available"]
-        imgl__detect__local___flood_rects["_flood_rects"]
-        imgl__detect__local___detect_panels_simple["_detect_panels_simple"]
         imgl__detect__img2vql_bridge__detect_ui_merged["detect_ui_merged"]
-        imgl__detect__local___detect_titlebar["_detect_titlebar"]
-        imgl__detect__rectangles___column_has_edge["_column_has_edge"]
+        imgl__detect__rectangles___looks_like_frame["_looks_like_frame"]
+        imgl__detect__rectangles___find_rectangular_frames["_find_rectangular_frames"]
+        imgl__detect__rectangles__detect_input_frames["detect_input_frames"]
         imgl__detect__img2vql_bridge___from_img2vql_dict["_from_img2vql_dict"]
-        imgl__detect__local___avg_color["_avg_color"]
-        imgl__detect__local__detect_ui_elements["detect_ui_elements"]
+        imgl__detect__img2vql_bridge__detect_with_img2vql["detect_with_img2vql"]
+        imgl__detect__rectangles___row_has_edge["_row_has_edge"]
+        imgl__detect__rectangles___column_has_edge["_column_has_edge"]
     end
     subgraph imgl__diagnose
-        imgl__diagnose__diagnose_content["diagnose_content"]
-        imgl__diagnose___diagnose_with_img2nl["_diagnose_with_img2nl"]
-        imgl__diagnose___has_ui_signals["_has_ui_signals"]
         imgl__diagnose___diagnose_fallback["_diagnose_fallback"]
         imgl__diagnose___scene_class["_scene_class"]
-        imgl__diagnose__img2nl_available["img2nl_available"]
-        imgl__diagnose___diagnose_pil_fallback["_diagnose_pil_fallback"]
-        imgl__diagnose__content_summary["content_summary"]
         imgl__diagnose__worth_analyzing["worth_analyzing"]
+        imgl__diagnose__diagnose_content["diagnose_content"]
+        imgl__diagnose__content_summary["content_summary"]
+        imgl__diagnose___has_ui_signals["_has_ui_signals"]
+        imgl__diagnose___diagnose_with_img2nl["_diagnose_with_img2nl"]
+        imgl__diagnose__img2nl_available["img2nl_available"]
         imgl__diagnose___recommendation["_recommendation"]
+        imgl__diagnose___diagnose_pil_fallback["_diagnose_pil_fallback"]
     end
     subgraph imgl__execute
         imgl__execute__execute_action["execute_action"]
-        imgl__execute___normalize_keys["_normalize_keys"]
         imgl__execute__execute_keys["execute_keys"]
+        imgl__execute___normalize_keys["_normalize_keys"]
     end
     subgraph imgl__export
-        imgl__export__vql_adapter___object_from_bbox["_object_from_bbox"]
-        imgl__export__svg_export__scene_to_svg["scene_to_svg"]
-        imgl__export__annotate_export__default_annotated_path["default_annotated_path"]
-        imgl__export__vql_adapter___element_to_object["_element_to_object"]
-        imgl__export__vql_adapter__scene_to_vql["scene_to_vql"]
-        imgl__export__annotate_export___catalog_relative_to_window["_catalog_relative_to_window"]
-        imgl__export__html_export__scene_to_html["scene_to_html"]
-        imgl__export__vql_adapter__scene_to_vql_json["scene_to_vql_json"]
+        imgl__export__html_export___render_window["_render_window"]
         imgl__export___escape__escape_html["escape_html"]
-        imgl__export__vql_adapter__write_vql_program["write_vql_program"]
-        imgl__export__annotate_export___draw_number_badge["_draw_number_badge"]
-        imgl__export__annotate_export__scene_to_annotated_image["scene_to_annotated_image"]
-        imgl__export__json_export__scene_from_json["scene_from_json"]
-        imgl__export___escape__escape_xml["escape_xml"]
         imgl__export__svg_export___svg_css["_svg_css"]
-        imgl__export__vql_adapter___grid_layer["_grid_layer"]
-        imgl__export__json_export__scene_to_json["scene_to_json"]
-        imgl__export__html_export___render_element["_render_element"]
-        imgl__export__svg_export___render_window_svg["_render_window_svg"]
-        imgl__export__annotate_export__write_annotated_images_per_window["write_annotated_images_per_win"]
-        imgl__export__vql_adapter___window_to_object["_window_to_object"]
-        imgl__export__html_export___default_title["_default_title"]
-        imgl__export__annotate_export__write_annotated_image["write_annotated_image"]
-        imgl__export__annotate_export___load_fonts["_load_fonts"]
         imgl__export__svg_export___render_element_svg["_render_element_svg"]
-        imgl__export__html_export___background_layer["_background_layer"]
+        imgl__export__html_export___bbox_style["_bbox_style"]
+        imgl__export__svg_export__scene_to_svg["scene_to_svg"]
+        imgl__export__annotate_export__open_image["open_image"]
+        imgl__export__annotate_export__write_window_preview_images["write_window_preview_images"]
+        imgl__export__vql_adapter___element_to_object["_element_to_object"]
+        imgl__export__annotate_export___load_fonts["_load_fonts"]
+        imgl__export__json_export__scene_to_json["scene_to_json"]
+        imgl__export__annotate_export__default_annotated_path["default_annotated_path"]
+        imgl__export__json_export__scene_from_json["scene_from_json"]
+        imgl__export__vql_adapter___grid_layer["_grid_layer"]
+        imgl__export__vql_adapter___object_from_bbox["_object_from_bbox"]
+        imgl__export__vql_adapter___window_to_object["_window_to_object"]
+        imgl__export__annotate_export__write_annotated_image["write_annotated_image"]
+        imgl__export__annotate_export__scene_to_annotated_image["scene_to_annotated_image"]
+        imgl__export__annotate_export___badge_size["_badge_size"]
+        imgl__export__annotate_export___draw_number_badge["_draw_number_badge"]
+        imgl__export__vql_adapter__scene_to_vql["scene_to_vql"]
+        imgl__export__vql_adapter__write_vql_program["write_vql_program"]
+        imgl__export__html_export___render_element["_render_element"]
+        imgl__export__svg_export___element_css_class["_element_css_class"]
+        imgl__export__vql_adapter__scene_to_vql_json["scene_to_vql_json"]
+        imgl__export__svg_export___background_rect["_background_rect"]
+        imgl__export__svg_export___render_window_svg["_render_window_svg"]
+        imgl__export__annotate_export___catalog_relative_to_window["_catalog_relative_to_window"]
         imgl__export__svg_export___default_title["_default_title"]
         imgl__export__vql_adapter___bbox_norm["_bbox_norm"]
-        imgl__export__html_export___bbox_style["_bbox_style"]
-        imgl__export__svg_export___element_css_class["_element_css_class"]
-        imgl__export__vql_adapter___location_label["_location_label"]
-        imgl__export__annotate_export__write_window_preview_images["write_window_preview_images"]
-        imgl__export__svg_export___background_rect["_background_rect"]
-        imgl__export__html_export___render_window["_render_window"]
+        imgl__export___escape__escape_xml["escape_xml"]
+        imgl__export__html_export__scene_to_html["scene_to_html"]
+        imgl__export__html_export___default_title["_default_title"]
         imgl__export__vql_adapter___ocr_to_object["_ocr_to_object"]
+        imgl__export__annotate_export__write_annotated_images_per_window["write_annotated_images_per_win"]
         imgl__export__annotate_export___text_size["_text_size"]
         imgl__export__html_export___base_css["_base_css"]
-        imgl__export__annotate_export___badge_size["_badge_size"]
-        imgl__export__annotate_export__open_image["open_image"]
+        imgl__export__vql_adapter___location_label["_location_label"]
+        imgl__export__html_export___background_layer["_background_layer"]
     end
     subgraph imgl__freshness
-        imgl__freshness__clear_vql_cache["clear_vql_cache"]
-        imgl__freshness__sync_vql_cache_with_image["sync_vql_cache_with_image"]
-        imgl__freshness__is_valid_png["is_valid_png"]
         imgl__freshness__max_image_age_seconds["max_image_age_seconds"]
-        imgl__freshness__image_freshness["image_freshness"]
+        imgl__freshness__sync_vql_cache_with_image["sync_vql_cache_with_image"]
+        imgl__freshness__clear_vql_cache["clear_vql_cache"]
         imgl__freshness__capture_sidecar_path["capture_sidecar_path"]
         imgl__freshness__verify_capture_updated["verify_capture_updated"]
-        imgl__freshness__vql_cache_paths["vql_cache_paths"]
         imgl__freshness__mark_capture_fresh["mark_capture_fresh"]
+        imgl__freshness__is_valid_png["is_valid_png"]
+        imgl__freshness__image_freshness["image_freshness"]
+        imgl__freshness__vql_cache_paths["vql_cache_paths"]
     end
     subgraph imgl__geometry
+        imgl__geometry__center_in["center_in"]
+        imgl__geometry__bbox_from_xyxy["bbox_from_xyxy"]
         imgl__geometry__bbox_distance["bbox_distance"]
         imgl__geometry__iou["iou"]
-        imgl__geometry__bbox_from_xyxy["bbox_from_xyxy"]
-        imgl__geometry__center_in["center_in"]
+    end
+    subgraph imgl__installs
+        imgl__installs__ensure_vdisplay["ensure_vdisplay"]
     end
     subgraph imgl__interact
-        imgl__interact__run_interactive_shell["run_interactive_shell"]
-        imgl__interact___print_catalog_banner["_print_catalog_banner"]
-        imgl__interact___annotate_catalog["_annotate_catalog"]
-        imgl__interact___export_window_previews["_export_window_previews"]
         imgl__interact___select_window["_select_window"]
         imgl__interact___handle_window_phase_prompt["_handle_window_phase_prompt"]
         imgl__interact__resolve_imgl_uri["resolve_imgl_uri"]
+        imgl__interact___show_initial_shell_views["_show_initial_shell_views"]
+        imgl__interact__run_interactive_shell["run_interactive_shell"]
+        imgl__interact___annotate_catalog["_annotate_catalog"]
+        imgl__interact___export_window_previews["_export_window_previews"]
+        imgl__interact___print_catalog_banner["_print_catalog_banner"]
+        imgl__interact___prepare_interactive_session["_prepare_interactive_session"]
+        imgl__interact___handle_resolved_shell_action["_handle_resolved_shell_action"]
+        imgl__interact___read_shell_prompt["_read_shell_prompt"]
+        imgl__interact___print_actions_phase_hints["_print_actions_phase_hints"]
         imgl__interact___build_session_catalog["_build_session_catalog"]
     end
     subgraph imgl__layout
-        imgl__layout___overlaps_top["_overlaps_top"]
-        imgl__layout__extract_window_titles["extract_window_titles"]
-        imgl__layout___best_titlebar_for_window["_best_titlebar_for_window"]
         imgl__layout__build_windows["build_windows"]
         imgl__layout__find_containing_window["find_containing_window"]
+        imgl__layout___best_titlebar_for_window["_best_titlebar_for_window"]
+        imgl__layout___overlaps_top["_overlaps_top"]
         imgl__layout__assign_ocr_to_windows["assign_ocr_to_windows"]
+        imgl__layout__extract_window_titles["extract_window_titles"]
     end
     subgraph imgl__llm_catalog
         imgl__llm_catalog___call_vision_llm["_call_vision_llm"]
-        imgl__llm_catalog___overlaps_catalog["_overlaps_catalog"]
-        imgl__llm_catalog___merge_heuristic_inputs["_merge_heuristic_inputs"]
-        imgl__llm_catalog___env_file_candidates["_env_file_candidates"]
-        imgl__llm_catalog___heuristic_fallback["_heuristic_fallback"]
-        imgl__llm_catalog___best_label_match["_best_label_match"]
-        imgl__llm_catalog___load_env_files["_load_env_files"]
-        imgl__llm_catalog__llm_available["llm_available"]
-        imgl__llm_catalog___renumber_options["_renumber_options"]
-        imgl__llm_catalog___parse_json_payload["_parse_json_payload"]
         imgl__llm_catalog__refine_catalog_with_llm["refine_catalog_with_llm"]
+        imgl__llm_catalog___heuristic_fallback["_heuristic_fallback"]
+        imgl__llm_catalog___renumber_options["_renumber_options"]
+        imgl__llm_catalog___merge_heuristic_inputs["_merge_heuristic_inputs"]
         imgl__llm_catalog___snap_options_to_scene["_snap_options_to_scene"]
-        imgl__llm_catalog___image_to_base64["_image_to_base64"]
         imgl__llm_catalog___llm_json_to_options["_llm_json_to_options"]
+        imgl__llm_catalog___load_env_files["_load_env_files"]
+        imgl__llm_catalog___image_to_base64["_image_to_base64"]
+        imgl__llm_catalog___env_file_candidates["_env_file_candidates"]
+        imgl__llm_catalog___parse_json_payload["_parse_json_payload"]
+        imgl__llm_catalog___overlaps_catalog["_overlaps_catalog"]
         imgl__llm_catalog__llm_dependencies_ok["llm_dependencies_ok"]
+        imgl__llm_catalog___best_label_match["_best_label_match"]
+        imgl__llm_catalog__llm_available["llm_available"]
     end
     subgraph imgl__nlp2uri
-        imgl__nlp2uri___find_catalog_input["_find_catalog_input"]
         imgl__nlp2uri__prompt_to_imgl_uri["prompt_to_imgl_uri"]
         imgl__nlp2uri___match_catalog_action["_match_catalog_action"]
+        imgl__nlp2uri___find_catalog_input["_find_catalog_input"]
         imgl__nlp2uri___delegate_vql_nlp2uri["_delegate_vql_nlp2uri"]
     end
     subgraph imgl__ocr
+        imgl__ocr__get_ocr_backend["get_ocr_backend"]
+        imgl__ocr__tesseract__TesseractOcr__run["run"]
         imgl__ocr__lang__ocr_lang_attempts["ocr_lang_attempts"]
         imgl__ocr__lang__normalize_ocr_lang["normalize_ocr_lang"]
-        imgl__ocr__tesseract__TesseractOcr__run["run"]
-        imgl__ocr__get_ocr_backend["get_ocr_backend"]
     end
     subgraph imgl__paths
-        imgl__paths__resolve_image_path_optional["resolve_image_path_optional"]
         imgl__paths__resolve_image_path["resolve_image_path"]
+        imgl__paths__resolve_image_path_optional["resolve_image_path_optional"]
     end
     subgraph imgl__pipeline
         imgl__pipeline__analyze["analyze"]
@@ -240,142 +254,170 @@ flowchart LR
         imgl__preprocess__load_image["load_image"]
     end
     subgraph imgl__scene_cache
-        imgl__scene_cache__load_or_analyze["load_or_analyze"]
         imgl__scene_cache__load_cached_scene["load_cached_scene"]
         imgl__scene_cache__scene_cache_path["scene_cache_path"]
+        imgl__scene_cache__load_or_analyze["load_or_analyze"]
         imgl__scene_cache__save_scene_cache["save_scene_cache"]
     end
+    subgraph imgl__terminal_md
+        imgl__terminal_md___c["_c"]
+        imgl__terminal_md__stdout_color_enabled["stdout_color_enabled"]
+        imgl__terminal_md___color_yaml_value["_color_yaml_value"]
+        imgl__terminal_md___highlight_inline["_highlight_inline"]
+        imgl__terminal_md__print_report["print_report"]
+        imgl__terminal_md___highlight_yaml_line["_highlight_yaml_line"]
+        imgl__terminal_md__colorize_markdown["colorize_markdown"]
+        imgl__terminal_md___highlight_bash_line["_highlight_bash_line"]
+        imgl__terminal_md___verdict_color["_verdict_color"]
+    end
     subgraph imgl__uri
-        imgl__uri__uri_for_imgl_click["uri_for_imgl_click"]
-        imgl__uri__uri_for_imgl_list["uri_for_imgl_list"]
-        imgl__uri__uri_for_imgl_action["uri_for_imgl_action"]
         imgl__uri___imgl_uri["_imgl_uri"]
         imgl__uri__uri_for_imgl_type["uri_for_imgl_type"]
-        imgl__uri__uri_for_imgl_analyze["uri_for_imgl_analyze"]
         imgl__uri__uri_for_imgl_annotate["uri_for_imgl_annotate"]
+        imgl__uri__uri_for_imgl_action["uri_for_imgl_action"]
+        imgl__uri__uri_for_imgl_click["uri_for_imgl_click"]
+        imgl__uri__uri_for_imgl_analyze["uri_for_imgl_analyze"]
+        imgl__uri__uri_for_imgl_list["uri_for_imgl_list"]
     end
     subgraph imgl__vdisplay_bridge
-        imgl__vdisplay_bridge__correlate_windows["correlate_windows"]
-        imgl__vdisplay_bridge___norm["_norm"]
-        imgl__vdisplay_bridge__vdisplay_missing_message["vdisplay_missing_message"]
-        imgl__vdisplay_bridge__diagnose_os_display["diagnose_os_display"]
-        imgl__vdisplay_bridge__find_os_window["find_os_window"]
-        imgl__vdisplay_bridge__list_vision_windows["list_vision_windows"]
-        imgl__vdisplay_bridge__list_os_monitors["list_os_monitors"]
-        imgl__vdisplay_bridge__list_os_windows["list_os_windows"]
-        imgl__vdisplay_bridge__default_display["default_display"]
         imgl__vdisplay_bridge__build_window_control_report["build_window_control_report"]
     end
     subgraph imgl__web
-        imgl__web__session__WebSession__capture["capture"]
+        imgl__web__agent__pick_agent_action["pick_agent_action"]
         imgl__web__thumbs__crop_bbox_png["crop_bbox_png"]
-        imgl__web__app__create_app["create_app"]
-        imgl__web__thumbs___clamp_box["_clamp_box"]
+        imgl__web__session__WebSession__analyze["analyze"]
+        imgl__web__agent___parse_agent_json["_parse_agent_json"]
+        imgl__web__session__WebSession__capture["capture"]
         imgl__web__session__WebSession__resolve_prompt["resolve_prompt"]
         imgl__web__session__WebSession__select_window["select_window"]
-        imgl__web__agent__pick_agent_action["pick_agent_action"]
         imgl__web__session__WebSession__refresh_catalog["refresh_catalog"]
-        imgl__web__agent___parse_agent_json["_parse_agent_json"]
         imgl__web__session__WebSession___refresh_annotated_png["_refresh_annotated_png"]
-        imgl__web__session__WebSession__analyze["analyze"]
+        imgl__web__thumbs___clamp_box["_clamp_box"]
     end
     subgraph imgl__window_scope
-        imgl__window_scope___split_monolithic_window["_split_monolithic_window"]
-        imgl__window_scope___image_gutter_candidates["_image_gutter_candidates"]
-        imgl__window_scope__export_window_crop["export_window_crop"]
-        imgl__window_scope___split_side_by_side["_split_side_by_side"]
-        imgl__window_scope___element_gap_gutters["_element_gap_gutters"]
-        imgl__window_scope__summarize_windows["summarize_windows"]
-        imgl__window_scope___split_stacked["_split_stacked"]
-        imgl__window_scope__scene_for_window["scene_for_window"]
-        imgl__window_scope__default_window_annotated_path["default_window_annotated_path"]
-        imgl__window_scope__crop_window_image["crop_window_image"]
-        imgl__window_scope__discover_windows["discover_windows"]
+        imgl__window_scope__scope_to_focus_window["scope_to_focus_window"]
         imgl__window_scope__apply_discovered_windows["apply_discovered_windows"]
-        imgl__window_scope__is_monolithic_scene["is_monolithic_scene"]
-        imgl__window_scope___shift_ocr_boxes["_shift_ocr_boxes"]
-        imgl__window_scope___regions_from_balanced_gutters["_regions_from_balanced_gutters"]
-        imgl__window_scope___split_by_element_y_gaps["_split_by_element_y_gaps"]
-        imgl__window_scope___detect_layout_mode["_detect_layout_mode"]
-        imgl__window_scope___guess_window_title["_guess_window_title"]
-        imgl__window_scope___collect_elements["_collect_elements"]
-        imgl__window_scope__get_discovered_window["get_discovered_window"]
         imgl__window_scope___safe_filename["_safe_filename"]
-        imgl__window_scope___best_vertical_split["_best_vertical_split"]
-        imgl__window_scope___shift_elements["_shift_elements"]
+        imgl__window_scope__crop_window_image["crop_window_image"]
+        imgl__window_scope__is_monolithic_scene["is_monolithic_scene"]
+        imgl__window_scope___split_monolithic_window["_split_monolithic_window"]
+        imgl__window_scope__scope_image_to_focus_window["scope_image_to_focus_window"]
+        imgl__window_scope__should_scope_window["should_scope_window"]
+        imgl__window_scope__export_window_crop["export_window_crop"]
+        imgl__window_scope__default_window_annotated_path["default_window_annotated_path"]
+        imgl__window_scope__get_discovered_window["get_discovered_window"]
+        imgl__window_scope__discover_windows["discover_windows"]
+        imgl__window_scope__summarize_windows["summarize_windows"]
+        imgl__window_scope__pick_focus_window["pick_focus_window"]
+        imgl__window_scope__format_window_picker["format_window_picker"]
     end
     subgraph packages__cli2imgl
         packages__cli2imgl__src__cli2imgl__cli__main["main"]
     end
     subgraph packages__dsl2imgl
-        packages__dsl2imgl__src__dsl2imgl__schema_registry__all_verbs["all_verbs"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_result_protobuf["encode_result_protobuf"]
-        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_resolve["handle_resolve"]
-        packages__dsl2imgl__src__dsl2imgl__bus__dispatch["dispatch"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf["decode_protobuf"]
-        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute["handle_execute"]
-        packages__dsl2imgl__src__dsl2imgl__grammar__parse_line["parse_line"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf_to_text["decode_protobuf_to_text"]
+        packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_jsonl["_append_jsonl"]
         packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture["handle_capture"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec__dict_to_envelope["dict_to_envelope"]
         packages__dsl2imgl__src__dsl2imgl__codec__envelope_to_bytes["envelope_to_bytes"]
         packages__dsl2imgl__src__dsl2imgl__pb_codec__envelope_to_dict["envelope_to_dict"]
-        packages__dsl2imgl__src__dsl2imgl__codec__envelope_from_json["envelope_from_json"]
-        packages__dsl2imgl__src__dsl2imgl__schema_registry__schema_for_verb["schema_for_verb"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str["_assign_optional_str"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_type_body["_set_type_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf["decode_protobuf"]
+        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute["handle_execute"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_type_body["_dict_type_body"]
         packages__dsl2imgl__src__dsl2imgl__schema_registry___load_schemas["_load_schemas"]
-        packages__dsl2imgl__src__dsl2imgl__codec__roundtrip_text["roundtrip_text"]
-        packages__dsl2imgl__src__dsl2imgl__codec__validate_payload["validate_payload"]
-        packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_pb["_append_pb"]
-        packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag["pick_flag"]
-        packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl["execute_dsl"]
-        packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session["_build_interact_session"]
-        packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl_line["execute_dsl_line"]
-        packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act["_run_prompt_act"]
-        packages__dsl2imgl__src__dsl2imgl__codec__envelope_from_bytes["envelope_from_bytes"]
-        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_analyze["handle_analyze"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec__result_to_pb["result_to_pb"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_protobuf["encode_protobuf"]
-        packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_jsonl["_append_jsonl"]
-        packages__dsl2imgl__src__dsl2imgl__grammar__to_text["to_text"]
-        packages__dsl2imgl__src__dsl2imgl__codec__envelope_to_json["envelope_to_json"]
-        packages__dsl2imgl__src__dsl2imgl__bus__dispatch_json["dispatch_json"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_body["_set_body"]
-        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_actions["handle_actions"]
-        packages__dsl2imgl__src__dsl2imgl__bus___run_handler["_run_handler"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_analyze_body["_dict_analyze_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_click_body["_set_click_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_actions_body["_set_actions_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_click_body["_dict_click_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_resolve_body["_set_resolve_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_key_body["_dict_key_body"]
+        packages__dsl2imgl__src__dsl2imgl__codec__envelope_from_json["envelope_from_json"]
         packages__dsl2imgl__src__dsl2imgl__grammar__split_command["split_command"]
-        packages__dsl2imgl__src__dsl2imgl__schema_registry__validate_schemas["validate_schemas"]
+        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_resolve["handle_resolve"]
+        packages__dsl2imgl__src__dsl2imgl__bus___run_handler["_run_handler"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str["_dict_optional_str"]
+        packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl["execute_dsl"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_click["_parse_click"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_analyze["_parse_analyze"]
         packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_text_to_protobuf["encode_text_to_protobuf"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_body["_dict_execute_body"]
+        packages__dsl2imgl__src__dsl2imgl__codec__envelope_to_json["envelope_to_json"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_execute_flag["_assign_execute_flag"]
+        packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl_line["execute_dsl_line"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_capture["_parse_capture"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb["_parse_interaction_verb"]
+        packages__dsl2imgl__src__dsl2imgl__grammar__to_text["to_text"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_actions["_parse_actions"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec__dict_to_envelope["dict_to_envelope"]
+        packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session["_build_interact_session"]
+        packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act["_run_prompt_act"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec__result_to_pb["result_to_pb"]
+        packages__dsl2imgl__src__dsl2imgl__codec__roundtrip_text["roundtrip_text"]
+        packages__dsl2imgl__src__dsl2imgl__bus__dispatch_json["dispatch_json"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_agent_body["_dict_agent_body"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve["_parse_resolve"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_analyze_body["_set_analyze_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf_to_text["decode_protobuf_to_text"]
+        packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag["pick_flag"]
+        packages__dsl2imgl__src__dsl2imgl__grammar__parse_line["parse_line"]
+        packages__dsl2imgl__src__dsl2imgl__codec__validate_payload["validate_payload"]
+        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_analyze["handle_analyze"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags["_apply_image_window_flags"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_execute_body["_set_execute_body"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_key["_parse_key"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_protobuf["encode_protobuf"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_key_body["_set_key_body"]
+        packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_actions["handle_actions"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_flag["_dict_execute_flag"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_resolve_body["_dict_resolve_body"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_agent["_parse_agent"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___strip_prompt_tokens["_strip_prompt_tokens"]
+        packages__dsl2imgl__src__dsl2imgl__schema_registry__all_verbs["all_verbs"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_actions_body["_dict_actions_body"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_type["_parse_type"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_capture_body["_dict_capture_body"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_agent_body["_set_agent_body"]
+        packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_pb["_append_pb"]
         packages__dsl2imgl__src__dsl2imgl__codec__parse_text["parse_text"]
+        packages__dsl2imgl__src__dsl2imgl__schema_registry__validate_schemas["validate_schemas"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_body["_set_body"]
+        packages__dsl2imgl__src__dsl2imgl__schema_registry__schema_for_verb["schema_for_verb"]
+        packages__dsl2imgl__src__dsl2imgl__bus__dispatch["dispatch"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_execute["_parse_execute"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_result_protobuf["encode_result_protobuf"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_capture_body["_set_capture_body"]
+        packages__dsl2imgl__src__dsl2imgl__codec__envelope_from_bytes["envelope_from_bytes"]
     end
     subgraph packages__mcp2imgl
         packages__mcp2imgl__src__mcp2imgl__cli__main["main"]
         packages__mcp2imgl__src__mcp2imgl__server__run_stdio["run_stdio"]
     end
     subgraph packages__nlp2imgl
-        packages__nlp2imgl__src__nlp2imgl__control___result_to_dict["_result_to_dict"]
+        packages__nlp2imgl__src__nlp2imgl__cli_commands__output_format["output_format"]
+        packages__nlp2imgl__src__nlp2imgl__cli__main["main"]
+        packages__nlp2imgl__src__nlp2imgl__cli_commands__run_to_dsl["run_to_dsl"]
+        packages__nlp2imgl__src__nlp2imgl__cli_parser__build_parser["build_parser"]
+        packages__nlp2imgl__src__nlp2imgl__to_dsl__apply_nl["apply_nl"]
         packages__nlp2imgl__src__nlp2imgl__control__default_window["default_window"]
+        packages__nlp2imgl__src__nlp2imgl__to_dsl__use_llm_enabled["use_llm_enabled"]
+        packages__nlp2imgl__src__nlp2imgl__cli_commands__run_apply["run_apply"]
+        packages__nlp2imgl__src__nlp2imgl__cli_commands___print_apply_payload["_print_apply_payload"]
+        packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor["run_doctor"]
+        packages__nlp2imgl__src__nlp2imgl__control__doctor_capture["doctor_capture"]
+        packages__nlp2imgl__src__nlp2imgl__control___result_to_dict["_result_to_dict"]
+        packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag["apply_nl_with_diag"]
         packages__nlp2imgl__src__nlp2imgl__control__default_image_path["default_image_path"]
         packages__nlp2imgl__src__nlp2imgl__to_dsl__to_dsl["to_dsl"]
-        packages__nlp2imgl__src__nlp2imgl__to_dsl__use_llm_enabled["use_llm_enabled"]
-        packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag["apply_nl_with_diag"]
-        packages__nlp2imgl__src__nlp2imgl__control__doctor_capture["doctor_capture"]
-        packages__nlp2imgl__src__nlp2imgl__to_dsl__apply_nl["apply_nl"]
     end
     subgraph packages__rest2imgl
         packages__rest2imgl__src__rest2imgl__cli__main["main"]
+        packages__rest2imgl__src__rest2imgl__app__create_app["create_app"]
     end
     subgraph packages__uri2imgl
         packages__uri2imgl__src__uri2imgl__cli__main["main"]
         packages__uri2imgl__src__uri2imgl__decode__uri_to_dsl["uri_to_dsl"]
     end
-    subgraph scripts__imgl_capture
-        scripts__imgl_capture__mark_capture_fresh["mark_capture_fresh"]
-    end
-    subgraph scripts__imgl_verify_capture
-        scripts__imgl_verify_capture__print["print"]
-    end
-    packages__rest2imgl__src__rest2imgl__cli__main --> imgl__web__app__create_app
-    packages__cli2imgl__src__cli2imgl__cli__main --> scripts__imgl_verify_capture__print
+    packages__rest2imgl__src__rest2imgl__cli__main --> packages__rest2imgl__src__rest2imgl__app__create_app
     packages__cli2imgl__src__cli2imgl__cli__main --> packages__dsl2imgl__src__dsl2imgl__bus__dispatch
     packages__cli2imgl__src__cli2imgl__cli__main --> packages__nlp2imgl__src__nlp2imgl__to_dsl__apply_nl
     packages__uri2imgl__src__uri2imgl__cli__main --> packages__uri2imgl__src__uri2imgl__decode__uri_to_dsl
@@ -395,14 +437,6 @@ flowchart LR
     packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_pb --> packages__dsl2imgl__src__dsl2imgl__pb_codec__result_to_pb
     packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_jsonl --> packages__dsl2imgl__src__dsl2imgl__pb_codec__dict_to_envelope
     packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_jsonl --> packages__dsl2imgl__src__dsl2imgl__pb_codec__result_to_pb
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__dict_to_envelope --> packages__dsl2imgl__src__dsl2imgl__pb_codec___set_body
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__dict_to_envelope
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__envelope_to_dict
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_text_to_protobuf --> packages__dsl2imgl__src__dsl2imgl__grammar__parse_line
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_text_to_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_protobuf
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf_to_text --> packages__dsl2imgl__src__dsl2imgl__grammar__to_text
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf_to_text --> packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf
-    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_result_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__result_to_pb
     packages__dsl2imgl__src__dsl2imgl__schema_registry__schema_for_verb --> packages__dsl2imgl__src__dsl2imgl__schema_registry___load_schemas
     packages__dsl2imgl__src__dsl2imgl__schema_registry__all_verbs --> packages__dsl2imgl__src__dsl2imgl__schema_registry___load_schemas
     packages__dsl2imgl__src__dsl2imgl__schema_registry__validate_schemas --> packages__dsl2imgl__src__dsl2imgl__schema_registry___load_schemas
@@ -434,7 +468,16 @@ flowchart LR
     packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
     packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act
     packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> imgl__execute__execute_action
-    examples__scripts__demo_nlp2uri__main --> scripts__imgl_verify_capture__print
+    packages__nlp2imgl__src__nlp2imgl__control__doctor_capture --> imgl__autodiag__diagnose_capture
+    packages__nlp2imgl__src__nlp2imgl__control__doctor_capture --> packages__nlp2imgl__src__nlp2imgl__control__default_image_path
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> packages__nlp2imgl__src__nlp2imgl__to_dsl__apply_nl
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> packages__nlp2imgl__src__nlp2imgl__control___result_to_dict
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__diagnostics_enabled
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> packages__nlp2imgl__src__nlp2imgl__control__default_window
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__diagnose_capture
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__should_block_stale_capture
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__build_execute_report
+    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__should_block_blank_capture
     examples__scripts__demo_nlp2uri__main --> imgl__pipeline__analyze
     examples__scripts__demo_nlp2uri__main --> imgl__window_scope__apply_discovered_windows
     examples__scripts__demo_nlp2uri__main --> imgl__catalog__build_interactive_catalog
@@ -450,44 +493,16 @@ flowchart LR
     imgl__nlp2uri__prompt_to_imgl_uri --> imgl__nlp2uri___delegate_vql_nlp2uri
     imgl__nlp2uri___delegate_vql_nlp2uri --> imgl__uri__uri_for_imgl_list
     imgl__nlp2uri___match_catalog_action --> imgl__nlp2uri___find_catalog_input
-    imgl__interact___build_session_catalog --> imgl__catalog__build_interactive_catalog
-    imgl__interact__resolve_imgl_uri --> imgl__actions__actions
-    imgl__interact__resolve_imgl_uri --> imgl__interact___annotate_catalog
-    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__load_or_analyze
-    imgl__interact__resolve_imgl_uri --> imgl__export__vql_adapter__write_vql_program
-    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__save_scene_cache
-    imgl__interact__resolve_imgl_uri --> imgl__interact___build_session_catalog
-    imgl__interact___annotate_catalog --> imgl__export__annotate_export__write_annotated_image
-    imgl__interact___annotate_catalog --> imgl__window_scope__get_discovered_window
-    imgl__interact___annotate_catalog --> imgl__export__annotate_export__default_annotated_path
-    imgl__interact___annotate_catalog --> imgl__export__annotate_export__open_image
-    imgl__interact___select_window --> imgl__window_scope__get_discovered_window
-    imgl__interact___select_window --> imgl__interact___build_session_catalog
-    imgl__interact___select_window --> imgl__interact___annotate_catalog
-    imgl__interact___select_window --> scripts__imgl_verify_capture__print
-    imgl__interact___select_window --> imgl__export__annotate_export__default_annotated_path
-    imgl__interact___export_window_previews --> imgl__window_scope__discover_windows
-    imgl__interact___export_window_previews --> imgl__export__annotate_export__write_window_preview_images
-    imgl__interact__run_interactive_shell --> scripts__imgl_verify_capture__print
-    imgl__interact__run_interactive_shell --> imgl__scene_cache__load_or_analyze
-    imgl__interact__run_interactive_shell --> imgl__window_scope__apply_discovered_windows
-    imgl__interact__run_interactive_shell --> imgl__export__vql_adapter__write_vql_program
-    imgl__interact__run_interactive_shell --> imgl__scene_cache__save_scene_cache
-    imgl__interact__run_interactive_shell --> imgl__window_scope__discover_windows
-    imgl__interact___print_catalog_banner --> scripts__imgl_verify_capture__print
-    imgl__interact___handle_window_phase_prompt --> scripts__imgl_verify_capture__print
-    imgl__interact___handle_window_phase_prompt --> imgl__interact___export_window_previews
-    imgl__interact___handle_window_phase_prompt --> imgl__interact___build_session_catalog
-    imgl__interact___handle_window_phase_prompt --> imgl__interact___print_catalog_banner
-    imgl__catalog__build_interactive_catalog --> imgl__actions__actions
-    imgl__catalog__build_interactive_catalog --> imgl__catalog___iter_interactive_elements
-    imgl__catalog__build_interactive_catalog --> imgl__catalog___find_window
-    imgl__catalog__build_interactive_catalog --> imgl__llm_catalog__refine_catalog_with_llm
-    imgl__catalog__build_interactive_catalog --> imgl__catalog___element_option
-    imgl__catalog__build_interactive_catalog --> imgl__catalog_filter__filter_catalog
-    imgl__catalog__format_catalog_table --> imgl__catalog___truncate
-    imgl__catalog___window_option --> imgl__uri__uri_for_imgl_click
-    imgl__catalog___find_window --> imgl__window_scope__get_discovered_window
+    imgl__actions__SceneActions__find --> imgl__actions___iter_elements
+    imgl__actions__SceneActions__find --> imgl__actions___find_label_for_input
+    imgl__actions__SceneActions__find --> imgl__actions___text_matches
+    imgl__actions__SceneActions__click --> imgl__actions___format_query
+    imgl__actions__SceneActions__type_into --> imgl__actions___format_query
+    imgl__actions__SceneActions__list_actions --> imgl__actions___iter_elements
+    imgl__actions___iter_elements --> imgl__window_scope__get_discovered_window
+    imgl__actions___iter_elements --> imgl__actions___window_matches
+    imgl__actions___find_label_for_input --> imgl__actions___iter_elements
+    imgl__actions___find_label_for_input --> imgl__geometry__bbox_distance
     imgl__preprocess__load_image --> imgl__paths__resolve_image_path
     imgl__preprocess__preprocess --> imgl__preprocess__load_image
     imgl__layout__find_containing_window --> imgl__geometry__center_in
@@ -502,31 +517,6 @@ flowchart LR
     imgl__uri__uri_for_imgl_click --> imgl__uri___imgl_uri
     imgl__uri__uri_for_imgl_type --> imgl__uri___imgl_uri
     imgl__uri__uri_for_imgl_action --> imgl__uri___imgl_uri
-    imgl__llm_catalog___load_env_files --> imgl__llm_catalog___env_file_candidates
-    imgl__llm_catalog__llm_available --> imgl__llm_catalog___load_env_files
-    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog__llm_dependencies_ok
-    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog__llm_available
-    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___call_vision_llm
-    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___llm_json_to_options
-    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___snap_options_to_scene
-    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___merge_heuristic_inputs
-    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___heuristic_fallback
-    imgl__llm_catalog___heuristic_fallback --> imgl__catalog__build_interactive_catalog
-    imgl__llm_catalog___heuristic_fallback --> imgl__catalog_filter__filter_catalog
-    imgl__llm_catalog___call_vision_llm --> imgl__llm_catalog___image_to_base64
-    imgl__llm_catalog___call_vision_llm --> imgl__llm_catalog___parse_json_payload
-    imgl__llm_catalog___image_to_base64 --> imgl__window_scope__crop_window_image
-    imgl__llm_catalog___snap_options_to_scene --> imgl__catalog__build_interactive_catalog
-    imgl__llm_catalog___snap_options_to_scene --> imgl__llm_catalog___best_label_match
-    imgl__llm_catalog___merge_heuristic_inputs --> imgl__llm_catalog___heuristic_fallback
-    imgl__llm_catalog___merge_heuristic_inputs --> imgl__llm_catalog___overlaps_catalog
-    imgl__llm_catalog___merge_heuristic_inputs --> imgl__llm_catalog___renumber_options
-    imgl__llm_catalog___overlaps_catalog --> imgl__geometry__iou
-    imgl__catalog_filter__filter_catalog --> imgl__catalog_filter___renumber
-    imgl__catalog_filter__filter_catalog --> imgl__catalog_filter___keep_element
-    imgl__catalog_filter__filter_catalog --> imgl__catalog_filter___element_score
-    imgl__catalog_filter__filter_catalog --> imgl__catalog_filter___window_score
-    imgl__catalog_filter___renumber --> imgl__catalog_filter___replace_index_in_uri
     imgl__paths__resolve_image_path_optional --> imgl__paths__resolve_image_path
     imgl__execute__execute_action --> imgl__execute__execute_keys
     imgl__execute__execute_keys --> imgl__execute___normalize_keys
@@ -596,15 +586,6 @@ flowchart LR
     imgl__export__svg_export___render_window_svg --> imgl__export___escape__escape_xml
     imgl__export__svg_export___render_element_svg --> imgl__export__svg_export___element_css_class
     imgl__export__svg_export___render_element_svg --> imgl__export___escape__escape_xml
-    imgl__detect__local___detect_titlebar --> imgl__detect__local___avg_color
-    imgl__detect__local___detect_titlebar --> imgl__geometry__bbox_from_xyxy
-    imgl__detect__local___detect_buttons --> imgl__detect__local___flood_rects
-    imgl__detect__local___detect_panels_simple --> imgl__detect__local___avg_color
-    imgl__detect__local___dedupe --> imgl__detect__local___iou_xyxy
-    imgl__detect__local__detect_ui_elements --> imgl__detect__local___detect_titlebar
-    imgl__detect__local__detect_ui_elements --> imgl__detect__local___dedupe
-    imgl__detect__local__detect_ui_elements --> imgl__detect__local___detect_panels_simple
-    imgl__detect__local__detect_ui_elements --> imgl__detect__local___detect_buttons
     imgl__detect__rectangles__detect_input_frames --> imgl__detect__rectangles___find_rectangular_frames
     imgl__detect__rectangles__detect_input_frames --> imgl__geometry__bbox_from_xyxy
     imgl__detect__rectangles___find_rectangular_frames --> imgl__detect__rectangles___looks_like_frame
@@ -645,21 +626,74 @@ flowchart LR
     imgl__classify__gui_heuristics___build_inputs --> imgl__classify__gui_heuristics___ocr_inside_frame
     imgl__classify__gui_heuristics___build_inputs --> imgl__classify__gui_heuristics___nearest_label
     imgl__classify__gui_heuristics___build_inputs --> imgl__classify__gui_heuristics___normalize_confidence
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_capture_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_analyze_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_actions_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_resolve_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_click_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_click_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_type_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_type_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_key_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_key_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_execute_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_execute_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___set_agent_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___assign_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_capture_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_analyze_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_actions_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_resolve_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_click_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_click_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_type_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_type_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_key_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_key_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_execute_flag
+    packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_agent_body --> packages__dsl2imgl__src__dsl2imgl__pb_codec___dict_optional_str
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__dict_to_envelope --> packages__dsl2imgl__src__dsl2imgl__pb_codec___set_body
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__dict_to_envelope
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__envelope_to_dict
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_text_to_protobuf --> packages__dsl2imgl__src__dsl2imgl__grammar__parse_line
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_text_to_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_protobuf
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf_to_text --> packages__dsl2imgl__src__dsl2imgl__grammar__to_text
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf_to_text --> packages__dsl2imgl__src__dsl2imgl__pb_codec__decode_protobuf
+    packages__dsl2imgl__src__dsl2imgl__pb_codec__encode_result_protobuf --> packages__dsl2imgl__src__dsl2imgl__pb_codec__result_to_pb
+    packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_capture --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_analyze --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_actions --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve --> packages__dsl2imgl__src__dsl2imgl__grammar___strip_prompt_tokens
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_type --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_key --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_click
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_type
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_key
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_execute
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_agent --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_agent --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
     packages__dsl2imgl__src__dsl2imgl__grammar__parse_line --> packages__dsl2imgl__src__dsl2imgl__grammar__split_command
-    packages__dsl2imgl__src__dsl2imgl__grammar__parse_line --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__nlp2imgl__src__nlp2imgl__cli__main --> packages__nlp2imgl__src__nlp2imgl__cli_parser__build_parser
+    packages__nlp2imgl__src__nlp2imgl__to_dsl__use_llm_enabled --> imgl__llm_catalog___load_env_files
     packages__nlp2imgl__src__nlp2imgl__to_dsl__to_dsl --> packages__nlp2imgl__src__nlp2imgl__to_dsl__use_llm_enabled
     packages__nlp2imgl__src__nlp2imgl__to_dsl__apply_nl --> packages__nlp2imgl__src__nlp2imgl__to_dsl__to_dsl
     packages__nlp2imgl__src__nlp2imgl__to_dsl__apply_nl --> packages__dsl2imgl__src__dsl2imgl__bus__dispatch
-    packages__nlp2imgl__src__nlp2imgl__control__doctor_capture --> imgl__autodiag__diagnose_capture
-    packages__nlp2imgl__src__nlp2imgl__control__doctor_capture --> packages__nlp2imgl__src__nlp2imgl__control__default_image_path
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> packages__nlp2imgl__src__nlp2imgl__to_dsl__apply_nl
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> packages__nlp2imgl__src__nlp2imgl__control___result_to_dict
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__diagnostics_enabled
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> packages__nlp2imgl__src__nlp2imgl__control__default_window
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__diagnose_capture
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__should_block_stale_capture
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__build_execute_report
-    packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag --> imgl__autodiag__should_block_blank_capture
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__output_format --> imgl__autodiag__resolve_cli_output_format
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_to_dsl --> packages__nlp2imgl__src__nlp2imgl__to_dsl__to_dsl
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor --> packages__nlp2imgl__src__nlp2imgl__cli_commands__output_format
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor --> imgl__vdisplay_bridge__build_window_control_report
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor --> imgl__terminal_md__print_report
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor --> packages__nlp2imgl__src__nlp2imgl__control__doctor_capture
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor --> imgl__autodiag__render_report
+    packages__nlp2imgl__src__nlp2imgl__cli_commands___print_apply_payload --> imgl__terminal_md__print_report
+    packages__nlp2imgl__src__nlp2imgl__cli_commands___print_apply_payload --> imgl__autodiag__render_report
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_apply --> packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_apply --> packages__nlp2imgl__src__nlp2imgl__cli_commands___print_apply_payload
+    packages__nlp2imgl__src__nlp2imgl__cli_commands__run_apply --> packages__nlp2imgl__src__nlp2imgl__cli_commands__output_format
     imgl__autodiag__diagnose_capture --> imgl__freshness__sync_vql_cache_with_image
     imgl__autodiag__diagnose_capture --> imgl__freshness__image_freshness
     imgl__autodiag__diagnose_capture --> imgl__diagnose__diagnose_content
@@ -667,6 +701,8 @@ flowchart LR
     imgl__autodiag__diagnose_capture --> imgl__freshness__is_valid_png
     imgl__autodiag__diagnose_capture --> imgl__diagnose__worth_analyzing
     imgl__autodiag__build_execute_report --> imgl__autodiag__build_operation_step
+    imgl__autodiag__build_execute_report --> imgl__autodiag___derive_current_next
+    imgl__autodiag__build_execute_report --> imgl__autodiag___actionable_hints
     imgl__autodiag__build_execute_report --> imgl__autodiag___compact_result
     imgl__autodiag__build_execute_report --> imgl__autodiag___overall_verdict
     imgl__autodiag__render_report --> imgl__autodiag__pick_output_format
@@ -674,17 +710,17 @@ flowchart LR
     imgl__autodiag__should_block_blank_capture --> imgl__autodiag___flag_enabled
     imgl__autodiag__should_block_stale_capture --> imgl__autodiag___flag_enabled
     imgl__autodiag__diagnostics_enabled --> imgl__autodiag___flag_enabled
-    imgl__autodiag___render_markdown --> imgl__autodiag___actionable_hints
+    imgl__autodiag___capture_next_cmd --> imgl__autodiag___shell_quote
+    imgl__autodiag___derive_current_next --> imgl__autodiag___capture_next_cmd
+    imgl__autodiag___render_markdown --> imgl__autodiag___derive_current_next
+    imgl__autodiag___render_markdown --> imgl__autodiag___yaml_codeblock
+    imgl__cli___output_format --> imgl__autodiag__resolve_cli_output_format
     imgl__cli__build_parser --> imgl__cli___add_common_args
-    imgl__cli___write_output --> scripts__imgl_verify_capture__print
     imgl__cli__main --> imgl__cli__build_parser
-    imgl__cli__main --> imgl__web__app__create_app
-    imgl__cli__main --> scripts__imgl_verify_capture__print
-    imgl__cli__main --> imgl__diagnose__diagnose_content
-    imgl__cli__main --> imgl__cli___write_output
-    imgl__cli__main --> imgl__cli___check_blank_before_analyze
+    imgl__cli__main --> packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor
+    imgl__cli__main --> imgl__terminal_md__print_report
+    imgl__cli__main --> imgl__control__run_map
     imgl__cli___check_blank_before_analyze --> imgl__diagnose__diagnose_content
-    imgl__cli___check_blank_before_analyze --> scripts__imgl_verify_capture__print
     imgl__cli___check_blank_before_analyze --> imgl__diagnose__worth_analyzing
     imgl__cli___run_image_command --> imgl__cli___apply_config_overrides
     imgl__cli___run_image_command --> imgl__cli___check_blank_before_analyze
@@ -692,17 +728,45 @@ flowchart LR
     imgl__cli___run_image_command --> imgl__cli___write_output
     imgl__cli___run_image_command --> imgl__export__html_export__scene_to_html
     imgl__cli___run_image_command --> imgl__export__svg_export__scene_to_svg
-    imgl__actions__SceneActions__find --> imgl__actions___iter_elements
-    imgl__actions__SceneActions__find --> imgl__actions___find_label_for_input
-    imgl__actions__SceneActions__find --> imgl__catalog___infer_input_label
-    imgl__actions__SceneActions__find --> imgl__actions___text_matches
-    imgl__actions__SceneActions__click --> imgl__actions___format_query
-    imgl__actions__SceneActions__type_into --> imgl__actions___format_query
-    imgl__actions__SceneActions__list_actions --> imgl__actions___iter_elements
-    imgl__actions___iter_elements --> imgl__window_scope__get_discovered_window
-    imgl__actions___iter_elements --> imgl__actions___window_matches
-    imgl__actions___find_label_for_input --> imgl__actions___iter_elements
-    imgl__actions___find_label_for_input --> imgl__geometry__bbox_distance
+    imgl__interact___build_session_catalog --> imgl__catalog__build_interactive_catalog
+    imgl__interact__resolve_imgl_uri --> imgl__actions__actions
+    imgl__interact__resolve_imgl_uri --> imgl__interact___annotate_catalog
+    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__load_or_analyze
+    imgl__interact__resolve_imgl_uri --> imgl__export__vql_adapter__write_vql_program
+    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__save_scene_cache
+    imgl__interact__resolve_imgl_uri --> imgl__interact___build_session_catalog
+    imgl__interact___annotate_catalog --> imgl__export__annotate_export__write_annotated_image
+    imgl__interact___annotate_catalog --> imgl__window_scope__get_discovered_window
+    imgl__interact___annotate_catalog --> imgl__export__annotate_export__default_annotated_path
+    imgl__interact___annotate_catalog --> imgl__export__annotate_export__open_image
+    imgl__interact___select_window --> imgl__window_scope__get_discovered_window
+    imgl__interact___select_window --> imgl__interact___build_session_catalog
+    imgl__interact___select_window --> imgl__interact___annotate_catalog
+    imgl__interact___select_window --> imgl__export__annotate_export__default_annotated_path
+    imgl__interact___export_window_previews --> imgl__window_scope__discover_windows
+    imgl__interact___export_window_previews --> imgl__export__annotate_export__write_window_preview_images
+    imgl__interact___prepare_interactive_session --> imgl__scene_cache__load_or_analyze
+    imgl__interact___prepare_interactive_session --> imgl__window_scope__apply_discovered_windows
+    imgl__interact___prepare_interactive_session --> imgl__export__vql_adapter__write_vql_program
+    imgl__interact___prepare_interactive_session --> imgl__scene_cache__save_scene_cache
+    imgl__interact___prepare_interactive_session --> imgl__window_scope__discover_windows
+    imgl__interact___show_initial_shell_views --> imgl__interact___build_session_catalog
+    imgl__interact___show_initial_shell_views --> imgl__interact___print_catalog_banner
+    imgl__interact___show_initial_shell_views --> imgl__window_scope__format_window_picker
+    imgl__interact___print_actions_phase_hints --> imgl__interact___annotate_catalog
+    imgl__interact___print_actions_phase_hints --> imgl__export__annotate_export__default_annotated_path
+    imgl__interact___print_actions_phase_hints --> imgl__uri__uri_for_imgl_list
+    imgl__interact___handle_resolved_shell_action --> imgl__interact___build_session_catalog
+    imgl__interact__run_interactive_shell --> imgl__interact___prepare_interactive_session
+    imgl__interact__run_interactive_shell --> imgl__interact___show_initial_shell_views
+    imgl__interact__run_interactive_shell --> imgl__interact___print_actions_phase_hints
+    imgl__interact__run_interactive_shell --> imgl__interact___read_shell_prompt
+    imgl__interact__run_interactive_shell --> imgl__nlp2uri__prompt_to_imgl_uri
+    imgl__interact__run_interactive_shell --> imgl__interact__resolve_imgl_uri
+    imgl__interact__run_interactive_shell --> imgl__interact___handle_resolved_shell_action
+    imgl__interact___handle_window_phase_prompt --> imgl__interact___export_window_previews
+    imgl__interact___handle_window_phase_prompt --> imgl__interact___build_session_catalog
+    imgl__interact___handle_window_phase_prompt --> imgl__interact___print_catalog_banner
     imgl__freshness__clear_vql_cache --> imgl__freshness__vql_cache_paths
     imgl__freshness__sync_vql_cache_with_image --> imgl__freshness__clear_vql_cache
     imgl__freshness__sync_vql_cache_with_image --> imgl__freshness__vql_cache_paths
@@ -712,58 +776,78 @@ flowchart LR
     imgl__freshness__image_freshness --> imgl__freshness__capture_sidecar_path
     imgl__freshness__verify_capture_updated --> imgl__freshness__mark_capture_fresh
     imgl__freshness__verify_capture_updated --> imgl__freshness__is_valid_png
+    imgl__catalog__build_interactive_catalog --> imgl__catalog_heuristic__build_heuristic_catalog
+    imgl__catalog__build_interactive_catalog --> imgl__llm_catalog__refine_catalog_with_llm
+    imgl__catalog__build_interactive_catalog --> imgl__catalog_heuristic___find_window
+    imgl__catalog__format_catalog_table --> imgl__catalog___truncate
+    imgl__capture___portal_fallback_enabled --> imgl__capture___is_wayland
+    imgl__capture___vdisplay_portal_in_chain_enabled --> imgl__capture___portal_fallback_enabled
     imgl__capture__capture_screen --> imgl__capture__default_capture_path
-    imgl__capture__capture_screen --> imgl__capture___try_vql_capture
-    imgl__capture__capture_screen --> imgl__capture___native_backends
-    imgl__capture__capture_screen --> imgl__capture___is_wayland
-    imgl__capture__capture_screen --> imgl__capture___capture_with_mss
-    imgl__capture___try_vql_capture --> scripts__imgl_capture__mark_capture_fresh
-    imgl__capture___try_vql_capture --> imgl__capture___is_blank_image
-    imgl__capture___native_backends --> imgl__capture___is_wayland
-    imgl__capture___capture_with_grim --> imgl__capture___run_command
+    imgl__capture__capture_screen --> imgl__installs__ensure_vdisplay
+    imgl__capture__capture_screen --> imgl__capture___try_vdisplay_capture
+    imgl__capture__capture_screen --> imgl__capture___vdisplay_portal_in_chain_enabled
+    imgl__capture__capture_screen --> imgl__capture___non_portal_backends
+    imgl__capture__capture_screen --> imgl__capture___vql_capture_enabled
+    imgl__capture__capture_screen --> imgl__capture___discard_capture_file
+    imgl__capture__capture_screen --> imgl__capture___capture_failure_hint
+    imgl__capture__capture_screen --> imgl__capture___prefer_mirror
+    imgl__capture___capture_failure_hint --> imgl__capture___screen_recording_denied
+    imgl__capture___capture_failure_hint --> imgl__capture___is_wayland
+    imgl__capture___try_vdisplay_capture --> imgl__capture___discard_capture_file
+    imgl__capture___try_vdisplay_capture --> imgl__freshness__mark_capture_fresh
+    imgl__capture___try_vql_capture --> imgl__capture___discard_capture_file
+    imgl__capture___try_vql_capture --> imgl__freshness__mark_capture_fresh
+    imgl__capture___non_portal_backends --> imgl__capture___is_wayland
+    imgl__capture___portal_backends --> imgl__capture___capture_with_portal
+    imgl__capture___try_portal_backends --> imgl__capture___portal_backends
+    imgl__capture___try_portal_backends --> imgl__capture___discard_capture_file
+    imgl__capture___try_portal_backends --> imgl__freshness__mark_capture_fresh
+    imgl__capture___try_portal_backends --> imgl__capture___is_blank_image
     imgl__capture___capture_with_gnome_screenshot --> imgl__capture___run_command
     imgl__capture___capture_with_scrot --> imgl__capture___run_command
+    imgl__capture___capture_with_portal --> imgl__capture___portal_python
+    imgl__capture___capture_with_portal --> imgl__capture___portal_script
     imgl__capture___is_blank_image --> imgl__diagnose__diagnose_content
     imgl__capture___is_blank_image --> imgl__diagnose__worth_analyzing
     imgl__capture__capture_status_message --> imgl__capture___is_blank_image
+    imgl__terminal_md___highlight_yaml_line --> imgl__terminal_md___c
+    imgl__terminal_md___highlight_yaml_line --> imgl__terminal_md___color_yaml_value
+    imgl__terminal_md___color_yaml_value --> imgl__terminal_md___c
+    imgl__terminal_md___highlight_bash_line --> imgl__terminal_md___c
+    imgl__terminal_md___highlight_inline --> imgl__terminal_md___c
+    imgl__terminal_md___highlight_inline --> imgl__terminal_md___verdict_color
+    imgl__terminal_md__colorize_markdown --> imgl__terminal_md__stdout_color_enabled
+    imgl__terminal_md__print_report --> imgl__terminal_md__colorize_markdown
+    imgl__llm_catalog___load_env_files --> imgl__llm_catalog___env_file_candidates
+    imgl__llm_catalog__llm_available --> imgl__llm_catalog___load_env_files
+    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog__llm_dependencies_ok
+    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog__llm_available
+    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___call_vision_llm
+    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___llm_json_to_options
+    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___snap_options_to_scene
+    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___merge_heuristic_inputs
+    imgl__llm_catalog__refine_catalog_with_llm --> imgl__llm_catalog___heuristic_fallback
+    imgl__llm_catalog___heuristic_fallback --> imgl__catalog_heuristic__build_heuristic_catalog
+    imgl__llm_catalog___heuristic_fallback --> imgl__catalog_filter__filter_catalog
+    imgl__llm_catalog___call_vision_llm --> imgl__llm_catalog___image_to_base64
+    imgl__llm_catalog___call_vision_llm --> imgl__llm_catalog___parse_json_payload
+    imgl__llm_catalog___image_to_base64 --> imgl__window_scope__crop_window_image
+    imgl__llm_catalog___snap_options_to_scene --> imgl__catalog_heuristic__build_heuristic_catalog
+    imgl__llm_catalog___snap_options_to_scene --> imgl__llm_catalog___best_label_match
+    imgl__llm_catalog___merge_heuristic_inputs --> imgl__llm_catalog___heuristic_fallback
+    imgl__llm_catalog___merge_heuristic_inputs --> imgl__llm_catalog___overlaps_catalog
+    imgl__llm_catalog___merge_heuristic_inputs --> imgl__llm_catalog___renumber_options
+    imgl__llm_catalog___overlaps_catalog --> imgl__geometry__iou
     imgl__window_scope__apply_discovered_windows --> imgl__window_scope__discover_windows
     imgl__window_scope__discover_windows --> imgl__window_scope__is_monolithic_scene
     imgl__window_scope__discover_windows --> imgl__window_scope___split_monolithic_window
     imgl__window_scope__summarize_windows --> imgl__window_scope__discover_windows
     imgl__window_scope__summarize_windows --> imgl__window_scope__export_window_crop
-    imgl__window_scope__get_discovered_window --> imgl__window_scope__discover_windows
-    imgl__window_scope__scene_for_window --> imgl__geometry__center_in
-    imgl__window_scope__scene_for_window --> imgl__window_scope___shift_ocr_boxes
-    imgl__window_scope__scene_for_window --> imgl__window_scope___shift_elements
-    imgl__window_scope__export_window_crop --> imgl__window_scope___safe_filename
-    imgl__window_scope__export_window_crop --> imgl__paths__resolve_image_path
-    imgl__window_scope__export_window_crop --> imgl__window_scope__crop_window_image
-    imgl__window_scope__default_window_annotated_path --> imgl__window_scope___safe_filename
-    imgl__window_scope___split_monolithic_window --> imgl__window_scope___collect_elements
-    imgl__window_scope___split_monolithic_window --> imgl__window_scope___detect_layout_mode
-    imgl__window_scope___split_monolithic_window --> imgl__window_scope___split_side_by_side
-    imgl__window_scope___split_monolithic_window --> imgl__window_scope___split_stacked
-    imgl__window_scope___split_monolithic_window --> imgl__layout__find_containing_window
-    imgl__window_scope___split_monolithic_window --> imgl__window_scope___guess_window_title
-    imgl__window_scope___split_side_by_side --> imgl__window_scope___best_vertical_split
-    imgl__window_scope___split_stacked --> imgl__window_scope___element_gap_gutters
-    imgl__window_scope___split_stacked --> imgl__window_scope___regions_from_balanced_gutters
-    imgl__window_scope___split_stacked --> imgl__window_scope___split_by_element_y_gaps
-    imgl__window_scope___split_stacked --> imgl__geometry__center_in
-    imgl__window_scope___split_stacked --> imgl__window_scope___image_gutter_candidates
-    imgl__window_scope___split_by_element_y_gaps --> imgl__geometry__center_in
-    imgl__window_scope___guess_window_title --> imgl__geometry__center_in
-    imgl__vdisplay_bridge__list_os_windows --> imgl__vdisplay_bridge__default_display
-    imgl__vdisplay_bridge__list_os_monitors --> imgl__vdisplay_bridge__default_display
-    imgl__vdisplay_bridge__diagnose_os_display --> imgl__vdisplay_bridge__vdisplay_missing_message
-    imgl__vdisplay_bridge__diagnose_os_display --> imgl__vdisplay_bridge__default_display
-    imgl__vdisplay_bridge__find_os_window --> imgl__vdisplay_bridge___norm
-    imgl__vdisplay_bridge__find_os_window --> imgl__vdisplay_bridge__list_os_windows
-    imgl__vdisplay_bridge__list_vision_windows --> imgl__scene_cache__load_or_analyze
-    imgl__vdisplay_bridge__list_vision_windows --> imgl__window_scope__summarize_windows
-    imgl__vdisplay_bridge__list_vision_windows --> imgl__window_scope__discover_windows
-    imgl__vdisplay_bridge__list_vision_windows --> imgl__paths__resolve_image_path
-    imgl__vdisplay_bridge__build_window_control_report --> imgl__autodiag__diagnose_capture
-    imgl__vdisplay_bridge__build_window_control_report --> imgl__vdisplay_bridge__diagnose_os_display
-    imgl__vdisplay_bridge__build_window_control_report --> imgl__vdisplay_bridge__list_os_windows
-    imgl__vdisplay_bridge__build_window_control_report --> imgl__vdisplay_bridge__correlate_windows
+    imgl__window_scope__should_scope_window --> imgl__window_scope__discover_windows
+    imgl__window_scope__scope_to_focus_window --> imgl__window_scope__summarize_windows
+    imgl__window_scope__scope_to_focus_window --> imgl__window_scope__pick_focus_window
+    imgl__window_scope__scope_to_focus_window --> imgl__paths__resolve_image_path
+    imgl__window_scope__scope_to_focus_window --> imgl__window_scope___safe_filename
+    imgl__window_scope__scope_image_to_focus_window --> imgl__pipeline__analyze
+    imgl__window_scope__scope_image_to_focus_window --> imgl__window_scope__apply_discovered_windows
+    imgl__window_scope__scope_image_to_focus_window --> imgl__window_scope__scope_to_focus_window

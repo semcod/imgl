@@ -23,12 +23,12 @@ Image to Layout — screenshot OCR and semantic UI reconstruction
 ## Metadata
 
 - **name**: `imgl`
-- **version**: `0.7.2`
-- **python_requires**: `>=3.10`
+- **version**: `0.7.3`
+- **python_requires**: `>=3.10,<3.14`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Makefile, testql(3), app.doql.less, goal.yaml, .env.example, src(24 mod), project/(3 analysis files)
+- **generated_from**: pyproject.toml, Makefile, testql(3), app.doql.less, goal.yaml, .env.example, src(29 mod), project/(3 analysis files)
 
 ## Architecture
 
@@ -43,11 +43,11 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: imgl;
-  version: 0.7.2;
+  version: 0.7.3;
 }
 
 dependencies {
-  runtime: "pillow>=10.0, pytesseract>=0.3.10";
+  runtime: "pillow>=10.0, pytesseract>=0.3.10, PyYAML>=6.0";
   capture: mss>=9.0;
   diagnose: numpy>=1.24;
   llm: "litellm>=1.30, python-dotenv>=1.0";
@@ -86,18 +86,15 @@ workflow[name="install"] {
 workflow[name="install-dev"] {
   trigger: manual;
   step-1: run cmd=$(PIP) install -e ".[dev,llm,capture]";
+  step-2: run cmd=$(IMGL) install control;
+  step-3: run cmd=if [ -d "$(VDISPLAY_ROOT)" ]; then \;
+  step-4: run cmd=$(PIP) install -e "$(VDISPLAY_ROOT)[pillow]" || $(PIP) install -e "$(VDISPLAY_ROOT)"; \;
+  step-5: run cmd=fi;
 }
 
 workflow[name="install-control"] {
   trigger: manual;
-  step-1: run cmd=$(PIP) install "jsonschema>=4.0" "protobuf>=5.0";
-  step-2: run cmd=$(PIP) install -e packages/dsl2imgl packages/nlp2imgl packages/rest2imgl packages/cli2imgl;
-}
-
-workflow[name="install-full"] {
-  trigger: manual;
-  step-1: run cmd=$(PIP) install -e ".[web]";
-  step-2: run cmd=$(PIP) install "jsonschema>=4.0" "protobuf>=5.0";
+  step-1: run cmd=$(IMGL) install control;
 }
 
 workflow[name="install-img2nl"] {
@@ -110,39 +107,32 @@ workflow[name="install-vdisplay"] {
   step-1: run cmd=$(IMGL) install vdisplay;
 }
 
-workflow[name="test"] {
+workflow[name="install-vql"] {
   trigger: manual;
-  step-1: run cmd=$(PY) -m pytest tests packages/dsl2imgl/tests -q;
+  step-1: run cmd=$(IMGL) install vql;
 }
 
-workflow[name="test-imgl"] {
+workflow[name="install-full"] {
   trigger: manual;
-  step-1: run cmd=$(PY) -m pytest tests/test_autodiag.py tests/test_vdisplay_bridge.py tests/test_nlp2imgl_control.py -q;
-}
-
-workflow[name="test-dsl2imgl"] {
-  trigger: manual;
-  step-1: run cmd=$(PY) -m pytest packages/dsl2imgl/tests -q;
+  step-1: run cmd=$(PIP) install -e ".[web]";
 }
 
 workflow[name="capture"] {
   trigger: manual;
-  step-1: run cmd=test -x "$(PY)" || (echo "Brak $(VENV) — make install-dev" && exit 1);
-  step-2: run cmd=$(IMGL) capture --smart -o "$(IMGL_IMAGE)";
+  step-1: run cmd=$(IMGL) capture --smart -o "$(IMGL_IMAGE)";
 }
 
 workflow[name="capture-interactive"] {
   trigger: manual;
-  step-1: run cmd=depend target=install-dev;
-  step-2: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
-  step-3: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture -o "$(IMGL_IMAGE)" --verify;
-  step-4: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)";
-  step-5: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
+  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
+  step-2: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify;
+  step-3: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)";
+  step-4: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
 }
 
 workflow[name="verify-capture"] {
   trigger: manual;
-  step-1: run cmd=BEFORE=$$(stat -c %Y "$(IMGL_IMAGE)" 2>/dev/null || echo 0); \;
+  step-1: run cmd=BEFORE=$${BEFORE:-$$(stat -c %Y "$(IMGL_IMAGE)" 2>/dev/null || echo 0)}; \;
   step-2: run cmd=$(IMGL) verify "$(IMGL_IMAGE)" --before "$$BEFORE";
 }
 
@@ -179,20 +169,29 @@ workflow[name="execute-llm"] {
   trigger: manual;
   step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute-llm PROMPT='wpisz test w Chat input'" && exit 1);
-  step-3: run cmd=test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY — ustaw klucz OpenRouter" && exit 1);
+  step-3: run cmd=test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY" && exit 1);
   step-4: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --llm --format "$(FORMAT)";
 }
 
 workflow[name="shot"] {
   trigger: manual;
-  step-1: depend target=capture-interactive;
-  step-2: depend target=execute;
+  step-1: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make shot PROMPT='wpisz test w Chat input'" && exit 1);
+  step-2: run cmd=$(IMGL) shot "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)";
 }
 
-workflow[name="shot-llm"] {
+workflow[name="test"] {
   trigger: manual;
-  step-1: depend target=capture-interactive;
-  step-2: depend target=execute-llm;
+  step-1: run cmd=$(PY) -m pytest tests packages/dsl2imgl/tests -q;
+}
+
+workflow[name="test-imgl"] {
+  trigger: manual;
+  step-1: run cmd=$(PY) -m pytest tests/test_autodiag.py tests/test_vdisplay_bridge.py tests/test_nlp2imgl_control.py tests/test_control_cli.py tests/test_installs.py -q;
+}
+
+workflow[name="test-dsl2imgl"] {
+  trigger: manual;
+  step-1: run cmd=$(PY) -m pytest packages/dsl2imgl/tests -q;
 }
 
 workflow[name="proto"] {
@@ -207,7 +206,7 @@ workflow[name="serve-rest"] {
 
 workflow[name="serve-web"] {
   trigger: manual;
-  step-1: run cmd=$(PY) -m imgl.cli serve --port $(WEB_PORT) --image $(IMGL_IMAGE) --llm --window $(IMGL_WINDOW);
+  step-1: run cmd=$(IMGL) serve --port $(WEB_PORT) --image screen.png --llm --window region-bottom;
 }
 
 workflow[name="demo-key"] {
@@ -217,15 +216,15 @@ workflow[name="demo-key"] {
 
 workflow[name="demo-nl"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak $(IMGL_IMAGE) — uruchom: make capture" && exit 1);
-  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz test w Chat input" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run;
+  step-1: run cmd=test -f screen.png || (echo "Brak screen.png — uruchom: imgl capture --interactive -o screen.png" && exit 1);
+  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz test w Chat input" --image screen.png --window region-bottom --dry-run;
 }
 
 workflow[name="demo-chat"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak $(IMGL_IMAGE) — uruchom: make capture" && exit 1);
-  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz demo w Chat input" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run;
-  step-3: run cmd=$(VENV)/bin/nlp2imgl apply "naciśnij ctrl+enter" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run;
+  step-1: run cmd=test -f screen.png || (echo "Brak screen.png" && exit 1);
+  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz demo w Chat input" --image screen.png --window region-bottom --dry-run;
+  step-3: run cmd=$(VENV)/bin/nlp2imgl apply "naciśnij ctrl+enter" --image screen.png --window region-bottom --dry-run;
 }
 
 tests {
@@ -244,7 +243,7 @@ environment[name="local"] {
   runtime: python;
   env_file: .env;
   template_file: .env.example;
-  python_version: >=3.10;
+  python_version: >=3.10,<3.14;
   vars: LLM_MODEL, OPENROUTER_API_KEY;
   runtime_llm: OPENROUTER_API_KEY;
 }
@@ -257,13 +256,17 @@ environment[name="local"] {
 - `imgl.capture`
 - `imgl.catalog`
 - `imgl.catalog_filter`
+- `imgl.catalog_heuristic`
+- `imgl.catalog_types`
 - `imgl.cli`
 - `imgl.config`
+- `imgl.control`
 - `imgl.coords`
 - `imgl.diagnose`
 - `imgl.execute`
 - `imgl.freshness`
 - `imgl.geometry`
+- `imgl.installs`
 - `imgl.interact`
 - `imgl.layout`
 - `imgl.llm_catalog`
@@ -272,6 +275,7 @@ environment[name="local"] {
 - `imgl.pipeline`
 - `imgl.preprocess`
 - `imgl.scene_cache`
+- `imgl.terminal_md`
 - `imgl.types`
 - `imgl.uri`
 - `imgl.vdisplay_bridge`
@@ -378,7 +382,7 @@ ASSERT[4]{field, operator, expected}:
 ```yaml
 project:
   name: imgl
-  version: 0.7.2
+  version: 0.7.3
   env: local
 ```
 
@@ -389,6 +393,7 @@ project:
 ```text markpact:deps python
 pillow>=10.0
 pytesseract>=0.3.10
+PyYAML>=6.0
 ```
 
 ### Development
@@ -429,18 +434,16 @@ pip install -e .[dev]
 - `SHELL`
 - `PIP`
 - `PY`
-- `IMGL_ROOT`
+- `IMGL`
 - `help`
 - `venv`
 - `install`
 - `install-dev`
 - `install-control`
-- `install-full`
 - `install-img2nl`
 - `install-vdisplay`
-- `test`
-- `test-imgl`
-- `test-dsl2imgl`
+- `install-vql`
+- `install-full`
 - `capture`
 - `capture-interactive`
 - `verify-capture`
@@ -451,7 +454,9 @@ pip install -e .[dev]
 - `execute-dry`
 - `execute-llm`
 - `shot`
-- `shot-llm`
+- `test`
+- `test-imgl`
+- `test-dsl2imgl`
 - `proto`
 - `serve-rest`
 - `serve-web`
@@ -464,14 +469,15 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# imgl | 113f 13391L | python:99,shell:13,less:1 | 2026-06-09
-# stats: 463 func | 38 cls | 113 mod | CC̄=5.1 | critical:53 | cycles:0
-# alerts[5]: CC main=44; CC parse_line=44; CC run_interactive_shell=43; CC envelope_to_dict=42; CC _set_body=31
-# hotspots[5]: main fan=41; create_app fan=38; run_interactive_shell fan=32; _run_image_command fan=28; _detect_buttons fan=24
+# imgl | 122f 15705L | python:114,shell:7,less:1 | 2026-06-09
+# stats: 622 func | 38 cls | 122 mod | CC̄=4.6 | critical:61 | cycles:0
+# alerts[5]: CC main=62; CC _derive_current_next=32; CC _resolve_type=30; CC prompt_to_imgl_uri=28; CC classify_scene_elements=27
+# hotspots[5]: main fan=54; create_app fan=38; _run_image_command fan=28; capture_screen fan=21; smart_capture fan=21
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[113]:
-  app.doql.less,212
+M[122]:
+  app.doql.less,209
+  examples/img2nl-vql-flow.sh,11
   examples/scripts/demo-agent-loop.sh,38
   examples/scripts/demo-github.sh,22
   examples/scripts/demo-nlp2uri.py,80
@@ -479,18 +485,21 @@ M[113]:
   imgl/__init__.py,52
   imgl/__main__.py,7
   imgl/actions.py,272
-  imgl/autodiag.py,407
-  imgl/capture.py,212
-  imgl/catalog.py,351
+  imgl/autodiag.py,531
+  imgl/capture.py,551
+  imgl/catalog.py,92
   imgl/catalog_filter.py,139
+  imgl/catalog_heuristic.py,257
+  imgl/catalog_types.py,47
   imgl/classify/__init__.py,6
   imgl/classify/gui_heuristics.py,262
-  imgl/cli.py,718
+  imgl/cli.py,934
   imgl/config.py,24
+  imgl/control.py,358
   imgl/coords.py,71
   imgl/detect/__init__.py,12
   imgl/detect/img2vql_bridge.py,65
-  imgl/detect/local.py,279
+  imgl/detect/local.py,375
   imgl/detect/rectangles.py,97
   imgl/diagnose.py,248
   imgl/execute.py,163
@@ -503,9 +512,10 @@ M[113]:
   imgl/export/vql_adapter.py,245
   imgl/freshness.py,152
   imgl/geometry.py,38
-  imgl/interact.py,561
+  imgl/installs.py,126
+  imgl/interact.py,660
   imgl/layout.py,109
-  imgl/llm_catalog.py,521
+  imgl/llm_catalog.py,522
   imgl/nlp2uri.py,283
   imgl/ocr/__init__.py,13
   imgl/ocr/base.py,15
@@ -515,6 +525,7 @@ M[113]:
   imgl/pipeline.py,117
   imgl/preprocess.py,64
   imgl/scene_cache.py,64
+  imgl/terminal_md.py,211
   imgl/types.py,171
   imgl/uri.py,119
   imgl/vdisplay_bridge.py,254
@@ -523,7 +534,7 @@ M[113]:
   imgl/web/app.py,287
   imgl/web/session.py,453
   imgl/web/thumbs.py,56
-  imgl/window_scope.py,576
+  imgl/window_scope.py,699
   packages/cli2imgl/src/cli2imgl/cli.py,35
   packages/dsl2imgl/scripts/generate-proto.sh,7
   packages/dsl2imgl/src/dsl2imgl/__init__.py,7
@@ -532,10 +543,10 @@ M[113]:
   packages/dsl2imgl/src/dsl2imgl/codec.py,58
   packages/dsl2imgl/src/dsl2imgl/engine.py,6
   packages/dsl2imgl/src/dsl2imgl/events.py,169
-  packages/dsl2imgl/src/dsl2imgl/grammar.py,138
+  packages/dsl2imgl/src/dsl2imgl/grammar.py,187
   packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py,2
   packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py,221
-  packages/dsl2imgl/src/dsl2imgl/pb_codec.py,241
+  packages/dsl2imgl/src/dsl2imgl/pb_codec.py,285
   packages/dsl2imgl/src/dsl2imgl/result.py,35
   packages/dsl2imgl/src/dsl2imgl/schema_registry.py,45
   packages/dsl2imgl/src/dsl2imgl/v1/__init__.py,2
@@ -546,36 +557,46 @@ M[113]:
   packages/mcp2imgl/src/mcp2imgl/cli.py,23
   packages/mcp2imgl/src/mcp2imgl/server.py,36
   packages/nlp2imgl/src/nlp2imgl/__init__.py,5
-  packages/nlp2imgl/src/nlp2imgl/cli.py,92
+  packages/nlp2imgl/src/nlp2imgl/cli.py,23
+  packages/nlp2imgl/src/nlp2imgl/cli_commands.py,72
+  packages/nlp2imgl/src/nlp2imgl/cli_parser.py,38
   packages/nlp2imgl/src/nlp2imgl/control.py,151
-  packages/nlp2imgl/src/nlp2imgl/to_dsl.py,94
+  packages/nlp2imgl/src/nlp2imgl/to_dsl.py,100
   packages/rest2imgl/src/rest2imgl/app.py,126
   packages/rest2imgl/src/rest2imgl/cli.py,27
   packages/uri2imgl/src/uri2imgl/__init__.py,4
   packages/uri2imgl/src/uri2imgl/cli.py,37
   packages/uri2imgl/src/uri2imgl/decode.py,36
   project.sh,59
+  tests/conftest.py,12
   tests/test_actions.py,140
   tests/test_annotate.py,59
-  tests/test_autodiag.py,91
-  tests/test_capture_paths.py,105
+  tests/test_autodiag.py,149
+  tests/test_capture_paths.py,106
+  tests/test_capture_vdisplay.py,40
+  tests/test_capture_vdisplay_priority.py,100
   tests/test_catalog_filter.py,73
   tests/test_catalog_interact.py,200
+  tests/test_control_cli.py,144
+  tests/test_detect_buttons.py,78
   tests/test_diagnose.py,147
   tests/test_execute_key.py,17
   tests/test_export.py,218
-  tests/test_imgl.py,202
+  tests/test_imgl.py,204
+  tests/test_installs.py,78
   tests/test_layout_classify.py,176
   tests/test_llm_catalog.py,127
+  tests/test_nlp2imgl_cli.py,92
   tests/test_nlp2imgl_control.py,36
   tests/test_nlp2imgl_llm.py,29
   tests/test_nlp2uri_fixes.py,63
   tests/test_ocr_lang.py,17
   tests/test_scene_cache.py,90
+  tests/test_terminal_md.py,49
   tests/test_vdisplay_bridge.py,51
   tests/test_vql_export.py,106
   tests/test_web.py,121
-  tests/test_window_scope.py,198
+  tests/test_window_scope.py,221
   tree.sh,2
 D:
   examples/scripts/demo-nlp2uri.py:
@@ -596,19 +617,25 @@ D:
     _window_matches(window;query)
     _find_label_for_input(scene;input_element;window)
   imgl/autodiag.py:
-    e: img2nl_root,img2nl_available,diagnose_capture,build_operation_step,_compact_result,build_execute_report,pick_output_format,render_report,_flag_enabled,should_block_blank_capture,should_block_stale_capture,diagnostics_enabled,_render_markdown,_overall_verdict,_actionable_hints,_compact_features,_scene_class,_parse_coords,_coords_from_action,_parse_typed_text,_parse_keys
+    e: img2nl_root,img2nl_available,diagnose_capture,build_operation_step,_compact_result,build_execute_report,resolve_cli_output_format,pick_output_format,render_report,_flag_enabled,should_block_blank_capture,should_block_stale_capture,diagnostics_enabled,_yaml_codeblock,_shell_quote,_capture_next_cmd,_derive_current_next,_markdown_payload,_render_markdown,_overall_verdict,_actionable_hints,_compact_features,_scene_class,_parse_coords,_coords_from_action,_parse_typed_text,_parse_keys
     img2nl_root()
     img2nl_available()
     diagnose_capture(image_path)
     build_operation_step(result)
     _compact_result(result)
     build_execute_report()
+    resolve_cli_output_format()
     pick_output_format(payload;requested)
     render_report(payload;fmt)
     _flag_enabled()
     should_block_blank_capture(capture)
     should_block_stale_capture(capture)
     diagnostics_enabled()
+    _yaml_codeblock(data)
+    _shell_quote(value)
+    _capture_next_cmd(image)
+    _derive_current_next(report)
+    _markdown_payload(report)
     _render_markdown(report)
     _overall_verdict(capture;operation)
     _actionable_hints(report)
@@ -619,32 +646,40 @@ D:
     _parse_typed_text(message)
     _parse_keys(message)
   imgl/capture.py:
-    e: default_capture_path,_is_wayland,capture_screen,_try_vql_capture,_native_backends,_run_command,_capture_with_grim,_capture_with_gnome_screenshot,_capture_with_scrot,_capture_with_portal,_capture_with_mss,_is_blank_image,capture_status_message,CaptureError,BlankCaptureError
+    e: last_capture_meta,_prefer_mirror,_vql_capture_enabled,_portal_fallback_enabled,_vdisplay_portal_in_chain_enabled,default_capture_path,_is_wayland,capture_screen,_screen_recording_denied,_capture_failure_hint,_try_vdisplay_capture,_try_vql_capture,_discard_capture_file,_non_portal_backends,_portal_backends,_try_portal_backends,_run_command,_capture_with_gnome_shell,_capture_with_grim,_capture_with_gnome_screenshot,_capture_with_scrot,_portal_python,_portal_script,_capture_with_portal,_capture_with_mss,_is_blank_image,capture_status_message,CaptureError,BlankCaptureError
     CaptureError:  # Raised when screen capture fails.
     BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
+    last_capture_meta()
+    _prefer_mirror()
+    _vql_capture_enabled()
+    _portal_fallback_enabled()
+    _vdisplay_portal_in_chain_enabled()
     default_capture_path(out)
     _is_wayland()
     capture_screen(out)
+    _screen_recording_denied(errors)
+    _capture_failure_hint()
+    _try_vdisplay_capture(path)
     _try_vql_capture(path)
-    _native_backends()
+    _discard_capture_file(path)
+    _non_portal_backends()
+    _portal_backends()
+    _try_portal_backends(path)
     _run_command(cmd;path)
+    _capture_with_gnome_shell(path)
     _capture_with_grim(path)
     _capture_with_gnome_screenshot(path)
     _capture_with_scrot(path)
+    _portal_python()
+    _portal_script()
     _capture_with_portal(path)
     _capture_with_mss(path)
     _is_blank_image(path)
     capture_status_message(path)
   imgl/catalog.py:
-    e: build_interactive_catalog,format_catalog_table,_window_option,_element_option,_infer_input_label,_find_window,_iter_interactive_elements,_truncate,InteractiveOption
-    InteractiveOption: to_dict(0)  # One selectable UI target with mouse/keyboard affordances.
+    e: build_interactive_catalog,format_catalog_table,_truncate
     build_interactive_catalog(scene)
     format_catalog_table(options)
-    _window_option(index;window)
-    _element_option(index;element)
-    _infer_input_label(element;window)
-    _find_window(scene;window_id)
-    _iter_interactive_elements(scene)
     _truncate(value;max_len)
   imgl/catalog_filter.py:
     e: filter_catalog,_renumber,_replace_index_in_uri,_keep_element,_element_score,_window_score
@@ -654,6 +689,17 @@ D:
     _keep_element(option)
     _element_score(option)
     _window_score(option)
+  imgl/catalog_heuristic.py:
+    e: build_heuristic_catalog,infer_input_label,_window_option,_element_option,_find_window,_iter_interactive_elements
+    build_heuristic_catalog(scene)
+    infer_input_label(element;window)
+    _window_option(index;window)
+    _element_option(index;element)
+    _find_window(scene;window_id)
+    _iter_interactive_elements(scene)
+  imgl/catalog_types.py:
+    e: InteractiveOption
+    InteractiveOption: to_dict(0)  # One selectable UI target with mouse/keyboard affordances.
   imgl/classify/__init__.py:
   imgl/classify/gui_heuristics.py:
     e: classify_scene_elements,_normalize_confidence,_word_count,_text_or_label,_label_candidates,_match_ocr_to_bbox,_nearest_label,_ocr_inside_frame,_build_inputs
@@ -667,7 +713,9 @@ D:
     _ocr_inside_frame(frame;window_ocr;used_ocr)
     _build_inputs()
   imgl/cli.py:
-    e: _add_common_args,build_parser,_write_output,main,_check_blank_before_analyze,_apply_config_overrides,_run_image_command
+    e: _add_output_format_flags,_output_format,_add_common_args,build_parser,_write_output,main,_check_blank_before_analyze,_apply_config_overrides,_run_image_command
+    _add_output_format_flags(parser)
+    _output_format(args)
     _add_common_args(parser)
     build_parser()
     _write_output(content;output)
@@ -678,6 +726,24 @@ D:
   imgl/config.py:
     e: ImglConfig
     ImglConfig:
+  imgl/control.py:
+    e: default_image_path,default_window,_vql_cache_paths,clear_ocr_cache,screen_usable,smart_capture,capture_interactive,verify_capture,run_doctor,run_map,_control_packages_present,_require_nlp2imgl,run_execute,run_shot,install_img2nl,install_vdisplay
+    default_image_path()
+    default_window()
+    _vql_cache_paths(image)
+    clear_ocr_cache(image)
+    screen_usable(image)
+    smart_capture(image)
+    capture_interactive(image)
+    verify_capture(image)
+    run_doctor(image)
+    run_map(image)
+    _control_packages_present()
+    _require_nlp2imgl()
+    run_execute(prompt)
+    run_shot(prompt)
+    install_img2nl()
+    install_vdisplay()
   imgl/coords.py:
     e: scale_scene_to_screen
     scale_scene_to_screen(scene)
@@ -689,13 +755,24 @@ D:
     detect_with_img2vql(image_path)
     detect_ui_merged(image)
   imgl/detect/local.py:
-    e: _hex_color,_avg_color,_iou_xyxy,_detect_titlebar,_flood_rects,_detect_buttons,_detect_panels_simple,_dedupe,detect_ui_elements,DetectedUI
+    e: _hex_color,_avg_color,_iou_xyxy,_detect_titlebar,_flood_rects,_prepare_button_scan,_neighbor_avg_rgb,_build_contrast_mask,_button_blob_area_limits,_valid_button_blob_size,_scale_blob_rect,_overlaps_seen_button,_button_confidence,_button_role,_button_from_blob_rect,_rank_button_detections,_detect_buttons,_detect_panels_simple,_dedupe,detect_ui_elements,DetectedUI
     DetectedUI:
     _hex_color(rgb)
     _avg_color(im;x0;y0;x1;y1)
     _iou_xyxy(a;b)
     _detect_titlebar(im;w;h)
     _flood_rects(mask)
+    _prepare_button_scan(im;w;h)
+    _neighbor_avg_rgb(pixels)
+    _build_contrast_mask(pixels)
+    _button_blob_area_limits(sw;sh)
+    _valid_button_blob_size(rw;rh)
+    _scale_blob_rect(rect;scale)
+    _overlaps_seen_button(box;seen_boxes)
+    _button_confidence(aspect;bw;bh)
+    _button_role(aspect;bw;bh)
+    _button_from_blob_rect(im;rect)
+    _rank_button_detections(elements)
     _detect_buttons(im;w;h)
     _detect_panels_simple(im;w;h)
     _dedupe(elements)
@@ -800,8 +877,19 @@ D:
     center_in(inner;outer)
     bbox_distance(a;b)
     bbox_from_xyxy(x0;y0;x1;y1)
+  imgl/installs.py:
+    e: _repo_root,vdisplay_available,_auto_install_vdisplay_enabled,ensure_vdisplay,_pip_install_editable,install_img2nl,install_vdisplay,install_vql,install_control
+    _repo_root(name;env_key;default)
+    vdisplay_available()
+    _auto_install_vdisplay_enabled()
+    ensure_vdisplay()
+    _pip_install_editable(path)
+    install_img2nl()
+    install_vdisplay()
+    install_vql()
+    install_control()
   imgl/interact.py:
-    e: _build_session_catalog,resolve_imgl_uri,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt,InteractSession
+    e: _build_session_catalog,resolve_imgl_uri,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,_prepare_interactive_session,_show_initial_shell_views,_print_actions_phase_hints,_read_shell_prompt,_handle_resolved_shell_action,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt,InteractSession
     InteractSession:
     _build_session_catalog(session)
     resolve_imgl_uri(uri;session)
@@ -810,6 +898,11 @@ D:
     _annotate_catalog(session)
     _select_window(session;window_ref)
     _export_window_previews(session)
+    _prepare_interactive_session(image_path)
+    _show_initial_shell_views()
+    _print_actions_phase_hints()
+    _read_shell_prompt(stdin;stderr)
+    _handle_resolved_shell_action()
     run_interactive_shell(image_path)
     describe_resolution(resolved)
     _print_catalog_banner(session;cfg;use_llm;no_filter;stderr)
@@ -882,6 +975,17 @@ D:
     load_cached_scene(image_path;vql_file)
     save_scene_cache(scene;vql_file)
     load_or_analyze(image_path)
+  imgl/terminal_md.py:
+    e: _c,stdout_color_enabled,_verdict_color,_highlight_yaml_line,_color_yaml_value,_highlight_bash_line,_highlight_inline,colorize_markdown,print_report
+    _c(name;text)
+    stdout_color_enabled()
+    _verdict_color(verdict)
+    _highlight_yaml_line(line)
+    _color_yaml_value(rest)
+    _highlight_bash_line(line)
+    _highlight_inline(text)
+    colorize_markdown(text)
+    print_report(text;fmt)
   imgl/types.py:
     e: dataclass_to_dict,BBox,OcrBox,Element,Window,Scene
     BBox: as_xyxy(0),contains(1),to_dict(0),from_xyxy(5)
@@ -944,12 +1048,16 @@ D:
     crop_bbox_png(image_path;bbox)
     window_bbox_dict(window)
   imgl/window_scope.py:
-    e: is_monolithic_scene,apply_discovered_windows,discover_windows,summarize_windows,format_window_picker,get_discovered_window,scene_for_window,crop_window_image,export_window_crop,default_window_annotated_path,_split_monolithic_window,_collect_elements,_detect_layout_mode,_split_side_by_side,_split_stacked,_image_gutter_candidates,_element_gap_gutters,_regions_from_balanced_gutters,_split_by_element_y_gaps,_best_vertical_split,_region_id_for_boxes,_guess_window_title,_shift_elements,_shift_ocr_boxes,_safe_filename,WindowSummary
+    e: is_monolithic_scene,apply_discovered_windows,discover_windows,summarize_windows,pick_focus_window,should_scope_window,scope_to_focus_window,scope_image_to_focus_window,format_window_picker,get_discovered_window,scene_for_window,crop_window_image,export_window_crop,default_window_annotated_path,_split_monolithic_window,_collect_elements,_detect_layout_mode,_split_side_by_side,_split_stacked,_image_gutter_candidates,_element_gap_gutters,_regions_from_balanced_gutters,_split_by_element_y_gaps,_best_vertical_split,_region_id_for_boxes,_guess_window_title,_shift_elements,_shift_ocr_boxes,_safe_filename,WindowSummary
     WindowSummary: label(0),bbox(0)  # One discoverable window region with stats for the picker UI.
     is_monolithic_scene(scene)
     apply_discovered_windows(scene)
     discover_windows(scene)
     summarize_windows(scene)
+    pick_focus_window(summaries)
+    should_scope_window(scene;summary)
+    scope_to_focus_window(image_path;scene)
+    scope_image_to_focus_window(image_path)
     format_window_picker(summaries)
     get_discovered_window(scene;window_ref)
     scene_for_window(scene;window)
@@ -1000,9 +1108,21 @@ D:
     StoredEvent: to_dict(0)
     EventStore: __init__(1),for_default(2),append_command(2),_append_pb(1),_append_jsonl(1),replay_pb(0),replay(0)
   packages/dsl2imgl/src/dsl2imgl/grammar.py:
-    e: split_command,pick_flag,parse_line,to_text
+    e: split_command,pick_flag,_strip_prompt_tokens,_apply_image_window_flags,_parse_capture,_parse_analyze,_parse_actions,_parse_resolve,_parse_click,_parse_type,_parse_key,_parse_execute,_parse_interaction_verb,_parse_agent,parse_line,to_text
     split_command(line)
     pick_flag(tokens;flag)
+    _strip_prompt_tokens(rest)
+    _apply_image_window_flags(cmd;rest)
+    _parse_capture(rest;cmd)
+    _parse_analyze(rest;cmd)
+    _parse_actions(rest;cmd)
+    _parse_resolve(rest;cmd)
+    _parse_click(rest;cmd)
+    _parse_type(rest;cmd)
+    _parse_key(rest;cmd)
+    _parse_execute(rest;cmd)
+    _parse_interaction_verb(rest;cmd)
+    _parse_agent(rest;cmd)
     parse_line(line)
     to_text(cmd)
   packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py:
@@ -1017,8 +1137,30 @@ D:
     handle_resolve(cmd)
     handle_execute(cmd)
   packages/dsl2imgl/src/dsl2imgl/pb_codec.py:
-    e: _set_body,dict_to_envelope,envelope_to_dict,encode_protobuf,decode_protobuf,encode_text_to_protobuf,decode_protobuf_to_text,result_to_pb,pb_to_result,encode_result_protobuf
+    e: _assign_optional_str,_assign_execute_flag,_set_capture_body,_set_analyze_body,_set_actions_body,_set_resolve_body,_set_click_body,_set_type_body,_set_key_body,_set_execute_body,_set_agent_body,_set_body,_dict_optional_str,_dict_execute_flag,_dict_capture_body,_dict_analyze_body,_dict_actions_body,_dict_resolve_body,_dict_click_body,_dict_type_body,_dict_key_body,_dict_execute_body,_dict_agent_body,dict_to_envelope,envelope_to_dict,encode_protobuf,decode_protobuf,encode_text_to_protobuf,decode_protobuf_to_text,result_to_pb,pb_to_result,encode_result_protobuf
+    _assign_optional_str(msg;field;cmd;key)
+    _assign_execute_flag(msg;cmd)
+    _set_capture_body(msg;cmd)
+    _set_analyze_body(msg;cmd)
+    _set_actions_body(msg;cmd)
+    _set_resolve_body(msg;cmd)
+    _set_click_body(msg;cmd)
+    _set_type_body(msg;cmd)
+    _set_key_body(msg;cmd)
+    _set_execute_body(msg;cmd)
+    _set_agent_body(msg;cmd)
     _set_body(envelope;cmd)
+    _dict_optional_str(cmd;msg;key)
+    _dict_execute_flag(cmd;msg)
+    _dict_capture_body(cmd;msg)
+    _dict_analyze_body(cmd;msg)
+    _dict_actions_body(cmd;msg)
+    _dict_resolve_body(cmd;msg)
+    _dict_click_body(cmd;msg)
+    _dict_type_body(cmd;msg)
+    _dict_key_body(cmd;msg)
+    _dict_execute_body(cmd;msg)
+    _dict_agent_body(cmd;msg)
     dict_to_envelope(cmd)
     envelope_to_dict(envelope)
     encode_protobuf(cmd)
@@ -1065,6 +1207,16 @@ D:
   packages/nlp2imgl/src/nlp2imgl/cli.py:
     e: main
     main(argv)
+  packages/nlp2imgl/src/nlp2imgl/cli_commands.py:
+    e: output_format,run_to_dsl,run_doctor,_print_apply_payload,run_apply
+    output_format(args)
+    run_to_dsl(args)
+    run_doctor(args)
+    _print_apply_payload(payload;fmt)
+    run_apply(args)
+  packages/nlp2imgl/src/nlp2imgl/cli_parser.py:
+    e: build_parser
+    build_parser()
   packages/nlp2imgl/src/nlp2imgl/control.py:
     e: default_image_path,default_window,_result_to_dict,doctor_capture,apply_nl_with_diag
     default_image_path()
@@ -1092,6 +1244,9 @@ D:
   packages/uri2imgl/src/uri2imgl/decode.py:
     e: uri_to_dsl
     uri_to_dsl(uri)
+  tests/conftest.py:
+    e: _disable_vdisplay_auto_install
+    _disable_vdisplay_auto_install(monkeypatch)
   tests/test_actions.py:
     e: _dialog_scene,test_find_button_by_text,test_find_input_by_label,test_click_coords,test_click_action,test_type_into_by_label,test_find_in_window,test_find_one_not_found,test_click_raises_when_missing,test_list_actions,test_cli_find_command
     _dialog_scene()
@@ -1112,10 +1267,13 @@ D:
     test_write_annotated_image(tmp_path)
     test_nlp2uri_mapa()
   tests/test_autodiag.py:
-    e: test_image_freshness_sidecar,test_verify_capture_updated_fails_on_stale,test_build_execute_report_json,test_diagnose_capture_stale,test_is_valid_png_rejects_empty,test_vql_cache_path_names
+    e: test_image_freshness_sidecar,test_verify_capture_updated_fails_on_stale,test_build_execute_report_json,test_render_report_markdown_uses_yaml_codeblock,test_pick_output_format_defaults_to_markdown,test_build_execute_report_stale_has_current_and_next_cmd,test_diagnose_capture_stale,test_is_valid_png_rejects_empty,test_vql_cache_path_names
     test_image_freshness_sidecar(tmp_path)
     test_verify_capture_updated_fails_on_stale(tmp_path)
     test_build_execute_report_json()
+    test_render_report_markdown_uses_yaml_codeblock()
+    test_pick_output_format_defaults_to_markdown()
+    test_build_execute_report_stale_has_current_and_next_cmd()
     test_diagnose_capture_stale(tmp_path;monkeypatch)
     test_is_valid_png_rejects_empty(tmp_path)
     test_vql_cache_path_names()
@@ -1129,7 +1287,15 @@ D:
     test_capture_default_path(tmp_path)
     test_cli_vql_aborts_on_blank(tmp_path)
     test_cli_vql_allows_blank_with_flag(tmp_path)
-    test_capture_screen_with_mock_vql(tmp_path)
+    test_capture_screen_with_mock_vql(tmp_path;monkeypatch)
+  tests/test_capture_vdisplay.py:
+    e: test_capture_screen_prefers_vdisplay
+    test_capture_screen_prefers_vdisplay(tmp_path)
+  tests/test_capture_vdisplay_priority.py:
+    e: test_capture_prefers_vdisplay_over_portal,test_capture_interactive_uses_mirror_not_portal,test_capture_interactive_portal_fallback_on_wayland
+    test_capture_prefers_vdisplay_over_portal(tmp_path;monkeypatch)
+    test_capture_interactive_uses_mirror_not_portal(tmp_path)
+    test_capture_interactive_portal_fallback_on_wayland(tmp_path;monkeypatch)
   tests/test_catalog_filter.py:
     e: _noisy_scene,test_filter_catalog_drops_code_and_generic,test_build_interactive_catalog_filtered_by_default
     _noisy_scene()
@@ -1148,6 +1314,26 @@ D:
     test_resolve_imgl_uri_type()
     test_catalog_input_number_is_click()
     test_interactive_shell_quit(monkeypatch)
+  tests/test_control_cli.py:
+    e: test_default_image_path_env,test_default_window_env,test_run_doctor,test_run_execute_missing_image,test_run_execute_loads_openrouter_key_from_dotenv,test_cli_doctor_help,test_cli_execute_help,test_require_nlp2imgl_auto_installs_from_local_packages,test_cli_default_output_is_markdown
+    test_default_image_path_env(monkeypatch;tmp_path)
+    test_default_window_env(monkeypatch)
+    test_run_doctor(tmp_path;monkeypatch)
+    test_run_execute_missing_image(tmp_path;monkeypatch)
+    test_run_execute_loads_openrouter_key_from_dotenv(tmp_path;monkeypatch)
+    test_cli_doctor_help()
+    test_cli_execute_help()
+    test_require_nlp2imgl_auto_installs_from_local_packages(monkeypatch)
+    test_cli_default_output_is_markdown()
+  tests/test_detect_buttons.py:
+    e: test_valid_button_blob_size_filters_extremes,test_button_role_classifies_icon_vs_button,test_button_confidence_prefers_typical_toolbar_shape,test_overlaps_seen_button_dedupes_high_iou,test_button_from_blob_rect_returns_none_for_invalid_blob,test_detect_buttons_finds_contrast_blob,test_detect_ui_elements_still_includes_buttons
+    test_valid_button_blob_size_filters_extremes()
+    test_button_role_classifies_icon_vs_button()
+    test_button_confidence_prefers_typical_toolbar_shape()
+    test_overlaps_seen_button_dedupes_high_iou()
+    test_button_from_blob_rect_returns_none_for_invalid_blob()
+    test_detect_buttons_finds_contrast_blob()
+    test_detect_ui_elements_still_includes_buttons(tmp_path)
   tests/test_diagnose.py:
     e: _black_image,_ui_like_image,test_worth_analyzing_blank_scene,test_worth_analyzing_ui_scene,test_diagnose_black_image_fallback,test_diagnose_with_img2nl_black,test_diagnose_with_img2nl_ui,test_pipeline_skip_blank_raises,test_pipeline_includes_content_metadata,test_cli_diagnose_command
     _black_image(path;size)
@@ -1189,6 +1375,15 @@ D:
     test_analyze_e2e_with_tesseract(tmp_path)
     test_cli_analyze_stdout(tmp_path;capsys)
     test_cli_analyze_output_file(tmp_path)
+  tests/test_installs.py:
+    e: test_install_img2nl_missing_repo,test_install_img2nl_calls_pip,test_install_vdisplay_calls_pip,test_install_vql_calls_pip,test_install_control_calls_pip,test_ensure_vdisplay_skips_when_installed,test_ensure_vdisplay_auto_installs
+    test_install_img2nl_missing_repo(tmp_path;monkeypatch)
+    test_install_img2nl_calls_pip(tmp_path;monkeypatch)
+    test_install_vdisplay_calls_pip(tmp_path;monkeypatch)
+    test_install_vql_calls_pip(tmp_path;monkeypatch)
+    test_install_control_calls_pip()
+    test_ensure_vdisplay_skips_when_installed(monkeypatch)
+    test_ensure_vdisplay_auto_installs(monkeypatch)
   tests/test_layout_classify.py:
     e: _font,_make_dialog_fixture,test_iou_and_center_in,test_build_windows_fallback,test_build_windows_from_panels,test_find_containing_window,test_extract_window_titles,test_classify_button_with_geometry,test_classify_label_input_pair,test_detect_ui_elements_on_fixture,test_analyze_classifies_dialog
     _font(size)
@@ -1207,6 +1402,13 @@ D:
     test_load_env_files_reads_dotenv(tmp_path;monkeypatch)
     test_snap_options_to_scene()
     test_merge_heuristic_inputs_appends_missing_fields()
+  tests/test_nlp2imgl_cli.py:
+    e: test_build_parser_registers_subcommands,test_run_to_dsl_prints_line,test_run_apply_uses_json_when_requested,test_run_doctor_exits_nonzero_on_stale_capture,test_main_dispatches_apply
+    test_build_parser_registers_subcommands()
+    test_run_to_dsl_prints_line(monkeypatch;capsys)
+    test_run_apply_uses_json_when_requested(monkeypatch;capsys)
+    test_run_doctor_exits_nonzero_on_stale_capture(monkeypatch)
+    test_main_dispatches_apply(monkeypatch)
   tests/test_nlp2imgl_control.py:
     e: test_apply_nl_with_diag_blocks_stale
     test_apply_nl_with_diag_blocks_stale(monkeypatch)
@@ -1229,6 +1431,12 @@ D:
     test_scale_scene_to_screen_doubles_coords()
     test_scene_cache_roundtrip(tmp_path)
     test_load_or_analyze_uses_cache(tmp_path;monkeypatch)
+  tests/test_terminal_md.py:
+    e: test_stdout_color_disabled_with_no_color,test_colorize_markdown_adds_ansi_when_forced,test_colorize_markdown_plain_when_disabled,test_resolve_cli_output_format_flags
+    test_stdout_color_disabled_with_no_color(monkeypatch)
+    test_colorize_markdown_adds_ansi_when_forced()
+    test_colorize_markdown_plain_when_disabled()
+    test_resolve_cli_output_format_flags()
   tests/test_vdisplay_bridge.py:
     e: test_suggest_imgl_region_bottom,test_suggest_imgl_region_top,test_correlate_windows_finds_overlap,test_vdisplay_available_is_bool
     test_suggest_imgl_region_bottom()
@@ -1255,7 +1463,7 @@ D:
     test_capture_error_returns_state(web_client;monkeypatch)
     test_agent_start_without_llm(web_client)
   tests/test_window_scope.py:
-    e: _wide_scene,test_discover_windows_splits_monolithic_scene,test_scene_for_window_shifts_coordinates,test_build_catalog_scoped_to_window,test_export_window_crop_and_preview,test_stacked_layout_splits_horizontally_not_grid,test_format_window_picker_lists_regions,test_single_monitor_region_bottom_alias
+    e: _wide_scene,test_discover_windows_splits_monolithic_scene,test_scene_for_window_shifts_coordinates,test_build_catalog_scoped_to_window,test_export_window_crop_and_preview,test_stacked_layout_splits_horizontally_not_grid,test_format_window_picker_lists_regions,test_single_monitor_region_bottom_alias,test_pick_focus_window_prefers_interactive_region,test_scope_to_focus_window_exports_crop
     _wide_scene()
     test_discover_windows_splits_monolithic_scene()
     test_scene_for_window_shifts_coordinates()
@@ -1264,16 +1472,19 @@ D:
     test_stacked_layout_splits_horizontally_not_grid(tmp_path)
     test_format_window_picker_lists_regions()
     test_single_monitor_region_bottom_alias()
+    test_pick_focus_window_prefers_interactive_region()
+    test_scope_to_focus_window_exports_crop(tmp_path)
 ```
 
 ### `project/logic.pl`
 
 ```prolog markpact:analysis path=project/logic.pl
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('imgl', '0.7.2', 'python').
+project_metadata('imgl', '0.7.3', 'python').
 
 % ── Project Files ────────────────────────────────────────
-project_file('app.doql.less', 212, 'less').
+project_file('app.doql.less', 209, 'less').
+project_file('examples/img2nl-vql-flow.sh', 11, 'shell').
 project_file('examples/scripts/demo-agent-loop.sh', 38, 'shell').
 project_file('examples/scripts/demo-github.sh', 22, 'shell').
 project_file('examples/scripts/demo-nlp2uri.py', 80, 'python').
@@ -1281,18 +1492,21 @@ project_file('examples/scripts/demo-windows.sh', 23, 'shell').
 project_file('imgl/__init__.py', 52, 'python').
 project_file('imgl/__main__.py', 7, 'python').
 project_file('imgl/actions.py', 272, 'python').
-project_file('imgl/autodiag.py', 407, 'python').
-project_file('imgl/capture.py', 212, 'python').
-project_file('imgl/catalog.py', 351, 'python').
+project_file('imgl/autodiag.py', 531, 'python').
+project_file('imgl/capture.py', 551, 'python').
+project_file('imgl/catalog.py', 92, 'python').
 project_file('imgl/catalog_filter.py', 139, 'python').
+project_file('imgl/catalog_heuristic.py', 257, 'python').
+project_file('imgl/catalog_types.py', 47, 'python').
 project_file('imgl/classify/__init__.py', 6, 'python').
 project_file('imgl/classify/gui_heuristics.py', 262, 'python').
-project_file('imgl/cli.py', 718, 'python').
+project_file('imgl/cli.py', 934, 'python').
 project_file('imgl/config.py', 24, 'python').
+project_file('imgl/control.py', 358, 'python').
 project_file('imgl/coords.py', 71, 'python').
 project_file('imgl/detect/__init__.py', 12, 'python').
 project_file('imgl/detect/img2vql_bridge.py', 65, 'python').
-project_file('imgl/detect/local.py', 279, 'python').
+project_file('imgl/detect/local.py', 375, 'python').
 project_file('imgl/detect/rectangles.py', 97, 'python').
 project_file('imgl/diagnose.py', 248, 'python').
 project_file('imgl/execute.py', 163, 'python').
@@ -1305,9 +1519,10 @@ project_file('imgl/export/svg_export.py', 138, 'python').
 project_file('imgl/export/vql_adapter.py', 245, 'python').
 project_file('imgl/freshness.py', 152, 'python').
 project_file('imgl/geometry.py', 38, 'python').
-project_file('imgl/interact.py', 561, 'python').
+project_file('imgl/installs.py', 126, 'python').
+project_file('imgl/interact.py', 660, 'python').
 project_file('imgl/layout.py', 109, 'python').
-project_file('imgl/llm_catalog.py', 521, 'python').
+project_file('imgl/llm_catalog.py', 522, 'python').
 project_file('imgl/nlp2uri.py', 283, 'python').
 project_file('imgl/ocr/__init__.py', 13, 'python').
 project_file('imgl/ocr/base.py', 15, 'python').
@@ -1317,6 +1532,7 @@ project_file('imgl/paths.py', 42, 'python').
 project_file('imgl/pipeline.py', 117, 'python').
 project_file('imgl/preprocess.py', 64, 'python').
 project_file('imgl/scene_cache.py', 64, 'python').
+project_file('imgl/terminal_md.py', 211, 'python').
 project_file('imgl/types.py', 171, 'python').
 project_file('imgl/uri.py', 119, 'python').
 project_file('imgl/vdisplay_bridge.py', 254, 'python').
@@ -1325,7 +1541,7 @@ project_file('imgl/web/agent.py', 153, 'python').
 project_file('imgl/web/app.py', 287, 'python').
 project_file('imgl/web/session.py', 453, 'python').
 project_file('imgl/web/thumbs.py', 56, 'python').
-project_file('imgl/window_scope.py', 576, 'python').
+project_file('imgl/window_scope.py', 699, 'python').
 project_file('packages/cli2imgl/src/cli2imgl/cli.py', 35, 'python').
 project_file('packages/dsl2imgl/scripts/generate-proto.sh', 7, 'shell').
 project_file('packages/dsl2imgl/src/dsl2imgl/__init__.py', 7, 'python').
@@ -1334,10 +1550,10 @@ project_file('packages/dsl2imgl/src/dsl2imgl/cli.py', 47, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/codec.py', 58, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/engine.py', 6, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/events.py', 169, 'python').
-project_file('packages/dsl2imgl/src/dsl2imgl/grammar.py', 138, 'python').
+project_file('packages/dsl2imgl/src/dsl2imgl/grammar.py', 187, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/handlers/__init__.py', 2, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py', 221, 'python').
-project_file('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 241, 'python').
+project_file('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 285, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/result.py', 35, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/schema_registry.py', 45, 'python').
 project_file('packages/dsl2imgl/src/dsl2imgl/v1/__init__.py', 2, 'python').
@@ -1348,36 +1564,46 @@ project_file('packages/dsl2imgl/tests/test_dsl2imgl_phase4.py', 71, 'python').
 project_file('packages/mcp2imgl/src/mcp2imgl/cli.py', 23, 'python').
 project_file('packages/mcp2imgl/src/mcp2imgl/server.py', 36, 'python').
 project_file('packages/nlp2imgl/src/nlp2imgl/__init__.py', 5, 'python').
-project_file('packages/nlp2imgl/src/nlp2imgl/cli.py', 92, 'python').
+project_file('packages/nlp2imgl/src/nlp2imgl/cli.py', 23, 'python').
+project_file('packages/nlp2imgl/src/nlp2imgl/cli_commands.py', 72, 'python').
+project_file('packages/nlp2imgl/src/nlp2imgl/cli_parser.py', 38, 'python').
 project_file('packages/nlp2imgl/src/nlp2imgl/control.py', 151, 'python').
-project_file('packages/nlp2imgl/src/nlp2imgl/to_dsl.py', 94, 'python').
+project_file('packages/nlp2imgl/src/nlp2imgl/to_dsl.py', 100, 'python').
 project_file('packages/rest2imgl/src/rest2imgl/app.py', 126, 'python').
 project_file('packages/rest2imgl/src/rest2imgl/cli.py', 27, 'python').
 project_file('packages/uri2imgl/src/uri2imgl/__init__.py', 4, 'python').
 project_file('packages/uri2imgl/src/uri2imgl/cli.py', 37, 'python').
 project_file('packages/uri2imgl/src/uri2imgl/decode.py', 36, 'python').
 project_file('project.sh', 59, 'shell').
+project_file('tests/conftest.py', 12, 'python').
 project_file('tests/test_actions.py', 140, 'python').
 project_file('tests/test_annotate.py', 59, 'python').
-project_file('tests/test_autodiag.py', 91, 'python').
-project_file('tests/test_capture_paths.py', 105, 'python').
+project_file('tests/test_autodiag.py', 149, 'python').
+project_file('tests/test_capture_paths.py', 106, 'python').
+project_file('tests/test_capture_vdisplay.py', 40, 'python').
+project_file('tests/test_capture_vdisplay_priority.py', 100, 'python').
 project_file('tests/test_catalog_filter.py', 73, 'python').
 project_file('tests/test_catalog_interact.py', 200, 'python').
+project_file('tests/test_control_cli.py', 144, 'python').
+project_file('tests/test_detect_buttons.py', 78, 'python').
 project_file('tests/test_diagnose.py', 147, 'python').
 project_file('tests/test_execute_key.py', 17, 'python').
 project_file('tests/test_export.py', 218, 'python').
-project_file('tests/test_imgl.py', 202, 'python').
+project_file('tests/test_imgl.py', 204, 'python').
+project_file('tests/test_installs.py', 78, 'python').
 project_file('tests/test_layout_classify.py', 176, 'python').
 project_file('tests/test_llm_catalog.py', 127, 'python').
+project_file('tests/test_nlp2imgl_cli.py', 92, 'python').
 project_file('tests/test_nlp2imgl_control.py', 36, 'python').
 project_file('tests/test_nlp2imgl_llm.py', 29, 'python').
 project_file('tests/test_nlp2uri_fixes.py', 63, 'python').
 project_file('tests/test_ocr_lang.py', 17, 'python').
 project_file('tests/test_scene_cache.py', 90, 'python').
+project_file('tests/test_terminal_md.py', 49, 'python').
 project_file('tests/test_vdisplay_bridge.py', 51, 'python').
 project_file('tests/test_vql_export.py', 106, 'python').
 project_file('tests/test_web.py', 121, 'python').
-project_file('tests/test_window_scope.py', 198, 'python').
+project_file('tests/test_window_scope.py', 221, 'python').
 project_file('tree.sh', 2, 'shell').
 
 % ── Python Functions ─────────────────────────────────────
@@ -1393,42 +1619,57 @@ python_function('imgl/autodiag.py', 'img2nl_available', 0, 1, 2).
 python_function('imgl/autodiag.py', 'diagnose_capture', 1, 16, 16).
 python_function('imgl/autodiag.py', 'build_operation_step', 1, 19, 9).
 python_function('imgl/autodiag.py', '_compact_result', 1, 6, 3).
-python_function('imgl/autodiag.py', 'build_execute_report', 0, 5, 5).
-python_function('imgl/autodiag.py', 'pick_output_format', 2, 7, 2).
+python_function('imgl/autodiag.py', 'build_execute_report', 0, 8, 7).
+python_function('imgl/autodiag.py', 'resolve_cli_output_format', 0, 7, 1).
+python_function('imgl/autodiag.py', 'pick_output_format', 2, 2, 0).
 python_function('imgl/autodiag.py', 'render_report', 2, 3, 4).
 python_function('imgl/autodiag.py', '_flag_enabled', 0, 3, 3).
 python_function('imgl/autodiag.py', 'should_block_blank_capture', 1, 2, 2).
 python_function('imgl/autodiag.py', 'should_block_stale_capture', 1, 3, 2).
 python_function('imgl/autodiag.py', 'diagnostics_enabled', 0, 1, 1).
-python_function('imgl/autodiag.py', '_render_markdown', 1, 24, 7).
+python_function('imgl/autodiag.py', '_yaml_codeblock', 1, 1, 2).
+python_function('imgl/autodiag.py', '_shell_quote', 1, 3, 2).
+python_function('imgl/autodiag.py', '_capture_next_cmd', 1, 1, 1).
+python_function('imgl/autodiag.py', '_derive_current_next', 1, 32, 7).
+python_function('imgl/autodiag.py', '_markdown_payload', 1, 18, 1).
+python_function('imgl/autodiag.py', '_render_markdown', 1, 6, 7).
 python_function('imgl/autodiag.py', '_overall_verdict', 2, 10, 1).
-python_function('imgl/autodiag.py', '_actionable_hints', 1, 12, 3).
+python_function('imgl/autodiag.py', '_actionable_hints', 1, 19, 6).
 python_function('imgl/autodiag.py', '_compact_features', 1, 6, 1).
 python_function('imgl/autodiag.py', '_scene_class', 1, 2, 2).
 python_function('imgl/autodiag.py', '_parse_coords', 1, 2, 3).
 python_function('imgl/autodiag.py', '_coords_from_action', 1, 3, 1).
 python_function('imgl/autodiag.py', '_parse_typed_text', 1, 2, 2).
 python_function('imgl/autodiag.py', '_parse_keys', 1, 2, 3).
+python_function('imgl/capture.py', 'last_capture_meta', 0, 1, 1).
+python_function('imgl/capture.py', '_prefer_mirror', 0, 1, 3).
+python_function('imgl/capture.py', '_vql_capture_enabled', 0, 1, 3).
+python_function('imgl/capture.py', '_portal_fallback_enabled', 0, 2, 4).
+python_function('imgl/capture.py', '_vdisplay_portal_in_chain_enabled', 0, 2, 4).
 python_function('imgl/capture.py', 'default_capture_path', 1, 2, 6).
 python_function('imgl/capture.py', '_is_wayland', 0, 3, 3).
-python_function('imgl/capture.py', 'capture_screen', 1, 13, 10).
-python_function('imgl/capture.py', '_try_vql_capture', 1, 8, 7).
-python_function('imgl/capture.py', '_native_backends', 0, 3, 4).
+python_function('imgl/capture.py', 'capture_screen', 1, 26, 21).
+python_function('imgl/capture.py', '_screen_recording_denied', 1, 2, 2).
+python_function('imgl/capture.py', '_capture_failure_hint', 0, 5, 2).
+python_function('imgl/capture.py', '_try_vdisplay_capture', 1, 10, 12).
+python_function('imgl/capture.py', '_try_vql_capture', 1, 8, 9).
+python_function('imgl/capture.py', '_discard_capture_file', 1, 3, 3).
+python_function('imgl/capture.py', '_non_portal_backends', 0, 2, 2).
+python_function('imgl/capture.py', '_portal_backends', 0, 1, 1).
+python_function('imgl/capture.py', '_try_portal_backends', 1, 8, 8).
 python_function('imgl/capture.py', '_run_command', 2, 3, 4).
-python_function('imgl/capture.py', '_capture_with_grim', 1, 2, 3).
+python_function('imgl/capture.py', '_capture_with_gnome_shell', 1, 11, 9).
+python_function('imgl/capture.py', '_capture_with_grim', 1, 10, 7).
 python_function('imgl/capture.py', '_capture_with_gnome_screenshot', 1, 2, 3).
 python_function('imgl/capture.py', '_capture_with_scrot', 1, 2, 3).
-python_function('imgl/capture.py', '_capture_with_portal', 1, 3, 5).
+python_function('imgl/capture.py', '_portal_python', 0, 7, 5).
+python_function('imgl/capture.py', '_portal_script', 0, 5, 3).
+python_function('imgl/capture.py', '_capture_with_portal', 1, 16, 12).
 python_function('imgl/capture.py', '_capture_with_mss', 1, 1, 8).
 python_function('imgl/capture.py', '_is_blank_image', 1, 6, 13).
 python_function('imgl/capture.py', 'capture_status_message', 1, 2, 1).
-python_function('imgl/catalog.py', 'build_interactive_catalog', 1, 12, 10).
+python_function('imgl/catalog.py', 'build_interactive_catalog', 1, 3, 3).
 python_function('imgl/catalog.py', 'format_catalog_table', 1, 8, 4).
-python_function('imgl/catalog.py', '_window_option', 2, 2, 4).
-python_function('imgl/catalog.py', '_element_option', 2, 13, 9).
-python_function('imgl/catalog.py', '_infer_input_label', 2, 13, 0).
-python_function('imgl/catalog.py', '_find_window', 2, 2, 1).
-python_function('imgl/catalog.py', '_iter_interactive_elements', 1, 9, 1).
 python_function('imgl/catalog.py', '_truncate', 2, 2, 3).
 python_function('imgl/catalog_filter.py', 'filter_catalog', 1, 8, 6).
 python_function('imgl/catalog_filter.py', '_renumber', 1, 2, 4).
@@ -1436,6 +1677,12 @@ python_function('imgl/catalog_filter.py', '_replace_index_in_uri', 2, 1, 0).
 python_function('imgl/catalog_filter.py', '_keep_element', 1, 17, 8).
 python_function('imgl/catalog_filter.py', '_element_score', 1, 9, 4).
 python_function('imgl/catalog_filter.py', '_window_score', 1, 5, 1).
+python_function('imgl/catalog_heuristic.py', 'build_heuristic_catalog', 1, 10, 8).
+python_function('imgl/catalog_heuristic.py', 'infer_input_label', 2, 13, 0).
+python_function('imgl/catalog_heuristic.py', '_window_option', 2, 2, 4).
+python_function('imgl/catalog_heuristic.py', '_element_option', 2, 13, 9).
+python_function('imgl/catalog_heuristic.py', '_find_window', 2, 2, 1).
+python_function('imgl/catalog_heuristic.py', '_iter_interactive_elements', 1, 9, 1).
 python_function('imgl/classify/gui_heuristics.py', 'classify_scene_elements', 4, 27, 15).
 python_function('imgl/classify/gui_heuristics.py', '_normalize_confidence', 1, 2, 0).
 python_function('imgl/classify/gui_heuristics.py', '_word_count', 1, 1, 2).
@@ -1445,13 +1692,31 @@ python_function('imgl/classify/gui_heuristics.py', '_match_ocr_to_bbox', 3, 5, 3
 python_function('imgl/classify/gui_heuristics.py', '_nearest_label', 3, 7, 3).
 python_function('imgl/classify/gui_heuristics.py', '_ocr_inside_frame', 3, 4, 1).
 python_function('imgl/classify/gui_heuristics.py', '_build_inputs', 0, 7, 7).
+python_function('imgl/cli.py', '_add_output_format_flags', 1, 1, 2).
+python_function('imgl/cli.py', '_output_format', 1, 1, 1).
 python_function('imgl/cli.py', '_add_common_args', 1, 1, 1).
-python_function('imgl/cli.py', 'build_parser', 0, 1, 6).
+python_function('imgl/cli.py', 'build_parser', 0, 1, 7).
 python_function('imgl/cli.py', '_write_output', 2, 2, 2).
-python_function('imgl/cli.py', 'main', 1, 44, 41).
+python_function('imgl/cli.py', 'main', 1, 62, 54).
 python_function('imgl/cli.py', '_check_blank_before_analyze', 1, 5, 4).
 python_function('imgl/cli.py', '_apply_config_overrides', 2, 2, 1).
 python_function('imgl/cli.py', '_run_image_command', 3, 19, 28).
+python_function('imgl/control.py', 'default_image_path', 0, 3, 5).
+python_function('imgl/control.py', 'default_window', 0, 3, 2).
+python_function('imgl/control.py', '_vql_cache_paths', 1, 1, 1).
+python_function('imgl/control.py', 'clear_ocr_cache', 1, 1, 1).
+python_function('imgl/control.py', 'screen_usable', 1, 2, 3).
+python_function('imgl/control.py', 'smart_capture', 1, 25, 21).
+python_function('imgl/control.py', 'capture_interactive', 1, 16, 17).
+python_function('imgl/control.py', 'verify_capture', 1, 4, 6).
+python_function('imgl/control.py', 'run_doctor', 1, 7, 7).
+python_function('imgl/control.py', 'run_map', 1, 3, 5).
+python_function('imgl/control.py', '_control_packages_present', 0, 2, 3).
+python_function('imgl/control.py', '_require_nlp2imgl', 0, 4, 3).
+python_function('imgl/control.py', 'run_execute', 1, 13, 16).
+python_function('imgl/control.py', 'run_shot', 1, 1, 2).
+python_function('imgl/control.py', 'install_img2nl', 0, 1, 1).
+python_function('imgl/control.py', 'install_vdisplay', 0, 1, 1).
 python_function('imgl/coords.py', 'scale_scene_to_screen', 1, 6, 11).
 python_function('imgl/detect/img2vql_bridge.py', 'img2vql_available', 0, 2, 0).
 python_function('imgl/detect/img2vql_bridge.py', '_from_img2vql_dict', 1, 1, 5).
@@ -1462,7 +1727,18 @@ python_function('imgl/detect/local.py', '_avg_color', 5, 5, 6).
 python_function('imgl/detect/local.py', '_iou_xyxy', 2, 3, 2).
 python_function('imgl/detect/local.py', '_detect_titlebar', 3, 5, 10).
 python_function('imgl/detect/local.py', '_flood_rects', 1, 14, 7).
-python_function('imgl/detect/local.py', '_detect_buttons', 3, 24, 24).
+python_function('imgl/detect/local.py', '_prepare_button_scan', 3, 1, 5).
+python_function('imgl/detect/local.py', '_neighbor_avg_rgb', 1, 7, 5).
+python_function('imgl/detect/local.py', '_build_contrast_mask', 1, 5, 5).
+python_function('imgl/detect/local.py', '_button_blob_area_limits', 2, 1, 2).
+python_function('imgl/detect/local.py', '_valid_button_blob_size', 2, 3, 0).
+python_function('imgl/detect/local.py', '_scale_blob_rect', 2, 1, 1).
+python_function('imgl/detect/local.py', '_overlaps_seen_button', 2, 2, 2).
+python_function('imgl/detect/local.py', '_button_confidence', 3, 4, 0).
+python_function('imgl/detect/local.py', '_button_role', 3, 4, 0).
+python_function('imgl/detect/local.py', '_button_from_blob_rect', 2, 3, 11).
+python_function('imgl/detect/local.py', '_rank_button_detections', 1, 1, 1).
+python_function('imgl/detect/local.py', '_detect_buttons', 3, 3, 11).
 python_function('imgl/detect/local.py', '_detect_panels_simple', 3, 23, 14).
 python_function('imgl/detect/local.py', '_dedupe', 1, 8, 5).
 python_function('imgl/detect/local.py', 'detect_ui_elements', 1, 4, 6).
@@ -1541,6 +1817,15 @@ python_function('imgl/geometry.py', 'iou', 2, 3, 3).
 python_function('imgl/geometry.py', 'center_in', 2, 2, 1).
 python_function('imgl/geometry.py', 'bbox_distance', 2, 1, 0).
 python_function('imgl/geometry.py', 'bbox_from_xyxy', 4, 1, 1).
+python_function('imgl/installs.py', '_repo_root', 3, 2, 6).
+python_function('imgl/installs.py', 'vdisplay_available', 0, 2, 0).
+python_function('imgl/installs.py', '_auto_install_vdisplay_enabled', 0, 1, 3).
+python_function('imgl/installs.py', 'ensure_vdisplay', 0, 5, 4).
+python_function('imgl/installs.py', '_pip_install_editable', 1, 2, 2).
+python_function('imgl/installs.py', 'install_img2nl', 0, 2, 3).
+python_function('imgl/installs.py', 'install_vdisplay', 0, 2, 3).
+python_function('imgl/installs.py', 'install_vql', 0, 1, 3).
+python_function('imgl/installs.py', 'install_control', 0, 1, 5).
 python_function('imgl/interact.py', '_build_session_catalog', 1, 2, 1).
 python_function('imgl/interact.py', 'resolve_imgl_uri', 2, 13, 16).
 python_function('imgl/interact.py', '_resolve_click', 3, 17, 4).
@@ -1548,7 +1833,12 @@ python_function('imgl/interact.py', '_resolve_type', 3, 30, 5).
 python_function('imgl/interact.py', '_annotate_catalog', 1, 6, 7).
 python_function('imgl/interact.py', '_select_window', 2, 6, 6).
 python_function('imgl/interact.py', '_export_window_previews', 1, 4, 5).
-python_function('imgl/interact.py', 'run_interactive_shell', 1, 43, 32).
+python_function('imgl/interact.py', '_prepare_interactive_session', 1, 4, 12).
+python_function('imgl/interact.py', '_show_initial_shell_views', 0, 8, 7).
+python_function('imgl/interact.py', '_print_actions_phase_hints', 0, 9, 6).
+python_function('imgl/interact.py', '_read_shell_prompt', 2, 4, 4).
+python_function('imgl/interact.py', '_handle_resolved_shell_action', 0, 11, 7).
+python_function('imgl/interact.py', 'run_interactive_shell', 1, 15, 12).
 python_function('imgl/interact.py', 'describe_resolution', 1, 1, 0).
 python_function('imgl/interact.py', '_print_catalog_banner', 5, 8, 4).
 python_function('imgl/interact.py', '_handle_window_phase_prompt', 1, 9, 12).
@@ -1594,6 +1884,15 @@ python_function('imgl/scene_cache.py', 'scene_cache_path', 1, 2, 3).
 python_function('imgl/scene_cache.py', 'load_cached_scene', 2, 5, 7).
 python_function('imgl/scene_cache.py', 'save_scene_cache', 2, 1, 3).
 python_function('imgl/scene_cache.py', 'load_or_analyze', 1, 5, 7).
+python_function('imgl/terminal_md.py', '_c', 2, 1, 1).
+python_function('imgl/terminal_md.py', 'stdout_color_enabled', 0, 6, 5).
+python_function('imgl/terminal_md.py', '_verdict_color', 1, 1, 3).
+python_function('imgl/terminal_md.py', '_highlight_yaml_line', 1, 3, 4).
+python_function('imgl/terminal_md.py', '_color_yaml_value', 1, 6, 6).
+python_function('imgl/terminal_md.py', '_highlight_bash_line', 1, 10, 9).
+python_function('imgl/terminal_md.py', '_highlight_inline', 1, 1, 5).
+python_function('imgl/terminal_md.py', 'colorize_markdown', 1, 18, 19).
+python_function('imgl/terminal_md.py', 'print_report', 2, 3, 3).
 python_function('imgl/types.py', 'dataclass_to_dict', 1, 2, 3).
 python_function('imgl/uri.py', '_imgl_uri', 0, 5, 3).
 python_function('imgl/uri.py', 'uri_for_imgl_analyze', 0, 2, 1).
@@ -1627,6 +1926,10 @@ python_function('imgl/window_scope.py', 'is_monolithic_scene', 1, 2, 2).
 python_function('imgl/window_scope.py', 'apply_discovered_windows', 1, 1, 3).
 python_function('imgl/window_scope.py', 'discover_windows', 1, 2, 3).
 python_function('imgl/window_scope.py', 'summarize_windows', 1, 6, 7).
+python_function('imgl/window_scope.py', 'pick_focus_window', 1, 11, 5).
+python_function('imgl/window_scope.py', 'should_scope_window', 2, 2, 3).
+python_function('imgl/window_scope.py', 'scope_to_focus_window', 2, 5, 13).
+python_function('imgl/window_scope.py', 'scope_image_to_focus_window', 1, 2, 9).
 python_function('imgl/window_scope.py', 'format_window_picker', 1, 4, 4).
 python_function('imgl/window_scope.py', 'get_discovered_window', 2, 10, 6).
 python_function('imgl/window_scope.py', 'scene_for_window', 2, 4, 6).
@@ -1664,7 +1967,19 @@ python_function('packages/dsl2imgl/src/dsl2imgl/codec.py', 'envelope_from_json',
 python_function('packages/dsl2imgl/src/dsl2imgl/codec.py', 'roundtrip_text', 1, 1, 4).
 python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', 'split_command', 1, 4, 3).
 python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', 'pick_flag', 2, 3, 2).
-python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', 'parse_line', 1, 44, 11).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_strip_prompt_tokens', 1, 4, 3).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_apply_image_window_flags', 2, 3, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_capture', 2, 3, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_analyze', 2, 5, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_actions', 2, 4, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_resolve', 2, 1, 2).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_click', 2, 3, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_type', 2, 6, 5).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_key', 2, 5, 3).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_execute', 2, 1, 2).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_interaction_verb', 2, 5, 8).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', '_parse_agent', 2, 3, 5).
+python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', 'parse_line', 1, 4, 4).
 python_function('packages/dsl2imgl/src/dsl2imgl/grammar.py', 'to_text', 1, 10, 6).
 python_function('packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py', '_build_interact_session', 0, 4, 10).
 python_function('packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py', '_run_prompt_act', 1, 8, 7).
@@ -1674,9 +1989,31 @@ python_function('packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py', 'handle_an
 python_function('packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py', 'handle_actions', 1, 4, 8).
 python_function('packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py', 'handle_resolve', 1, 7, 5).
 python_function('packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py', 'handle_execute', 1, 14, 10).
-python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_body', 2, 31, 6).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_assign_optional_str', 4, 2, 3).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_assign_execute_flag', 2, 1, 2).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_capture_body', 2, 1, 3).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_analyze_body', 2, 1, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_actions_body', 2, 1, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_resolve_body', 2, 1, 3).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_click_body', 2, 2, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_type_body', 2, 1, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_key_body', 2, 1, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_execute_body', 2, 1, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_agent_body', 2, 2, 4).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_set_body', 2, 2, 5).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_optional_str', 3, 2, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_execute_flag', 2, 2, 0).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_capture_body', 2, 2, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_analyze_body', 2, 3, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_actions_body', 2, 3, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_resolve_body', 2, 1, 1).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_click_body', 2, 2, 3).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_type_body', 2, 1, 2).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_key_body', 2, 2, 2).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_execute_body', 2, 1, 2).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', '_dict_agent_body', 2, 2, 2).
 python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 'dict_to_envelope', 1, 1, 5).
-python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 'envelope_to_dict', 1, 42, 5).
+python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 'envelope_to_dict', 1, 4, 5).
 python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 'encode_protobuf', 1, 1, 2).
 python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 'decode_protobuf', 1, 1, 3).
 python_function('packages/dsl2imgl/src/dsl2imgl/pb_codec.py', 'encode_text_to_protobuf', 1, 2, 3).
@@ -1701,19 +2038,26 @@ python_function('packages/dsl2imgl/tests/test_dsl2imgl_phase4.py', 'test_event_s
 python_function('packages/dsl2imgl/tests/test_dsl2imgl_phase4.py', 'test_command_dispatch_records_event_id', 2, 3, 3).
 python_function('packages/mcp2imgl/src/mcp2imgl/cli.py', 'main', 1, 2, 5).
 python_function('packages/mcp2imgl/src/mcp2imgl/server.py', 'run_stdio', 0, 2, 10).
-python_function('packages/nlp2imgl/src/nlp2imgl/cli.py', 'main', 1, 15, 16).
+python_function('packages/nlp2imgl/src/nlp2imgl/cli.py', 'main', 1, 1, 3).
+python_function('packages/nlp2imgl/src/nlp2imgl/cli_commands.py', 'output_format', 1, 1, 1).
+python_function('packages/nlp2imgl/src/nlp2imgl/cli_commands.py', 'run_to_dsl', 1, 1, 2).
+python_function('packages/nlp2imgl/src/nlp2imgl/cli_commands.py', 'run_doctor', 1, 6, 8).
+python_function('packages/nlp2imgl/src/nlp2imgl/cli_commands.py', '_print_apply_payload', 2, 3, 5).
+python_function('packages/nlp2imgl/src/nlp2imgl/cli_commands.py', 'run_apply', 1, 6, 5).
+python_function('packages/nlp2imgl/src/nlp2imgl/cli_parser.py', 'build_parser', 0, 1, 5).
 python_function('packages/nlp2imgl/src/nlp2imgl/control.py', 'default_image_path', 0, 3, 4).
 python_function('packages/nlp2imgl/src/nlp2imgl/control.py', 'default_window', 0, 3, 2).
 python_function('packages/nlp2imgl/src/nlp2imgl/control.py', '_result_to_dict', 1, 4, 6).
 python_function('packages/nlp2imgl/src/nlp2imgl/control.py', 'doctor_capture', 1, 2, 3).
 python_function('packages/nlp2imgl/src/nlp2imgl/control.py', 'apply_nl_with_diag', 1, 17, 12).
-python_function('packages/nlp2imgl/src/nlp2imgl/to_dsl.py', 'use_llm_enabled', 1, 4, 4).
+python_function('packages/nlp2imgl/src/nlp2imgl/to_dsl.py', 'use_llm_enabled', 1, 5, 5).
 python_function('packages/nlp2imgl/src/nlp2imgl/to_dsl.py', 'to_dsl', 1, 15, 8).
 python_function('packages/nlp2imgl/src/nlp2imgl/to_dsl.py', 'apply_nl', 1, 5, 4).
 python_function('packages/rest2imgl/src/rest2imgl/app.py', 'create_app', 0, 1, 20).
 python_function('packages/rest2imgl/src/rest2imgl/cli.py', 'main', 1, 2, 7).
 python_function('packages/uri2imgl/src/uri2imgl/cli.py', 'main', 1, 4, 11).
 python_function('packages/uri2imgl/src/uri2imgl/decode.py', 'uri_to_dsl', 1, 18, 7).
+python_function('tests/conftest.py', '_disable_vdisplay_auto_install', 1, 1, 2).
 python_function('tests/test_actions.py', '_dialog_scene', 0, 1, 4).
 python_function('tests/test_actions.py', 'test_find_button_by_text', 0, 3, 4).
 python_function('tests/test_actions.py', 'test_find_input_by_label', 0, 3, 3).
@@ -1732,6 +2076,9 @@ python_function('tests/test_annotate.py', 'test_nlp2uri_mapa', 0, 3, 1).
 python_function('tests/test_autodiag.py', 'test_image_freshness_sidecar', 1, 3, 5).
 python_function('tests/test_autodiag.py', 'test_verify_capture_updated_fails_on_stale', 1, 1, 4).
 python_function('tests/test_autodiag.py', 'test_build_execute_report_json', 0, 3, 2).
+python_function('tests/test_autodiag.py', 'test_render_report_markdown_uses_yaml_codeblock', 0, 10, 2).
+python_function('tests/test_autodiag.py', 'test_pick_output_format_defaults_to_markdown', 0, 5, 1).
+python_function('tests/test_autodiag.py', 'test_build_execute_report_stale_has_current_and_next_cmd', 0, 5, 1).
 python_function('tests/test_autodiag.py', 'test_diagnose_capture_stale', 2, 3, 5).
 python_function('tests/test_autodiag.py', 'test_is_valid_png_rejects_empty', 1, 2, 4).
 python_function('tests/test_autodiag.py', 'test_vql_cache_path_names', 0, 3, 2).
@@ -1743,7 +2090,11 @@ python_function('tests/test_capture_paths.py', 'test_cli_missing_image_friendly_
 python_function('tests/test_capture_paths.py', 'test_capture_default_path', 1, 2, 1).
 python_function('tests/test_capture_paths.py', 'test_cli_vql_aborts_on_blank', 1, 2, 4).
 python_function('tests/test_capture_paths.py', 'test_cli_vql_allows_blank_with_flag', 1, 2, 6).
-python_function('tests/test_capture_paths.py', 'test_capture_screen_with_mock_vql', 1, 2, 5).
+python_function('tests/test_capture_paths.py', 'test_capture_screen_with_mock_vql', 2, 2, 6).
+python_function('tests/test_capture_vdisplay.py', 'test_capture_screen_prefers_vdisplay', 1, 3, 7).
+python_function('tests/test_capture_vdisplay_priority.py', 'test_capture_prefers_vdisplay_over_portal', 2, 3, 11).
+python_function('tests/test_capture_vdisplay_priority.py', 'test_capture_interactive_uses_mirror_not_portal', 1, 2, 6).
+python_function('tests/test_capture_vdisplay_priority.py', 'test_capture_interactive_portal_fallback_on_wayland', 2, 3, 6).
 python_function('tests/test_catalog_filter.py', '_noisy_scene', 0, 1, 4).
 python_function('tests/test_catalog_filter.py', 'test_filter_catalog_drops_code_and_generic', 0, 8, 7).
 python_function('tests/test_catalog_filter.py', 'test_build_interactive_catalog_filtered_by_default', 0, 3, 4).
@@ -1758,6 +2109,22 @@ python_function('tests/test_catalog_interact.py', 'test_resolve_imgl_uri_list', 
 python_function('tests/test_catalog_interact.py', 'test_resolve_imgl_uri_type', 0, 4, 5).
 python_function('tests/test_catalog_interact.py', 'test_catalog_input_number_is_click', 0, 7, 5).
 python_function('tests/test_catalog_interact.py', 'test_interactive_shell_quit', 1, 3, 5).
+python_function('tests/test_control_cli.py', 'test_default_image_path_env', 2, 2, 4).
+python_function('tests/test_control_cli.py', 'test_default_window_env', 1, 2, 2).
+python_function('tests/test_control_cli.py', 'test_run_doctor', 2, 3, 3).
+python_function('tests/test_control_cli.py', 'test_run_execute_missing_image', 2, 1, 4).
+python_function('tests/test_control_cli.py', 'test_run_execute_loads_openrouter_key_from_dotenv', 2, 3, 9).
+python_function('tests/test_control_cli.py', 'test_cli_doctor_help', 0, 4, 2).
+python_function('tests/test_control_cli.py', 'test_cli_execute_help', 0, 6, 2).
+python_function('tests/test_control_cli.py', 'test_require_nlp2imgl_auto_installs_from_local_packages', 1, 3, 7).
+python_function('tests/test_control_cli.py', 'test_cli_default_output_is_markdown', 0, 4, 4).
+python_function('tests/test_detect_buttons.py', 'test_valid_button_blob_size_filters_extremes', 0, 5, 1).
+python_function('tests/test_detect_buttons.py', 'test_button_role_classifies_icon_vs_button', 0, 3, 1).
+python_function('tests/test_detect_buttons.py', 'test_button_confidence_prefers_typical_toolbar_shape', 0, 3, 1).
+python_function('tests/test_detect_buttons.py', 'test_overlaps_seen_button_dedupes_high_iou', 0, 3, 1).
+python_function('tests/test_detect_buttons.py', 'test_button_from_blob_rect_returns_none_for_invalid_blob', 0, 2, 2).
+python_function('tests/test_detect_buttons.py', 'test_detect_buttons_finds_contrast_blob', 0, 5, 5).
+python_function('tests/test_detect_buttons.py', 'test_detect_ui_elements_still_includes_buttons', 1, 5, 4).
 python_function('tests/test_diagnose.py', '_black_image', 2, 1, 2).
 python_function('tests/test_diagnose.py', '_ui_like_image', 1, 2, 7).
 python_function('tests/test_diagnose.py', 'test_worth_analyzing_blank_scene', 0, 2, 1).
@@ -1782,7 +2149,7 @@ python_function('tests/test_export.py', 'test_cli_html_command', 2, 4, 8).
 python_function('tests/test_export.py', 'test_cli_svg_command_writes_file', 1, 5, 8).
 python_function('tests/test_export.py', 'test_cli_svg_wireframe_default', 2, 3, 7).
 python_function('tests/test_imgl.py', '_make_text_image', 2, 2, 7).
-python_function('tests/test_imgl.py', 'test_import', 0, 2, 0).
+python_function('tests/test_imgl.py', 'test_import', 0, 2, 1).
 python_function('tests/test_imgl.py', 'test_bbox_as_xyxy_and_contains', 0, 4, 3).
 python_function('tests/test_imgl.py', 'test_scene_roundtrip_json', 0, 8, 8).
 python_function('tests/test_imgl.py', 'test_scene_from_dict', 0, 3, 1).
@@ -1791,6 +2158,13 @@ python_function('tests/test_imgl.py', 'test_analyze_with_mocked_ocr', 1, 10, 8).
 python_function('tests/test_imgl.py', 'test_analyze_e2e_with_tesseract', 1, 6, 8).
 python_function('tests/test_imgl.py', 'test_cli_analyze_stdout', 2, 4, 9).
 python_function('tests/test_imgl.py', 'test_cli_analyze_output_file', 1, 4, 8).
+python_function('tests/test_installs.py', 'test_install_img2nl_missing_repo', 2, 1, 4).
+python_function('tests/test_installs.py', 'test_install_img2nl_calls_pip', 2, 4, 5).
+python_function('tests/test_installs.py', 'test_install_vdisplay_calls_pip', 2, 2, 5).
+python_function('tests/test_installs.py', 'test_install_vql_calls_pip', 2, 2, 5).
+python_function('tests/test_installs.py', 'test_install_control_calls_pip', 0, 2, 3).
+python_function('tests/test_installs.py', 'test_ensure_vdisplay_skips_when_installed', 1, 2, 4).
+python_function('tests/test_installs.py', 'test_ensure_vdisplay_auto_installs', 1, 2, 4).
 python_function('tests/test_layout_classify.py', '_font', 1, 2, 2).
 python_function('tests/test_layout_classify.py', '_make_dialog_fixture', 1, 1, 7).
 python_function('tests/test_layout_classify.py', 'test_iou_and_center_in', 0, 4, 3).
@@ -1805,6 +2179,11 @@ python_function('tests/test_layout_classify.py', 'test_analyze_classifies_dialog
 python_function('tests/test_llm_catalog.py', 'test_load_env_files_reads_dotenv', 2, 3, 6).
 python_function('tests/test_llm_catalog.py', 'test_snap_options_to_scene', 0, 3, 6).
 python_function('tests/test_llm_catalog.py', 'test_merge_heuristic_inputs_appends_missing_fields', 0, 5, 8).
+python_function('tests/test_nlp2imgl_cli.py', 'test_build_parser_registers_subcommands', 0, 9, 2).
+python_function('tests/test_nlp2imgl_cli.py', 'test_run_to_dsl_prints_line', 2, 3, 4).
+python_function('tests/test_nlp2imgl_cli.py', 'test_run_apply_uses_json_when_requested', 2, 3, 5).
+python_function('tests/test_nlp2imgl_cli.py', 'test_run_doctor_exits_nonzero_on_stale_capture', 1, 2, 3).
+python_function('tests/test_nlp2imgl_cli.py', 'test_main_dispatches_apply', 1, 2, 2).
 python_function('tests/test_nlp2imgl_control.py', 'test_apply_nl_with_diag_blocks_stale', 1, 4, 5).
 python_function('tests/test_nlp2imgl_llm.py', 'test_to_dsl_adds_llm_flag', 1, 3, 2).
 python_function('tests/test_nlp2imgl_llm.py', 'test_to_dsl_explicit_llm_false', 1, 2, 2).
@@ -1817,6 +2196,10 @@ python_function('tests/test_ocr_lang.py', 'test_ocr_lang_attempts_fallback', 0, 
 python_function('tests/test_scene_cache.py', 'test_scale_scene_to_screen_doubles_coords', 0, 5, 5).
 python_function('tests/test_scene_cache.py', 'test_scene_cache_roundtrip', 1, 4, 9).
 python_function('tests/test_scene_cache.py', 'test_load_or_analyze_uses_cache', 2, 2, 9).
+python_function('tests/test_terminal_md.py', 'test_stdout_color_disabled_with_no_color', 1, 2, 2).
+python_function('tests/test_terminal_md.py', 'test_colorize_markdown_adds_ansi_when_forced', 0, 5, 3).
+python_function('tests/test_terminal_md.py', 'test_colorize_markdown_plain_when_disabled', 0, 2, 1).
+python_function('tests/test_terminal_md.py', 'test_resolve_cli_output_format_flags', 0, 4, 1).
 python_function('tests/test_vdisplay_bridge.py', 'test_suggest_imgl_region_bottom', 0, 2, 1).
 python_function('tests/test_vdisplay_bridge.py', 'test_suggest_imgl_region_top', 0, 2, 1).
 python_function('tests/test_vdisplay_bridge.py', 'test_correlate_windows_finds_overlap', 0, 4, 2).
@@ -1843,7 +2226,9 @@ python_function('tests/test_window_scope.py', 'test_build_catalog_scoped_to_wind
 python_function('tests/test_window_scope.py', 'test_export_window_crop_and_preview', 1, 5, 10).
 python_function('tests/test_window_scope.py', 'test_stacked_layout_splits_horizontally_not_grid', 1, 6, 13).
 python_function('tests/test_window_scope.py', 'test_format_window_picker_lists_regions', 0, 3, 4).
-python_function('tests/test_window_scope.py', 'test_single_monitor_region_bottom_alias', 0, 3, 4).
+python_function('tests/test_window_scope.py', 'test_single_monitor_region_bottom_alias', 0, 2, 4).
+python_function('tests/test_window_scope.py', 'test_pick_focus_window_prefers_interactive_region', 0, 3, 4).
+python_function('tests/test_window_scope.py', 'test_scope_to_focus_window_exports_crop', 1, 5, 8).
 
 % ── Python Classes ───────────────────────────────────────
 python_class('imgl/actions.py', 'ActionTarget').
@@ -1862,7 +2247,7 @@ python_method('SceneActions', 'list_actions', 0, 5, 7).
 python_class('imgl/actions.py', 'ElementNotFoundError').
 python_class('imgl/capture.py', 'CaptureError').
 python_class('imgl/capture.py', 'BlankCaptureError').
-python_class('imgl/catalog.py', 'InteractiveOption').
+python_class('imgl/catalog_types.py', 'InteractiveOption').
 python_method('InteractiveOption', 'to_dict', 0, 1, 0).
 python_class('imgl/config.py', 'ImglConfig').
 python_class('imgl/detect/local.py', 'DetectedUI').
@@ -1945,18 +2330,16 @@ python_class('packages/rest2imgl/src/rest2imgl/app.py', 'DoctorBody').
 makefile_target('SHELL', '').
 makefile_target('PIP', '').
 makefile_target('PY', '').
-makefile_target('IMGL_ROOT', '').
+makefile_target('IMGL', '').
 makefile_target('help', '').
 makefile_target('venv', '').
 makefile_target('install', '').
 makefile_target('install-dev', '').
 makefile_target('install-control', '').
-makefile_target('install-full', '').
 makefile_target('install-img2nl', '').
 makefile_target('install-vdisplay', '').
-makefile_target('test', '').
-makefile_target('test-imgl', '').
-makefile_target('test-dsl2imgl', '').
+makefile_target('install-vql', '').
+makefile_target('install-full', '').
 makefile_target('capture', '').
 makefile_target('capture-interactive', '').
 makefile_target('verify-capture', '').
@@ -1967,7 +2350,9 @@ makefile_target('execute', '').
 makefile_target('execute-dry', '').
 makefile_target('execute-llm', '').
 makefile_target('shot', '').
-makefile_target('shot-llm', '').
+makefile_target('test', '').
+makefile_target('test-imgl', '').
+makefile_target('test-dsl2imgl', '').
 makefile_target('proto', '').
 makefile_target('serve-rest', '').
 makefile_target('serve-web', '').
@@ -2004,34 +2389,28 @@ sumd_workflow('install', 'manual').
 sumd_workflow_step('install', 1, '$(PIP) install -e .').
 sumd_workflow('install-dev', 'manual').
 sumd_workflow_step('install-dev', 1, '$(PIP) install -e ".[dev,llm,capture]"').
+sumd_workflow_step('install-dev', 2, '$(IMGL) install control').
+sumd_workflow_step('install-dev', 3, 'if [ -d "$(VDISPLAY_ROOT)" ]').
+sumd_workflow_step('install-dev', 4, '$(PIP) install -e "$(VDISPLAY_ROOT)[pillow]" || $(PIP) install -e "$(VDISPLAY_ROOT)"').
+sumd_workflow_step('install-dev', 5, 'fi').
 sumd_workflow('install-control', 'manual').
-sumd_workflow_step('install-control', 1, '$(PIP) install "jsonschema>=4.0" "protobuf>=5.0"').
-sumd_workflow_step('install-control', 2, '$(PIP) install -e packages/dsl2imgl packages/nlp2imgl packages/rest2imgl packages/cli2imgl').
-sumd_workflow('install-full', 'manual').
-sumd_workflow_step('install-full', 1, '$(PIP) install -e ".[web]"').
-sumd_workflow_step('install-full', 2, '$(PIP) install "jsonschema>=4.0" "protobuf>=5.0"').
+sumd_workflow_step('install-control', 1, '$(IMGL) install control').
 sumd_workflow('install-img2nl', 'manual').
 sumd_workflow_step('install-img2nl', 1, '$(IMGL) install img2nl').
 sumd_workflow('install-vdisplay', 'manual').
 sumd_workflow_step('install-vdisplay', 1, '$(IMGL) install vdisplay').
-sumd_workflow('test', 'manual').
-sumd_workflow_step('test', 1, '$(PY) -m pytest tests packages/dsl2imgl/tests -q').
-sumd_workflow('test-imgl', 'manual').
-sumd_workflow_step('test-imgl', 1, '$(PY) -m pytest tests/test_autodiag.py tests/test_vdisplay_bridge.py tests/test_nlp2imgl_control.py -q').
-sumd_workflow('test-dsl2imgl', 'manual').
-sumd_workflow_step('test-dsl2imgl', 1, '$(PY) -m pytest packages/dsl2imgl/tests -q').
+sumd_workflow('install-vql', 'manual').
+sumd_workflow_step('install-vql', 1, '$(IMGL) install vql').
+sumd_workflow('install-full', 'manual').
+sumd_workflow_step('install-full', 1, '$(PIP) install -e ".[web]"').
 sumd_workflow('capture', 'manual').
-sumd_workflow_step('capture', 1, 'test -x "$(PY)" || (echo "Brak $(VENV) — make install-dev" && exit 1)').
-sumd_workflow_step('capture', 2, '$(IMGL) capture --smart -o "$(IMGL_IMAGE)"').
+sumd_workflow_step('capture', 1, '$(IMGL) capture --smart -o "$(IMGL_IMAGE)"').
 sumd_workflow('capture-interactive', 'manual').
-sumd_workflow_step('capture-interactive', 1, 'depend target=install-dev').
-sumd_workflow_step('capture-interactive', 2, 'rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)"').
-sumd_workflow_step('capture-interactive', 3, 'IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture -o "$(IMGL_IMAGE)" --verify').
-sumd_workflow_step('capture-interactive', 4, 'rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)"').
-sumd_workflow_step('capture-interactive', 5, 'echo "export IMGL_IMAGE=$(IMGL_IMAGE)"').
+sumd_workflow_step('capture-interactive', 1, 'rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)"').
+sumd_workflow_step('capture-interactive', 2, 'IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify').
+sumd_workflow_step('capture-interactive', 3, 'rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)"').
+sumd_workflow_step('capture-interactive', 4, 'echo "export IMGL_IMAGE=$(IMGL_IMAGE)"').
 sumd_workflow('verify-capture', 'manual').
-sumd_workflow_step('verify-capture', 1, 'BEFORE=$$(stat -c %Y "$(IMGL_IMAGE)" 2>/dev/null || echo 0)').
-sumd_workflow_step('verify-capture', 2, '$(IMGL) verify "$(IMGL_IMAGE)" --before "$$BEFORE"').
 sumd_workflow('windows', 'manual').
 sumd_workflow_step('windows', 1, '$(IMGL) map --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)"').
 sumd_workflow('doctor', 'manual').
@@ -2049,25 +2428,32 @@ sumd_workflow_step('execute-dry', 3, '$(IMGL) execute "$(PROMPT)" --image "$(IMG
 sumd_workflow('execute-llm', 'manual').
 sumd_workflow_step('execute-llm', 1, 'test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1)').
 sumd_workflow_step('execute-llm', 2, 'test -n "$(PROMPT)" || (echo "Użycie: make execute-llm PROMPT=\'wpisz test w Chat input\'" && exit 1)').
-sumd_workflow_step('execute-llm', 3, 'test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY — ustaw klucz OpenRouter" && exit 1)').
+sumd_workflow_step('execute-llm', 3, 'test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY" && exit 1)').
 sumd_workflow_step('execute-llm', 4, '$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --llm --format "$(FORMAT)"').
 sumd_workflow('shot', 'manual').
-sumd_workflow('shot-llm', 'manual').
+sumd_workflow_step('shot', 1, 'test -n "$(PROMPT)" || (echo "Użycie: make shot PROMPT=\'wpisz test w Chat input\'" && exit 1)').
+sumd_workflow_step('shot', 2, '$(IMGL) shot "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)"').
+sumd_workflow('test', 'manual').
+sumd_workflow_step('test', 1, '$(PY) -m pytest tests packages/dsl2imgl/tests -q').
+sumd_workflow('test-imgl', 'manual').
+sumd_workflow_step('test-imgl', 1, '$(PY) -m pytest tests/test_autodiag.py tests/test_vdisplay_bridge.py tests/test_nlp2imgl_control.py tests/test_control_cli.py tests/test_installs.py -q').
+sumd_workflow('test-dsl2imgl', 'manual').
+sumd_workflow_step('test-dsl2imgl', 1, '$(PY) -m pytest packages/dsl2imgl/tests -q').
 sumd_workflow('proto', 'manual').
 sumd_workflow_step('proto', 1, 'bash packages/dsl2imgl/scripts/generate-proto.sh').
 sumd_workflow('serve-rest', 'manual').
 sumd_workflow_step('serve-rest', 1, '$(VENV)/bin/rest2imgl serve --port $(REST_PORT)').
 sumd_workflow('serve-web', 'manual').
-sumd_workflow_step('serve-web', 1, '$(PY) -m imgl.cli serve --port $(WEB_PORT) --image $(IMGL_IMAGE) --llm --window $(IMGL_WINDOW)').
+sumd_workflow_step('serve-web', 1, '$(IMGL) serve --port $(WEB_PORT) --image screen.png --llm --window region-bottom').
 sumd_workflow('demo-key', 'manual').
 sumd_workflow_step('demo-key', 1, '$(VENV)/bin/dsl2imgl exec \'KEY ctrl+Return EXECUTE 0\'').
 sumd_workflow('demo-nl', 'manual').
-sumd_workflow_step('demo-nl', 1, 'test -f "$(IMGL_IMAGE)" || (echo "Brak $(IMGL_IMAGE) — uruchom: make capture" && exit 1)').
-sumd_workflow_step('demo-nl', 2, '$(VENV)/bin/nlp2imgl apply "wpisz test w Chat input" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run').
+sumd_workflow_step('demo-nl', 1, 'test -f screen.png || (echo "Brak screen.png — uruchom: imgl capture --interactive -o screen.png" && exit 1)').
+sumd_workflow_step('demo-nl', 2, '$(VENV)/bin/nlp2imgl apply "wpisz test w Chat input" --image screen.png --window region-bottom --dry-run').
 sumd_workflow('demo-chat', 'manual').
-sumd_workflow_step('demo-chat', 1, 'test -f "$(IMGL_IMAGE)" || (echo "Brak $(IMGL_IMAGE) — uruchom: make capture" && exit 1)').
-sumd_workflow_step('demo-chat', 2, '$(VENV)/bin/nlp2imgl apply "wpisz demo w Chat input" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run').
-sumd_workflow_step('demo-chat', 3, '$(VENV)/bin/nlp2imgl apply "naciśnij ctrl+enter" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run').
+sumd_workflow_step('demo-chat', 1, 'test -f screen.png || (echo "Brak screen.png" && exit 1)').
+sumd_workflow_step('demo-chat', 2, '$(VENV)/bin/nlp2imgl apply "wpisz demo w Chat input" --image screen.png --window region-bottom --dry-run').
+sumd_workflow_step('demo-chat', 3, '$(VENV)/bin/nlp2imgl apply "naciśnij ctrl+enter" --image screen.png --window region-bottom --dry-run').
 ```
 
 ## Source Map
@@ -2081,6 +2467,10 @@ def is_monolithic_scene(scene)  # CC=2, fan=2
 def apply_discovered_windows(scene)  # CC=1, fan=3
 def discover_windows(scene)  # CC=2, fan=3
 def summarize_windows(scene)  # CC=6, fan=7
+def pick_focus_window(summaries)  # CC=11, fan=5 ⚠
+def should_scope_window(scene, summary)  # CC=2, fan=3
+def scope_to_focus_window(image_path, scene)  # CC=5, fan=13
+def scope_image_to_focus_window(image_path)  # CC=2, fan=9
 def format_window_picker(summaries)  # CC=4, fan=4
 def get_discovered_window(scene, window_ref)  # CC=10, fan=6 ⚠
 def scene_for_window(scene, window)  # CC=4, fan=6
@@ -2115,22 +2505,62 @@ def img2nl_available()  # CC=1, fan=2
 def diagnose_capture(image_path)  # CC=16, fan=16 ⚠
 def build_operation_step(result)  # CC=19, fan=9 ⚠
 def _compact_result(result)  # CC=6, fan=3
-def build_execute_report()  # CC=5, fan=5
-def pick_output_format(payload, requested)  # CC=7, fan=2
+def build_execute_report()  # CC=8, fan=7
+def resolve_cli_output_format()  # CC=7, fan=1
+def pick_output_format(payload, requested)  # CC=2, fan=0
 def render_report(payload, fmt)  # CC=3, fan=4
 def _flag_enabled()  # CC=3, fan=3
 def should_block_blank_capture(capture)  # CC=2, fan=2
 def should_block_stale_capture(capture)  # CC=3, fan=2
 def diagnostics_enabled()  # CC=1, fan=1
-def _render_markdown(report)  # CC=24, fan=7 ⚠
+def _yaml_codeblock(data)  # CC=1, fan=2
+def _shell_quote(value)  # CC=3, fan=2
+def _capture_next_cmd(image)  # CC=1, fan=1
+def _derive_current_next(report)  # CC=32, fan=7 ⚠
+def _markdown_payload(report)  # CC=18, fan=1 ⚠
+def _render_markdown(report)  # CC=6, fan=7
 def _overall_verdict(capture, operation)  # CC=10, fan=1 ⚠
-def _actionable_hints(report)  # CC=12, fan=3 ⚠
+def _actionable_hints(report)  # CC=19, fan=6 ⚠
 def _compact_features(features)  # CC=6, fan=1
 def _scene_class(diag)  # CC=2, fan=2
 def _parse_coords(message)  # CC=2, fan=3
 def _coords_from_action(action)  # CC=3, fan=1
 def _parse_typed_text(message)  # CC=2, fan=2
 def _parse_keys(message)  # CC=2, fan=3
+```
+
+### `imgl.capture` (`imgl/capture.py`)
+
+```python
+def last_capture_meta()  # CC=1, fan=1
+def _prefer_mirror()  # CC=1, fan=3
+def _vql_capture_enabled()  # CC=1, fan=3
+def _portal_fallback_enabled()  # CC=2, fan=4
+def _vdisplay_portal_in_chain_enabled()  # CC=2, fan=4
+def default_capture_path(out)  # CC=2, fan=6
+def _is_wayland()  # CC=3, fan=3
+def capture_screen(out)  # CC=26, fan=21 ⚠
+def _screen_recording_denied(errors)  # CC=2, fan=2
+def _capture_failure_hint()  # CC=5, fan=2
+def _try_vdisplay_capture(path)  # CC=10, fan=12 ⚠
+def _try_vql_capture(path)  # CC=8, fan=9
+def _discard_capture_file(path)  # CC=3, fan=3
+def _non_portal_backends()  # CC=2, fan=2
+def _portal_backends()  # CC=1, fan=1
+def _try_portal_backends(path)  # CC=8, fan=8
+def _run_command(cmd, path)  # CC=3, fan=4
+def _capture_with_gnome_shell(path)  # CC=11, fan=9 ⚠
+def _capture_with_grim(path)  # CC=10, fan=7 ⚠
+def _capture_with_gnome_screenshot(path)  # CC=2, fan=3
+def _capture_with_scrot(path)  # CC=2, fan=3
+def _portal_python()  # CC=7, fan=5
+def _portal_script()  # CC=5, fan=3
+def _capture_with_portal(path)  # CC=16, fan=12 ⚠
+def _capture_with_mss(path)  # CC=1, fan=8
+def _is_blank_image(path)  # CC=6, fan=13
+def capture_status_message(path)  # CC=2, fan=1
+class CaptureError:  # Raised when screen capture fails.
+class BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
 ```
 
 ### `imgl.actions` (`imgl/actions.py`)
@@ -2158,111 +2588,91 @@ class SceneActions:  # Find and interact with elements in a Scene.
 class ElementNotFoundError:  # Raised when no element matches the query.
 ```
 
-### `imgl.llm_catalog` (`imgl/llm_catalog.py`)
+### `imgl.control` (`imgl/control.py`)
 
 ```python
-def _env_file_candidates()  # CC=1, fan=3
-def _load_env_files()  # CC=12, fan=9 ⚠
-def llm_available()  # CC=1, fan=4
-def llm_dependencies_ok()  # CC=2, fan=0
-def refine_catalog_with_llm(scene)  # CC=14, fan=12 ⚠
-def _heuristic_fallback(scene)  # CC=2, fan=2
-def _short_error(exc)  # CC=3, fan=3
-def _call_vision_llm(image_path)  # CC=4, fan=6
-def _parse_json_payload(content)  # CC=3, fan=3
-def _image_to_base64(image_path)  # CC=3, fan=12
-def _llm_json_to_options(payload)  # CC=13, fan=13 ⚠
-def _snap_options_to_scene(options, scene)  # CC=8, fan=6
-def _merge_heuristic_inputs(llm_options, scene)  # CC=4, fan=5
-def _overlaps_catalog(option, others)  # CC=4, fan=3
-def _renumber_options(options)  # CC=2, fan=3
-def _best_label_match(label, candidates)  # CC=13, fan=5 ⚠
-```
-
-### `imgl.capture` (`imgl/capture.py`)
-
-```python
-def default_capture_path(out)  # CC=2, fan=6
-def _is_wayland()  # CC=3, fan=3
-def capture_screen(out)  # CC=13, fan=10 ⚠
-def _try_vql_capture(path)  # CC=8, fan=7
-def _native_backends()  # CC=3, fan=4
-def _run_command(cmd, path)  # CC=3, fan=4
-def _capture_with_grim(path)  # CC=2, fan=3
-def _capture_with_gnome_screenshot(path)  # CC=2, fan=3
-def _capture_with_scrot(path)  # CC=2, fan=3
-def _capture_with_portal(path)  # CC=3, fan=5
-def _capture_with_mss(path)  # CC=1, fan=8
-def _is_blank_image(path)  # CC=6, fan=13
-def capture_status_message(path)  # CC=2, fan=1
-class CaptureError:  # Raised when screen capture fails.
-class BlankCaptureError:  # Raised when capture succeeded but image is empty/black.
+def default_image_path()  # CC=3, fan=5
+def default_window()  # CC=3, fan=2
+def _vql_cache_paths(image)  # CC=1, fan=1
+def clear_ocr_cache(image)  # CC=1, fan=1
+def screen_usable(image)  # CC=2, fan=3
+def smart_capture(image)  # CC=25, fan=21 ⚠
+def capture_interactive(image)  # CC=16, fan=17 ⚠
+def verify_capture(image)  # CC=4, fan=6
+def run_doctor(image)  # CC=7, fan=7
+def run_map(image)  # CC=3, fan=5
+def _control_packages_present()  # CC=2, fan=3
+def _require_nlp2imgl()  # CC=4, fan=3
+def run_execute(prompt)  # CC=13, fan=16 ⚠
+def run_shot(prompt)  # CC=1, fan=2
+def install_img2nl()  # CC=1, fan=1
+def install_vdisplay()  # CC=1, fan=1
 ```
 
 ## Call Graph
 
-*302 nodes · 393 edges · 57 modules · CC̄=5.3*
+*379 nodes · 500 edges · 61 modules · CC̄=4.8*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `create_app` *(in imgl.web.app)* | 4 | 2 | 107 | **109** |
-| `print` *(in scripts.imgl-verify-capture)* | 0 | 95 | 0 | **95** |
-| `main` *(in imgl.cli)* | 44 ⚠ | 0 | 94 | **94** |
-| `run_interactive_shell` *(in imgl.interact)* | 43 ⚠ | 1 | 87 | **88** |
-| `build_parser` *(in imgl.cli)* | 1 | 1 | 73 | **74** |
-| `_set_body` *(in packages.dsl2imgl.src.dsl2imgl.pb_codec)* | 31 ⚠ | 1 | 73 | **74** |
-| `parse_line` *(in packages.dsl2imgl.src.dsl2imgl.grammar)* | 44 ⚠ | 2 | 46 | **48** |
-| `diagnose_capture` *(in imgl.autodiag)* | 16 ⚠ | 4 | 41 | **45** |
+| `main` *(in imgl.cli)* | 62 ⚠ | 0 | 124 | **124** |
+| `build_parser` *(in imgl.cli)* | 1 | 1 | 113 | **114** |
+| `diagnose_capture` *(in imgl.autodiag)* | 16 ⚠ | 5 | 41 | **46** |
+| `_run_image_command` *(in imgl.cli)* | 19 ⚠ | 1 | 43 | **44** |
+| `smart_capture` *(in imgl.control)* | 25 ⚠ | 1 | 42 | **43** |
+| `prompt_to_imgl_uri` *(in imgl.nlp2uri)* | 28 ⚠ | 4 | 37 | **41** |
+| `colorize_markdown` *(in imgl.terminal_md)* | 18 ⚠ | 1 | 40 | **41** |
+| `_derive_current_next` *(in imgl.autodiag)* | 32 ⚠ | 2 | 39 | **41** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/semcod/imgl
-# generated in 0.13s
-# nodes: 302 | edges: 393 | modules: 57
-# CC̄=5.3
+# generated in 0.17s
+# nodes: 379 | edges: 500 | modules: 61
+# CC̄=4.8
 
 HUBS[20]:
-  imgl.web.app.create_app
-    CC=4  in:2  out:107  total:109
-  scripts.imgl-verify-capture.print
-    CC=0  in:95  out:0  total:95
   imgl.cli.main
-    CC=44  in:0  out:94  total:94
-  imgl.interact.run_interactive_shell
-    CC=43  in:1  out:87  total:88
+    CC=62  in:0  out:124  total:124
   imgl.cli.build_parser
-    CC=1  in:1  out:73  total:74
-  packages.dsl2imgl.src.dsl2imgl.pb_codec._set_body
-    CC=31  in:1  out:73  total:74
-  packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
-    CC=44  in:2  out:46  total:48
+    CC=1  in:1  out:113  total:114
   imgl.autodiag.diagnose_capture
-    CC=16  in:4  out:41  total:45
+    CC=16  in:5  out:41  total:46
   imgl.cli._run_image_command
     CC=19  in:1  out:43  total:44
-  imgl.detect.local._detect_buttons
-    CC=24  in:1  out:41  total:42
+  imgl.control.smart_capture
+    CC=25  in:1  out:42  total:43
   imgl.nlp2uri.prompt_to_imgl_uri
     CC=28  in:4  out:37  total:41
-  imgl.autodiag._render_markdown
-    CC=24  in:1  out:35  total:36
-  packages.dsl2imgl.src.dsl2imgl.bus.dispatch
-    CC=10  in:14  out:21  total:35
+  imgl.terminal_md.colorize_markdown
+    CC=18  in:1  out:40  total:41
+  imgl.autodiag._derive_current_next
+    CC=32  in:2  out:39  total:41
+  imgl.capture.capture_screen
+    CC=26  in:6  out:32  total:38
+  packages.rest2imgl.src.rest2imgl.app.create_app
+    CC=1  in:2  out:36  total:38
   packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute
     CC=14  in:0  out:35  total:35
+  imgl.vdisplay_bridge.build_window_control_report
+    CC=19  in:3  out:32  total:35
+  packages.dsl2imgl.src.dsl2imgl.bus.dispatch
+    CC=10  in:14  out:21  total:35
   imgl.autodiag.build_operation_step
     CC=19  in:1  out:33  total:34
-  imgl.vdisplay_bridge.correlate_windows
-    CC=18  in:1  out:32  total:33
-  imgl.vdisplay_bridge.build_window_control_report
-    CC=19  in:1  out:32  total:33
-  imgl.detect.local._detect_panels_simple
-    CC=23  in:1  out:31  total:32
+  imgl.autodiag._actionable_hints
+    CC=19  in:1  out:31  total:32
+  imgl.control.capture_interactive
+    CC=16  in:2  out:28  total:30
   imgl.coords.scale_scene_to_screen
     CC=6  in:1  out:29  total:30
   imgl.classify.gui_heuristics.classify_scene_elements
     CC=27  in:1  out:29  total:30
+  imgl.pipeline.analyze
+    CC=11  in:8  out:21  total:29
+  imgl.export.vql_adapter.scene_to_vql
+    CC=16  in:1  out:27  total:28
 
 MODULES:
   examples.scripts.demo-nlp2uri  [1 funcs]
@@ -2278,36 +2688,31 @@ MODULES:
     _text_matches  CC=3  out:2
     _window_matches  CC=4  out:3
     actions  CC=1  out:1
-  imgl.autodiag  [13 funcs]
-    _actionable_hints  CC=12  out:17
+  imgl.autodiag  [18 funcs]
+    _actionable_hints  CC=19  out:31
+    _capture_next_cmd  CC=1  out:1
     _compact_result  CC=6  out:4
+    _derive_current_next  CC=32  out:39
     _flag_enabled  CC=3  out:3
     _overall_verdict  CC=10  out:8
-    _render_markdown  CC=24  out:35
-    build_execute_report  CC=5  out:15
-    build_operation_step  CC=19  out:33
-    diagnose_capture  CC=16  out:41
-    diagnostics_enabled  CC=1  out:1
-    pick_output_format  CC=7  out:4
-  imgl.capture  [12 funcs]
+    _render_markdown  CC=6  out:13
+    _shell_quote  CC=3  out:2
+    _yaml_codeblock  CC=1  out:2
+    build_execute_report  CC=8  out:17
+  imgl.capture  [23 funcs]
+    _capture_failure_hint  CC=5  out:2
     _capture_with_gnome_screenshot  CC=2  out:3
-    _capture_with_grim  CC=2  out:3
-    _capture_with_mss  CC=1  out:8
+    _capture_with_portal  CC=16  out:18
     _capture_with_scrot  CC=2  out:3
+    _discard_capture_file  CC=3  out:3
     _is_blank_image  CC=6  out:13
     _is_wayland  CC=3  out:4
-    _native_backends  CC=3  out:4
-    _run_command  CC=3  out:4
-    _try_vql_capture  CC=8  out:9
-    capture_screen  CC=13  out:15
-  imgl.catalog  [8 funcs]
-    _element_option  CC=13  out:19
-    _find_window  CC=2  out:1
-    _infer_input_label  CC=13  out:0
-    _iter_interactive_elements  CC=9  out:2
+    _non_portal_backends  CC=2  out:2
+    _portal_backends  CC=1  out:2
+    _portal_fallback_enabled  CC=2  out:4
+  imgl.catalog  [3 funcs]
     _truncate  CC=2  out:3
-    _window_option  CC=2  out:5
-    build_interactive_catalog  CC=12  out:11
+    build_interactive_catalog  CC=3  out:3
     format_catalog_table  CC=8  out:10
   imgl.catalog_filter  [6 funcs]
     _element_score  CC=9  out:5
@@ -2316,6 +2721,9 @@ MODULES:
     _replace_index_in_uri  CC=1  out:0
     _window_score  CC=5  out:1
     filter_catalog  CC=8  out:7
+  imgl.catalog_heuristic  [2 funcs]
+    _find_window  CC=2  out:1
+    build_heuristic_catalog  CC=10  out:9
   imgl.classify.gui_heuristics  [9 funcs]
     _build_inputs  CC=7  out:10
     _label_candidates  CC=5  out:3
@@ -2326,14 +2734,26 @@ MODULES:
     _text_or_label  CC=7  out:5
     _word_count  CC=1  out:2
     classify_scene_elements  CC=27  out:29
-  imgl.cli  [7 funcs]
+  imgl.cli  [8 funcs]
     _add_common_args  CC=1  out:5
     _apply_config_overrides  CC=2  out:1
     _check_blank_before_analyze  CC=5  out:7
+    _output_format  CC=1  out:1
     _run_image_command  CC=19  out:43
     _write_output  CC=2  out:3
-    build_parser  CC=1  out:73
-    main  CC=44  out:94
+    build_parser  CC=1  out:113
+    main  CC=62  out:124
+  imgl.control  [13 funcs]
+    _control_packages_present  CC=2  out:4
+    _require_nlp2imgl  CC=4  out:4
+    _vql_cache_paths  CC=1  out:2
+    capture_interactive  CC=16  out:28
+    clear_ocr_cache  CC=1  out:1
+    default_image_path  CC=3  out:5
+    default_window  CC=3  out:2
+    run_doctor  CC=7  out:11
+    run_execute  CC=13  out:25
+    run_map  CC=3  out:6
   imgl.coords  [1 funcs]
     scale_scene_to_screen  CC=6  out:29
   imgl.detect.img2vql_bridge  [4 funcs]
@@ -2341,15 +2761,6 @@ MODULES:
     detect_ui_merged  CC=4  out:2
     detect_with_img2vql  CC=4  out:5
     img2vql_available  CC=2  out:0
-  imgl.detect.local  [8 funcs]
-    _avg_color  CC=5  out:8
-    _dedupe  CC=8  out:10
-    _detect_buttons  CC=24  out:41
-    _detect_panels_simple  CC=23  out:31
-    _detect_titlebar  CC=5  out:11
-    _flood_rects  CC=14  out:13
-    _iou_xyxy  CC=3  out:5
-    detect_ui_elements  CC=4  out:7
   imgl.detect.rectangles  [5 funcs]
     _column_has_edge  CC=2  out:3
     _find_rectangular_frames  CC=11  out:8
@@ -2430,15 +2841,27 @@ MODULES:
     bbox_from_xyxy  CC=1  out:1
     center_in  CC=2  out:1
     iou  CC=3  out:7
-  imgl.interact  [8 funcs]
+  imgl.installs  [9 funcs]
+    _auto_install_vdisplay_enabled  CC=1  out:3
+    _pip_install_editable  CC=2  out:2
+    _repo_root  CC=2  out:6
+    ensure_vdisplay  CC=5  out:5
+    install_control  CC=1  out:8
+    install_img2nl  CC=2  out:5
+    install_vdisplay  CC=2  out:5
+    install_vql  CC=1  out:4
+    vdisplay_available  CC=2  out:0
+  imgl.interact  [13 funcs]
     _annotate_catalog  CC=6  out:8
     _build_session_catalog  CC=2  out:1
     _export_window_previews  CC=4  out:6
+    _handle_resolved_shell_action  CC=11  out:27
     _handle_window_phase_prompt  CC=9  out:21
+    _prepare_interactive_session  CC=4  out:16
+    _print_actions_phase_hints  CC=9  out:12
     _print_catalog_banner  CC=8  out:10
+    _read_shell_prompt  CC=4  out:5
     _select_window  CC=6  out:6
-    resolve_imgl_uri  CC=13  out:19
-    run_interactive_shell  CC=43  out:87
   imgl.layout  [6 funcs]
     _best_titlebar_for_window  CC=5  out:3
     _overlaps_top  CC=2  out:2
@@ -2484,6 +2907,16 @@ MODULES:
     load_or_analyze  CC=5  out:7
     save_scene_cache  CC=1  out:3
     scene_cache_path  CC=2  out:3
+  imgl.terminal_md  [9 funcs]
+    _c  CC=1  out:1
+    _color_yaml_value  CC=6  out:12
+    _highlight_bash_line  CC=10  out:19
+    _highlight_inline  CC=1  out:8
+    _highlight_yaml_line  CC=3  out:8
+    _verdict_color  CC=1  out:3
+    colorize_markdown  CC=18  out:40
+    print_report  CC=3  out:3
+    stdout_color_enabled  CC=6  out:10
   imgl.uri  [7 funcs]
     _imgl_uri  CC=5  out:3
     uri_for_imgl_action  CC=1  out:1
@@ -2492,22 +2925,11 @@ MODULES:
     uri_for_imgl_click  CC=5  out:1
     uri_for_imgl_list  CC=1  out:1
     uri_for_imgl_type  CC=5  out:1
-  imgl.vdisplay_bridge  [10 funcs]
-    _norm  CC=1  out:2
+  imgl.vdisplay_bridge  [1 funcs]
     build_window_control_report  CC=19  out:32
-    correlate_windows  CC=18  out:32
-    default_display  CC=2  out:3
-    diagnose_os_display  CC=4  out:5
-    find_os_window  CC=6  out:5
-    list_os_monitors  CC=3  out:3
-    list_os_windows  CC=3  out:3
-    list_vision_windows  CC=4  out:11
-    vdisplay_missing_message  CC=2  out:4
   imgl.web.agent  [2 funcs]
     _parse_agent_json  CC=6  out:7
     pick_agent_action  CC=20  out:23
-  imgl.web.app  [1 funcs]
-    create_app  CC=4  out:107
   imgl.web.session  [6 funcs]
     _refresh_annotated_png  CC=3  out:6
     analyze  CC=1  out:6
@@ -2518,7 +2940,7 @@ MODULES:
   imgl.web.thumbs  [2 funcs]
     _clamp_box  CC=3  out:6
     crop_bbox_png  CC=2  out:15
-  imgl.window_scope  [23 funcs]
+  imgl.window_scope  [28 funcs]
     _best_vertical_split  CC=12  out:10
     _collect_elements  CC=2  out:2
     _detect_layout_mode  CC=12  out:16
@@ -2548,11 +2970,17 @@ MODULES:
   packages.dsl2imgl.src.dsl2imgl.events  [2 funcs]
     _append_jsonl  CC=3  out:27
     _append_pb  CC=3  out:27
-  packages.dsl2imgl.src.dsl2imgl.grammar  [4 funcs]
-    parse_line  CC=44  out:46
-    pick_flag  CC=3  out:2
-    split_command  CC=4  out:4
-    to_text  CC=10  out:20
+  packages.dsl2imgl.src.dsl2imgl.grammar  [16 funcs]
+    _apply_image_window_flags  CC=3  out:2
+    _parse_actions  CC=4  out:1
+    _parse_agent  CC=3  out:7
+    _parse_analyze  CC=5  out:2
+    _parse_capture  CC=3  out:2
+    _parse_click  CC=3  out:5
+    _parse_execute  CC=1  out:3
+    _parse_interaction_verb  CC=5  out:8
+    _parse_key  CC=5  out:3
+    _parse_resolve  CC=1  out:2
   packages.dsl2imgl.src.dsl2imgl.handlers.runtime  [7 funcs]
     _build_interact_session  CC=4  out:12
     _run_prompt_act  CC=8  out:15
@@ -2561,16 +2989,17 @@ MODULES:
     handle_capture  CC=3  out:9
     handle_execute  CC=14  out:35
     handle_resolve  CC=7  out:14
-  packages.dsl2imgl.src.dsl2imgl.pb_codec  [9 funcs]
-    _set_body  CC=31  out:73
-    decode_protobuf  CC=1  out:3
-    decode_protobuf_to_text  CC=1  out:2
-    dict_to_envelope  CC=1  out:5
-    encode_protobuf  CC=1  out:2
-    encode_result_protobuf  CC=1  out:2
-    encode_text_to_protobuf  CC=2  out:3
-    envelope_to_dict  CC=42  out:6
-    result_to_pb  CC=3  out:3
+  packages.dsl2imgl.src.dsl2imgl.pb_codec  [31 funcs]
+    _assign_execute_flag  CC=1  out:2
+    _assign_optional_str  CC=2  out:3
+    _dict_actions_body  CC=3  out:1
+    _dict_agent_body  CC=2  out:3
+    _dict_analyze_body  CC=3  out:2
+    _dict_capture_body  CC=2  out:1
+    _dict_click_body  CC=2  out:5
+    _dict_execute_body  CC=1  out:3
+    _dict_execute_flag  CC=2  out:0
+    _dict_key_body  CC=2  out:3
   packages.dsl2imgl.src.dsl2imgl.schema_registry  [4 funcs]
     _load_schemas  CC=4  out:11
     all_verbs  CC=1  out:3
@@ -2580,6 +3009,16 @@ MODULES:
     main  CC=2  out:5
   packages.mcp2imgl.src.mcp2imgl.server  [1 funcs]
     run_stdio  CC=2  out:12
+  packages.nlp2imgl.src.nlp2imgl.cli  [1 funcs]
+    main  CC=1  out:3
+  packages.nlp2imgl.src.nlp2imgl.cli_commands  [5 funcs]
+    _print_apply_payload  CC=3  out:7
+    output_format  CC=1  out:1
+    run_apply  CC=6  out:8
+    run_doctor  CC=6  out:13
+    run_to_dsl  CC=1  out:2
+  packages.nlp2imgl.src.nlp2imgl.cli_parser  [1 funcs]
+    build_parser  CC=1  out:24
   packages.nlp2imgl.src.nlp2imgl.control  [5 funcs]
     _result_to_dict  CC=4  out:13
     apply_nl_with_diag  CC=17  out:16
@@ -2589,21 +3028,18 @@ MODULES:
   packages.nlp2imgl.src.nlp2imgl.to_dsl  [3 funcs]
     apply_nl  CC=5  out:7
     to_dsl  CC=15  out:19
-    use_llm_enabled  CC=4  out:6
+    use_llm_enabled  CC=5  out:7
+  packages.rest2imgl.src.rest2imgl.app  [1 funcs]
+    create_app  CC=1  out:36
   packages.rest2imgl.src.rest2imgl.cli  [1 funcs]
     main  CC=2  out:8
   packages.uri2imgl.src.uri2imgl.cli  [1 funcs]
     main  CC=4  out:15
   packages.uri2imgl.src.uri2imgl.decode  [1 funcs]
     uri_to_dsl  CC=18  out:16
-  scripts.imgl-capture  [1 funcs]
-    mark_capture_fresh  CC=0  out:0
-  scripts.imgl-verify-capture  [1 funcs]
-    print  CC=0  out:0
 
 EDGES:
-  packages.rest2imgl.src.rest2imgl.cli.main → imgl.web.app.create_app
-  packages.cli2imgl.src.cli2imgl.cli.main → scripts.imgl-verify-capture.print
+  packages.rest2imgl.src.rest2imgl.cli.main → packages.rest2imgl.src.rest2imgl.app.create_app
   packages.cli2imgl.src.cli2imgl.cli.main → packages.dsl2imgl.src.dsl2imgl.bus.dispatch
   packages.cli2imgl.src.cli2imgl.cli.main → packages.nlp2imgl.src.nlp2imgl.to_dsl.apply_nl
   packages.uri2imgl.src.uri2imgl.cli.main → packages.uri2imgl.src.uri2imgl.decode.uri_to_dsl
@@ -2623,14 +3059,6 @@ EDGES:
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_pb → packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl → packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
   packages.dsl2imgl.src.dsl2imgl.events.EventStore._append_jsonl → packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope → packages.dsl2imgl.src.dsl2imgl.pb_codec._set_body
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.dict_to_envelope
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.envelope_to_dict
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf → packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_text_to_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_protobuf
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf_to_text → packages.dsl2imgl.src.dsl2imgl.grammar.to_text
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf_to_text → packages.dsl2imgl.src.dsl2imgl.pb_codec.decode_protobuf
-  packages.dsl2imgl.src.dsl2imgl.pb_codec.encode_result_protobuf → packages.dsl2imgl.src.dsl2imgl.pb_codec.result_to_pb
   packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
   packages.dsl2imgl.src.dsl2imgl.schema_registry.all_verbs → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
   packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas → packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas
@@ -2652,6 +3080,15 @@ EDGES:
   packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.interact._build_session_catalog
   packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session → imgl.window_scope.summarize_windows
   packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.nlp2uri.prompt_to_imgl_uri
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.interact.resolve_imgl_uri
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act → imgl.execute.execute_action
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture → imgl.capture.capture_screen
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session
+  packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute → packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act
 ```
 
 ## Test Contracts

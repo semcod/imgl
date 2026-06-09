@@ -2,11 +2,11 @@
 
 app {
   name: imgl;
-  version: 0.7.2;
+  version: 0.7.3;
 }
 
 dependencies {
-  runtime: "pillow>=10.0, pytesseract>=0.3.10";
+  runtime: "pillow>=10.0, pytesseract>=0.3.10, PyYAML>=6.0";
   capture: mss>=9.0;
   diagnose: numpy>=1.24;
   llm: "litellm>=1.30, python-dotenv>=1.0";
@@ -45,18 +45,15 @@ workflow[name="install"] {
 workflow[name="install-dev"] {
   trigger: manual;
   step-1: run cmd=$(PIP) install -e ".[dev,llm,capture]";
+  step-2: run cmd=$(IMGL) install control;
+  step-3: run cmd=if [ -d "$(VDISPLAY_ROOT)" ]; then \;
+  step-4: run cmd=$(PIP) install -e "$(VDISPLAY_ROOT)[pillow]" || $(PIP) install -e "$(VDISPLAY_ROOT)"; \;
+  step-5: run cmd=fi;
 }
 
 workflow[name="install-control"] {
   trigger: manual;
-  step-1: run cmd=$(PIP) install "jsonschema>=4.0" "protobuf>=5.0";
-  step-2: run cmd=$(PIP) install -e packages/dsl2imgl packages/nlp2imgl packages/rest2imgl packages/cli2imgl;
-}
-
-workflow[name="install-full"] {
-  trigger: manual;
-  step-1: run cmd=$(PIP) install -e ".[web]";
-  step-2: run cmd=$(PIP) install "jsonschema>=4.0" "protobuf>=5.0";
+  step-1: run cmd=$(IMGL) install control;
 }
 
 workflow[name="install-img2nl"] {
@@ -69,39 +66,32 @@ workflow[name="install-vdisplay"] {
   step-1: run cmd=$(IMGL) install vdisplay;
 }
 
-workflow[name="test"] {
+workflow[name="install-vql"] {
   trigger: manual;
-  step-1: run cmd=$(PY) -m pytest tests packages/dsl2imgl/tests -q;
+  step-1: run cmd=$(IMGL) install vql;
 }
 
-workflow[name="test-imgl"] {
+workflow[name="install-full"] {
   trigger: manual;
-  step-1: run cmd=$(PY) -m pytest tests/test_autodiag.py tests/test_vdisplay_bridge.py tests/test_nlp2imgl_control.py -q;
-}
-
-workflow[name="test-dsl2imgl"] {
-  trigger: manual;
-  step-1: run cmd=$(PY) -m pytest packages/dsl2imgl/tests -q;
+  step-1: run cmd=$(PIP) install -e ".[web]";
 }
 
 workflow[name="capture"] {
   trigger: manual;
-  step-1: run cmd=test -x "$(PY)" || (echo "Brak $(VENV) — make install-dev" && exit 1);
-  step-2: run cmd=$(IMGL) capture --smart -o "$(IMGL_IMAGE)";
+  step-1: run cmd=$(IMGL) capture --smart -o "$(IMGL_IMAGE)";
 }
 
 workflow[name="capture-interactive"] {
   trigger: manual;
-  step-1: run cmd=depend target=install-dev;
-  step-2: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
-  step-3: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture -o "$(IMGL_IMAGE)" --verify;
-  step-4: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)";
-  step-5: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
+  step-1: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)";
+  step-2: run cmd=IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify;
+  step-3: run cmd=rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)";
+  step-4: run cmd=echo "export IMGL_IMAGE=$(IMGL_IMAGE)";
 }
 
 workflow[name="verify-capture"] {
   trigger: manual;
-  step-1: run cmd=BEFORE=$$(stat -c %Y "$(IMGL_IMAGE)" 2>/dev/null || echo 0); \;
+  step-1: run cmd=BEFORE=$${BEFORE:-$$(stat -c %Y "$(IMGL_IMAGE)" 2>/dev/null || echo 0)}; \;
   step-2: run cmd=$(IMGL) verify "$(IMGL_IMAGE)" --before "$$BEFORE";
 }
 
@@ -138,20 +128,29 @@ workflow[name="execute-llm"] {
   trigger: manual;
   step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1);
   step-2: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make execute-llm PROMPT='wpisz test w Chat input'" && exit 1);
-  step-3: run cmd=test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY — ustaw klucz OpenRouter" && exit 1);
+  step-3: run cmd=test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY" && exit 1);
   step-4: run cmd=$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --llm --format "$(FORMAT)";
 }
 
 workflow[name="shot"] {
   trigger: manual;
-  step-1: depend target=capture-interactive;
-  step-2: depend target=execute;
+  step-1: run cmd=test -n "$(PROMPT)" || (echo "Użycie: make shot PROMPT='wpisz test w Chat input'" && exit 1);
+  step-2: run cmd=$(IMGL) shot "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)";
 }
 
-workflow[name="shot-llm"] {
+workflow[name="test"] {
   trigger: manual;
-  step-1: depend target=capture-interactive;
-  step-2: depend target=execute-llm;
+  step-1: run cmd=$(PY) -m pytest tests packages/dsl2imgl/tests -q;
+}
+
+workflow[name="test-imgl"] {
+  trigger: manual;
+  step-1: run cmd=$(PY) -m pytest tests/test_autodiag.py tests/test_vdisplay_bridge.py tests/test_nlp2imgl_control.py tests/test_control_cli.py tests/test_installs.py -q;
+}
+
+workflow[name="test-dsl2imgl"] {
+  trigger: manual;
+  step-1: run cmd=$(PY) -m pytest packages/dsl2imgl/tests -q;
 }
 
 workflow[name="proto"] {
@@ -166,7 +165,7 @@ workflow[name="serve-rest"] {
 
 workflow[name="serve-web"] {
   trigger: manual;
-  step-1: run cmd=$(PY) -m imgl.cli serve --port $(WEB_PORT) --image $(IMGL_IMAGE) --llm --window $(IMGL_WINDOW);
+  step-1: run cmd=$(IMGL) serve --port $(WEB_PORT) --image screen.png --llm --window region-bottom;
 }
 
 workflow[name="demo-key"] {
@@ -176,15 +175,15 @@ workflow[name="demo-key"] {
 
 workflow[name="demo-nl"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak $(IMGL_IMAGE) — uruchom: make capture" && exit 1);
-  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz test w Chat input" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run;
+  step-1: run cmd=test -f screen.png || (echo "Brak screen.png — uruchom: imgl capture --interactive -o screen.png" && exit 1);
+  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz test w Chat input" --image screen.png --window region-bottom --dry-run;
 }
 
 workflow[name="demo-chat"] {
   trigger: manual;
-  step-1: run cmd=test -f "$(IMGL_IMAGE)" || (echo "Brak $(IMGL_IMAGE) — uruchom: make capture" && exit 1);
-  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz demo w Chat input" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run;
-  step-3: run cmd=$(VENV)/bin/nlp2imgl apply "naciśnij ctrl+enter" --image $(IMGL_IMAGE) --window $(IMGL_WINDOW) --dry-run;
+  step-1: run cmd=test -f screen.png || (echo "Brak screen.png" && exit 1);
+  step-2: run cmd=$(VENV)/bin/nlp2imgl apply "wpisz demo w Chat input" --image screen.png --window region-bottom --dry-run;
+  step-3: run cmd=$(VENV)/bin/nlp2imgl apply "naciśnij ctrl+enter" --image screen.png --window region-bottom --dry-run;
 }
 
 tests {
@@ -203,7 +202,7 @@ environment[name="local"] {
   runtime: python;
   env_file: .env;
   template_file: .env.example;
-  python_version: >=3.10;
+  python_version: >=3.10,<3.14;
   vars: LLM_MODEL, OPENROUTER_API_KEY;
   runtime_llm: OPENROUTER_API_KEY;
 }

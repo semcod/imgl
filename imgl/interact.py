@@ -291,27 +291,19 @@ def _export_window_previews(session: InteractSession) -> list[str]:
     return [str(path) for path in paths]
 
 
-def run_interactive_shell(
+def _prepare_interactive_session(
     image_path: str | Path,
     *,
-    vql_file: str | Path = "layout.vql.json",
-    lang: str = "eng",
-    config: ImglConfig | None = None,
-    execute: bool = False,
-    use_llm: bool = False,
-    no_filter: bool = False,
-    annotate: bool = False,
-    open_annotated: bool = False,
-    annotated_output: str | Path | None = None,
-    window: str | None = None,
-    input_stream: TextIO | None = None,
-    output_stream: TextIO | None = None,
-) -> int:
-    """Analyze screenshot and run an interactive action picker."""
-    stdin = input_stream or sys.stdin
-    stdout = output_stream or sys.stdout
-    stderr = sys.stderr
-
+    vql_file: str | Path,
+    lang: str,
+    config: ImglConfig | None,
+    use_llm: bool,
+    no_filter: bool,
+    annotate: bool,
+    open_annotated: bool,
+    annotated_output: str | Path | None,
+    stderr: TextIO,
+) -> tuple[InteractSession, str, str, list[Any]]:
     image = str(Path(image_path).resolve())
     vql_path = str(Path(vql_file).resolve())
     cfg = config or ImglConfig()
@@ -337,7 +329,20 @@ def run_interactive_shell(
         open_annotated=open_annotated,
         annotated_output=str(annotated_output) if annotated_output else None,
     )
+    return session, image, vql_path, discovered
 
+
+def _show_initial_shell_views(
+    *,
+    session: InteractSession,
+    discovered: list[Any],
+    window: str | None,
+    cfg: ImglConfig,
+    use_llm: bool,
+    no_filter: bool,
+    stdout: TextIO,
+    stderr: TextIO,
+) -> int | None:
     print(f"Wykryto okien/regiónów: {len(discovered)}", file=stderr)
     if use_llm or cfg.use_llm_catalog:
         print(
@@ -345,7 +350,7 @@ def run_interactive_shell(
             file=stderr,
         )
     if len(discovered) > 1:
-        print(format_window_picker(session.window_summaries or [], scene=scene), file=stdout)
+        print(format_window_picker(session.window_summaries or [], scene=session.scene), file=stdout)
         if window:
             if not _select_window(session, window):
                 print(f"Nie znaleziono okna: {window}", file=stderr)
@@ -364,45 +369,168 @@ def run_interactive_shell(
         session.catalog = _build_session_catalog(session)
         _print_catalog_banner(session, cfg, use_llm, no_filter, stderr)
         print(format_catalog_table(session.catalog), file=stdout)
+    return None
 
-    if session.phase == "actions":
-        print(f"VQL program: {vql_path}", file=stderr)
-        print(f"Lista URI: {uri_for_imgl_list(image=image, file=vql_path, lang=lang)}", file=stderr)
-        if (annotate or open_annotated) and not session.annotated_path:
-            out = annotated_output or default_annotated_path(
-                image,
-                window_id=session.selected_window_id,
-            )
-            payload = _annotate_catalog(
-                session,
-                output_path=str(out),
-                open_viewer=open_annotated,
-            )
-            print(f"Mapa numerów: {payload['path']}", file=stderr)
-            if open_annotated and not payload.get("opened"):
-                print("Nie udało się otworzyć podglądu (brak xdg-open).", file=stderr)
-        elif session.annotated_path:
-            print(f"Mapa numerów: {session.annotated_path}", file=stderr)
-        print("", file=stderr)
-        print(
-            "Tryb interaktywny — numer, NL ('kliknij Save'), 'mapa', 'okna' (zmień okno), 'quit'.",
-            file=stderr,
+
+def _print_actions_phase_hints(
+    *,
+    session: InteractSession,
+    image: str,
+    vql_path: str,
+    lang: str,
+    annotate: bool,
+    open_annotated: bool,
+    annotated_output: str | Path | None,
+    stderr: TextIO,
+) -> None:
+    if session.phase != "actions":
+        return
+    print(f"VQL program: {vql_path}", file=stderr)
+    print(f"Lista URI: {uri_for_imgl_list(image=image, file=vql_path, lang=lang)}", file=stderr)
+    if (annotate or open_annotated) and not session.annotated_path:
+        out = annotated_output or default_annotated_path(
+            image,
+            window_id=session.selected_window_id,
         )
+        payload = _annotate_catalog(
+            session,
+            output_path=str(out),
+            open_viewer=open_annotated,
+        )
+        print(f"Mapa numerów: {payload['path']}", file=stderr)
+        if open_annotated and not payload.get("opened"):
+            print("Nie udało się otworzyć podglądu (brak xdg-open).", file=stderr)
+    elif session.annotated_path:
+        print(f"Mapa numerów: {session.annotated_path}", file=stderr)
+    print("", file=stderr)
+    print(
+        "Tryb interaktywny — numer, NL ('kliknij Save'), 'mapa', 'okna' (zmień okno), 'quit'.",
+        file=stderr,
+    )
+
+
+def _read_shell_prompt(stdin: TextIO, stderr: TextIO) -> str | None:
+    try:
+        if stdin is not sys.stdin:
+            line = stdin.readline()
+            if not line:
+                raise EOFError
+            prompt = line.strip()
+            print("Co chcesz zrobić?", prompt, file=stderr)
+            return prompt
+        return input("Co chcesz zrobić? ").strip()
+    except (EOFError, KeyboardInterrupt):
+        return None
+
+
+def _handle_resolved_shell_action(
+    *,
+    result: dict[str, Any],
+    session: InteractSession,
+    execute: bool,
+    stdout: TextIO,
+) -> bool:
+    """Handle one resolved URI. Returns True to continue the shell loop."""
+    if result.get("action") == "annotate":
+        print(f"Zapisano mapę numerów: {result.get('path')}", file=stdout)
+        if result.get("opened"):
+            print("Otwarto podgląd obrazu.", file=stdout)
+        return True
+
+    if result.get("action") == "list":
+        session.catalog = _build_session_catalog(session)
+        print(format_catalog_table(session.catalog), file=stdout)
+        return True
+
+    if result.get("action") == "analyze":
+        print(
+            f"Odświeżono layout — {result.get('element_count', 0)} opcji.",
+            file=stdout,
+        )
+        print(format_catalog_table(session.catalog), file=stdout)
+        return True
+
+    if not result.get("ok"):
+        print(f"Błąd: {result.get('error', 'unknown')}", file=stdout)
+        return True
+
+    action_payload = {k: v for k, v in result.items() if k not in {"ok", "uri_action"}}
+    print(json.dumps(action_payload, indent=2, ensure_ascii=False), file=stdout)
+
+    if execute and action_payload.get("action") in {"click", "type"}:
+        exec_result = execute_action(action_payload, dry_run=False)
+        print(f"Wykonano: {exec_result.message} [{exec_result.method}]", file=stdout)
+    elif action_payload.get("action") in {"click", "type"}:
+        dry = execute_action(action_payload, dry_run=True)
+        print(f"Dry-run: {dry.message} (dodaj --execute aby wykonać)", file=stdout)
+
+    print("", file=stdout)
+    return True
+
+
+def run_interactive_shell(
+    image_path: str | Path,
+    *,
+    vql_file: str | Path = "layout.vql.json",
+    lang: str = "eng",
+    config: ImglConfig | None = None,
+    execute: bool = False,
+    use_llm: bool = False,
+    no_filter: bool = False,
+    annotate: bool = False,
+    open_annotated: bool = False,
+    annotated_output: str | Path | None = None,
+    window: str | None = None,
+    input_stream: TextIO | None = None,
+    output_stream: TextIO | None = None,
+) -> int:
+    """Analyze screenshot and run an interactive action picker."""
+    stdin = input_stream or sys.stdin
+    stdout = output_stream or sys.stdout
+    stderr = sys.stderr
+    cfg = config or ImglConfig()
+
+    session, image, vql_path, discovered = _prepare_interactive_session(
+        image_path,
+        vql_file=vql_file,
+        lang=lang,
+        config=cfg,
+        use_llm=use_llm,
+        no_filter=no_filter,
+        annotate=annotate,
+        open_annotated=open_annotated,
+        annotated_output=annotated_output,
+        stderr=stderr,
+    )
+    early_exit = _show_initial_shell_views(
+        session=session,
+        discovered=discovered,
+        window=window,
+        cfg=cfg,
+        use_llm=use_llm,
+        no_filter=no_filter,
+        stdout=stdout,
+        stderr=stderr,
+    )
+    if early_exit is not None:
+        return early_exit
+
+    _print_actions_phase_hints(
+        session=session,
+        image=image,
+        vql_path=vql_path,
+        lang=lang,
+        annotate=annotate,
+        open_annotated=open_annotated,
+        annotated_output=annotated_output,
+        stderr=stderr,
+    )
 
     while True:
-        try:
-            if stdin is not sys.stdin:
-                line = stdin.readline()
-                if not line:
-                    raise EOFError
-                prompt = line.strip()
-                print("Co chcesz zrobić?", prompt, file=stderr)
-            else:
-                prompt = input("Co chcesz zrobić? ").strip()
-        except (EOFError, KeyboardInterrupt):
+        prompt = _read_shell_prompt(stdin, stderr)
+        if prompt is None:
             print("\nKoniec.", file=stdout)
             return 0
-
         if not prompt:
             continue
 
@@ -445,41 +573,12 @@ def run_interactive_shell(
 
         print(f"\n→ URI ({resolved.confidence:.0%}): {resolved.uri}", file=stdout)
         result = resolve_imgl_uri(resolved.uri, session)
-
-        if result.get("action") == "annotate":
-            print(f"Zapisano mapę numerów: {result.get('path')}", file=stdout)
-            if result.get("opened"):
-                print("Otwarto podgląd obrazu.", file=stdout)
-            continue
-
-        if result.get("action") == "list":
-            session.catalog = _build_session_catalog(session)
-            print(format_catalog_table(session.catalog), file=stdout)
-            continue
-
-        if result.get("action") == "analyze":
-            print(
-                f"Odświeżono layout — {result.get('element_count', 0)} opcji.",
-                file=stdout,
-            )
-            print(format_catalog_table(session.catalog), file=stdout)
-            continue
-
-        if not result.get("ok"):
-            print(f"Błąd: {result.get('error', 'unknown')}", file=stdout)
-            continue
-
-        action_payload = {k: v for k, v in result.items() if k not in {"ok", "uri_action"}}
-        print(json.dumps(action_payload, indent=2, ensure_ascii=False), file=stdout)
-
-        if execute and action_payload.get("action") in {"click", "type"}:
-            exec_result = execute_action(action_payload, dry_run=False)
-            print(f"Wykonano: {exec_result.message} [{exec_result.method}]", file=stdout)
-        elif action_payload.get("action") in {"click", "type"}:
-            dry = execute_action(action_payload, dry_run=True)
-            print(f"Dry-run: {dry.message} (dodaj --execute aby wykonać)", file=stdout)
-
-        print("", file=stdout)
+        _handle_resolved_shell_action(
+            result=result,
+            session=session,
+            execute=execute,
+            stdout=stdout,
+        )
 
 
 def describe_resolution(resolved: ResolvedImglUri) -> str:

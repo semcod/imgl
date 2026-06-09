@@ -49,6 +49,7 @@ install: venv
 
 install-dev: install
 	$(PIP) install -e ".[dev,llm,capture]"
+	$(IMGL) install control
 	@if [ -d "$(VDISPLAY_ROOT)" ]; then \
 		$(PIP) install -e "$(VDISPLAY_ROOT)[pillow]" || $(PIP) install -e "$(VDISPLAY_ROOT)"; \
 	fi
@@ -73,7 +74,7 @@ capture: install-dev
 
 capture-interactive: install-dev
 	rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)"
-	IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture -o "$(IMGL_IMAGE)" --verify
+	IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify
 	rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)"
 	@echo "export IMGL_IMAGE=$(IMGL_IMAGE)"
 

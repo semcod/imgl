@@ -1,71 +1,116 @@
-# redup/duplication | 5 groups | 76f 10328L | 2026-06-09
+# redup/duplication | 10 groups | 83f 12199L | 2026-06-09
 
 SUMMARY:
-  files_scanned: 76
-  total_lines:   10328
-  dup_groups:    5
-  dup_fragments: 10
-  saved_lines:   44
-  scan_ms:       2384
+  files_scanned: 83
+  total_lines:   12199
+  dup_groups:    10
+  dup_fragments: 21
+  saved_lines:   80
+  scan_ms:       3635
 
 HOTSPOTS[7] (files with most duplication):
-  imgl/export/html_export.py  dup=28L  groups=2  frags=2  (0.3%)
-  imgl/export/svg_export.py  dup=17L  groups=2  frags=2  (0.2%)
-  imgl/capture.py  dup=8L  groups=1  frags=2  (0.1%)
+  imgl/installs.py  dup=34L  groups=3  frags=4  (0.3%)
+  imgl/export/html_export.py  dup=28L  groups=2  frags=2  (0.2%)
+  imgl/control.py  dup=19L  groups=3  frags=4  (0.2%)
+  imgl/export/svg_export.py  dup=17L  groups=2  frags=2  (0.1%)
+  packages/dsl2imgl/src/dsl2imgl/pb_codec.py  dup=10L  groups=1  frags=2  (0.1%)
   imgl/detect/img2vql_bridge.py  dup=7L  groups=1  frags=1  (0.1%)
   imgl/diagnose.py  dup=7L  groups=1  frags=1  (0.1%)
-  imgl/catalog.py  dup=5L  groups=1  frags=1  (0.0%)
-  imgl/export/annotate_export.py  dup=5L  groups=1  frags=1  (0.0%)
 
-DUPLICATES[5] (ranked by impact):
+DUPLICATES[10] (ranked by impact):
   [49d1d03e6ce392a1]   STRU  _base_css  L=21 N=2 saved=21 sim=1.00
       imgl/export/html_export.py:75-95  (_base_css)
       imgl/export/svg_export.py:76-85  (_svg_css)
+  [5843dfdd9fc8bd2f]   STRU  img2vql_available  L=7 N=3 saved=14 sim=1.00
+      imgl/detect/img2vql_bridge.py:18-24  (img2vql_available)
+      imgl/diagnose.py:16-22  (img2nl_available)
+      imgl/installs.py:21-27  (vdisplay_available)
+  [3e7a5c4c9a268921]   STRU  install_img2nl  L=10 N=2 saved=10 sim=1.00
+      imgl/installs.py:58-67  (install_img2nl)
+      imgl/installs.py:70-83  (install_vdisplay)
   [00c76eba96672ce9]   EXAC  _default_title  L=7 N=2 saved=7 sim=1.00
       imgl/export/html_export.py:56-62  (_default_title)
       imgl/export/svg_export.py:56-62  (_default_title)
-  [5843dfdd9fc8bd2f]   STRU  img2vql_available  L=7 N=2 saved=7 sim=1.00
-      imgl/detect/img2vql_bridge.py:18-24  (img2vql_available)
-      imgl/diagnose.py:16-22  (img2nl_available)
+  [d82a12d006aec7c6]   EXAC  default_window  L=6 N=2 saved=6 sim=1.00
+      imgl/control.py:23-28  (default_window)
+      packages/nlp2imgl/src/nlp2imgl/control.py:21-26  (default_window)
   [e4a985e7f83fe868]   STRU  _truncate  L=5 N=2 saved=5 sim=1.00
-      imgl/catalog.py:346-350  (_truncate)
+      imgl/catalog.py:87-91  (_truncate)
       imgl/export/annotate_export.py:231-235  (_short_hint_text)
-  [e41d60f79f9afd0d]   STRU  _capture_with_grim  L=4 N=2 saved=4 sim=1.00
-      imgl/capture.py:142-145  (_capture_with_grim)
-      imgl/capture.py:154-157  (_capture_with_scrot)
+  [f81040e23b7ff781]   STRU  _vql_cache_paths  L=5 N=2 saved=5 sim=1.00
+      imgl/control.py:31-35  (_vql_cache_paths)
+      imgl/freshness.py:41-45  (vql_cache_paths)
+  [684ba64a9784557d]   STRU  _set_key_body  L=5 N=2 saved=5 sim=1.00
+      packages/dsl2imgl/src/dsl2imgl/pb_codec.py:76-80  (_set_key_body)
+      packages/dsl2imgl/src/dsl2imgl/pb_codec.py:83-87  (_set_execute_body)
+  [86c2b27187305f83]   STRU  install_img2nl  L=4 N=2 saved=4 sim=1.00
+      imgl/control.py:332-335  (install_img2nl)
+      imgl/control.py:338-341  (install_vdisplay)
+  [2d7b9210c1b65241]   STRU  _prefer_mirror  L=3 N=2 saved=3 sim=1.00
+      imgl/capture.py:29-31  (_prefer_mirror)
+      imgl/installs.py:30-32  (_auto_install_vdisplay_enabled)
 
-REFACTOR[5] (ranked by priority):
+REFACTOR[10] (ranked by priority):
   [1] ○ extract_function   → imgl/export/utils/_base_css.py
       WHY: 2 occurrences of 21-line block across 2 files — saves 21 lines
       FILES: imgl/export/html_export.py, imgl/export/svg_export.py
-  [2] ○ extract_function   → imgl/export/utils/_default_title.py
+  [2] ○ extract_function   → imgl/utils/img2vql_available.py
+      WHY: 3 occurrences of 7-line block across 3 files — saves 14 lines
+      FILES: imgl/detect/img2vql_bridge.py, imgl/diagnose.py, imgl/installs.py
+  [3] ○ extract_function   → imgl/utils/install_img2nl.py
+      WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
+      FILES: imgl/installs.py
+  [4] ○ extract_function   → imgl/export/utils/_default_title.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: imgl/export/html_export.py, imgl/export/svg_export.py
-  [3] ○ extract_function   → imgl/utils/img2vql_available.py
-      WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
-      FILES: imgl/detect/img2vql_bridge.py, imgl/diagnose.py
-  [4] ○ extract_function   → imgl/utils/_truncate.py
+  [5] ○ extract_function   → utils/default_window.py
+      WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
+      FILES: imgl/control.py, packages/nlp2imgl/src/nlp2imgl/control.py
+  [6] ○ extract_function   → imgl/utils/_truncate.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: imgl/catalog.py, imgl/export/annotate_export.py
-  [5] ○ extract_function   → imgl/utils/_capture_with_grim.py
+  [7] ○ extract_function   → imgl/utils/_vql_cache_paths.py
+      WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
+      FILES: imgl/control.py, imgl/freshness.py
+  [8] ○ extract_function   → packages/dsl2imgl/src/dsl2imgl/utils/_set_key_body.py
+      WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
+      FILES: packages/dsl2imgl/src/dsl2imgl/pb_codec.py
+  [9] ○ extract_function   → imgl/utils/install_img2nl.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
-      FILES: imgl/capture.py
+      FILES: imgl/control.py
+  [10] ○ extract_function   → imgl/utils/_prefer_mirror.py
+      WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
+      FILES: imgl/capture.py, imgl/installs.py
 
-QUICK_WINS[3] (low risk, high savings — do first):
+QUICK_WINS[5] (low risk, high savings — do first):
   [1] extract_function   saved=21L  → imgl/export/utils/_base_css.py
       FILES: html_export.py, svg_export.py
-  [2] extract_function   saved=7L  → imgl/export/utils/_default_title.py
+  [2] extract_function   saved=14L  → imgl/utils/img2vql_available.py
+      FILES: img2vql_bridge.py, diagnose.py, installs.py
+  [3] extract_function   saved=10L  → imgl/utils/install_img2nl.py
+      FILES: installs.py
+  [4] extract_function   saved=7L  → imgl/export/utils/_default_title.py
       FILES: html_export.py, svg_export.py
-  [3] extract_function   saved=7L  → imgl/utils/img2vql_available.py
-      FILES: img2vql_bridge.py, diagnose.py
+  [5] extract_function   saved=6L  → utils/default_window.py
+      FILES: control.py, control.py
 
-EFFORT_ESTIMATE (total ≈ 1.5h):
+DEPENDENCY_RISK[1] (duplicates spanning multiple packages):
+  default_window  packages=2  files=2
+      imgl/control.py
+      packages/nlp2imgl/src/nlp2imgl/control.py
+
+EFFORT_ESTIMATE (total ≈ 2.9h):
   medium _base_css                           saved=21L  ~42min
+  easy   img2vql_available                   saved=14L  ~28min
+  easy   install_img2nl                      saved=10L  ~20min
   easy   _default_title                      saved=7L  ~14min
-  easy   img2vql_available                   saved=7L  ~14min
+  easy   default_window                      saved=6L  ~24min
   easy   _truncate                           saved=5L  ~10min
-  easy   _capture_with_grim                  saved=4L  ~8min
+  easy   _vql_cache_paths                    saved=5L  ~10min
+  easy   _set_key_body                       saved=5L  ~10min
+  easy   install_img2nl                      saved=4L  ~8min
+  easy   _prefer_mirror                      saved=3L  ~6min
 
 METRICS-TARGET:
-  dup_groups:  5 → 0
-  saved_lines: 44 lines recoverable
+  dup_groups:  10 → 0
+  saved_lines: 80 lines recoverable

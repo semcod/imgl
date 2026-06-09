@@ -76,7 +76,7 @@ def test_capture_interactive_uses_mirror_not_portal(tmp_path: Path) -> None:
 def test_capture_interactive_portal_fallback_on_wayland(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from imgl.capture import BlankCaptureError
+    """Wayland + portal fallback enables interactive capture on the first attempt."""
     from imgl.control import capture_interactive
 
     out = tmp_path / "screen.png"
@@ -86,8 +86,6 @@ def test_capture_interactive_portal_fallback_on_wayland(
 
     def fake_capture_screen(path, *, interactive=False, **kwargs):
         calls.append(interactive)
-        if not interactive:
-            raise BlankCaptureError("driver failed")
         from PIL import Image
 
         Image.new("RGB", (50, 40), color=(30, 180, 90)).save(path)
@@ -98,4 +96,4 @@ def test_capture_interactive_portal_fallback_on_wayland(
             result = capture_interactive(out, verify=False, portal=False)
 
     assert result == out
-    assert calls == [False, True]
+    assert calls == [True]

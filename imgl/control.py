@@ -129,22 +129,23 @@ def capture_interactive(
         sidecar.unlink()
 
     before_size = path.stat().st_size if path.is_file() else 0
-    from imgl.capture import _portal_fallback_enabled
+    from imgl.capture import _is_wayland, _portal_fallback_enabled
 
-    use_portal = portal
+    use_portal = portal or (_portal_fallback_enabled() and _is_wayland())
     try:
         captured = capture_screen(path, interactive=use_portal, prefer_mirror=True)
     except BlankCaptureError:
-        if use_portal or _portal_fallback_enabled():
+        if use_portal:
+            raise
+        if _portal_fallback_enabled():
             import sys
 
-            if not use_portal:
-                print(
-                    "Mirror/driver capture unavailable — fallback: GNOME portal "
-                    "(wybierz obszar; jednorazowa zgoda Screen Recording).",
-                    file=sys.stderr,
-                )
-            captured = capture_screen(path, interactive=True, prefer_mirror=True)
+            print(
+                "Mirror/driver capture unavailable — fallback: GNOME portal "
+                "(wybierz obszar; jednorazowa zgoda Screen Recording).",
+                file=sys.stderr,
+            )
+            captured = capture_screen(path, interactive=True, prefer_mirror=False)
         else:
             raise
     if (
@@ -216,18 +217,36 @@ def run_map(
     return render_report(report, output_format), 0
 
 
+def _control_packages_present() -> bool:
+    pkg_root = Path(__file__).resolve().parents[1] / "packages"
+    return (pkg_root / "dsl2imgl").is_dir() and (pkg_root / "nlp2imgl").is_dir()
+
+
 def _require_nlp2imgl():
     try:
         from nlp2imgl.control import apply_nl_with_diag
 
         return apply_nl_with_diag
-    except ImportError as exc:
+    except ImportError as first_exc:
+        if _control_packages_present():
+            try:
+                from imgl.installs import install_control
+
+                install_control()
+                from nlp2imgl.control import apply_nl_with_diag
+
+                return apply_nl_with_diag
+            except Exception as install_exc:
+                raise RuntimeError(
+                    "Control layer install failed. Run: imgl install control "
+                    f"— {install_exc}"
+                ) from install_exc
         raise RuntimeError(
             "Install control layer: imgl install control "
-            "(installs dsl2imgl + nlp2imgl + rest2imgl + cli2imgl; "
-            "nlp2imgl alone fails — dsl2imgl is not on PyPI) "
-            f"— {exc}"
-        ) from exc
+            "(dsl2imgl + nlp2imgl + rest2imgl + cli2imgl; "
+            "pip install -e . alone is not enough) "
+            f"— {first_exc}"
+        ) from first_exc
 
 
 def run_execute(

@@ -1,30 +1,30 @@
-# code2llm/evolution | 373 func | 61f | 2026-06-09
+# code2llm/evolution | 490 func | 68f | 2026-06-09
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT-FUNC      main  CC=44  fan=45
-      WHY: CC=44 exceeds 15
-      EFFORT: ~1h  IMPACT: 1980
+  [1] !! SPLIT           imgl/cli.py
+      WHY: 933L, 0 classes, max CC=62
+      EFFORT: ~4h  IMPACT: 57846
 
-  [2] !! SPLIT-FUNC      run_interactive_shell  CC=43  fan=35
-      WHY: CC=43 exceeds 15
-      EFFORT: ~1h  IMPACT: 1505
+  [2] !! SPLIT-FUNC      main  CC=62  fan=57
+      WHY: CC=62 exceeds 15
+      EFFORT: ~1h  IMPACT: 3534
 
-  [3] !! SPLIT-FUNC      prompt_to_imgl_uri  CC=28  fan=24
+  [3] !! SPLIT-FUNC      smart_capture  CC=25  fan=28
+      WHY: CC=25 exceeds 15
+      EFFORT: ~1h  IMPACT: 700
+
+  [4] !! SPLIT-FUNC      prompt_to_imgl_uri  CC=28  fan=24
       WHY: CC=28 exceeds 15
       EFFORT: ~1h  IMPACT: 672
 
-  [4] !  SPLIT-FUNC      _detect_buttons  CC=24  fan=26
-      WHY: CC=24 exceeds 15
-      EFFORT: ~1h  IMPACT: 624
+  [5] !! SPLIT-FUNC      capture_screen  CC=26  fan=21
+      WHY: CC=26 exceeds 15
+      EFFORT: ~1h  IMPACT: 546
 
-  [5] !  SPLIT-FUNC      _run_image_command  CC=19  fan=28
+  [6] !  SPLIT-FUNC      _run_image_command  CC=19  fan=28
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 532
-
-  [6] !! SPLIT-FUNC      parse_line  CC=44  fan=12
-      WHY: CC=44 exceeds 15
-      EFFORT: ~1h  IMPACT: 528
 
   [7] !! SPLIT-FUNC      classify_scene_elements  CC=27  fan=17
       WHY: CC=27 exceeds 15
@@ -45,14 +45,14 @@ NEXT[10] (ranked by impact):
 
 RISKS[3]:
   ⚠ Splitting layout.vql.json may break 0 import paths
-  ⚠ Splitting screen.vql.imgl.json may break 0 import paths
   ⚠ Splitting planfile.yaml may break 0 import paths
+  ⚠ Splitting imgl/cli.py may break 9 import paths
 
 METRICS-TARGET:
-  CC̄:          5.4 → ≤3.8
-  max-CC:      44 → ≤20
-  god-modules: 8 → 0
-  high-CC(≥15): 27 → ≤13
+  CC̄:          4.8 → ≤3.4
+  max-CC:      62 → ≤20
+  god-modules: 9 → 0
+  high-CC(≥15): 29 → ≤14
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=5.3 → now CC̄=5.4
+  prev CC̄=5.4 → now CC̄=4.8

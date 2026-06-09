@@ -1,11 +1,13 @@
 flowchart TD
-%% generated in 0.02s
+%% generated in 0.03s
 
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
     subgraph CLI
         packages__cli2imgl__src__cli2imgl__cli__main["main"]
+        imgl__cli___add_output_format_flags["_add_output_format_flags"]
+        imgl__cli___output_format["_output_format"]
         imgl__cli___add_common_args["_add_common_args"]
         imgl__cli__build_parser["build_parser"]
         imgl__cli___write_output["_write_output"]
@@ -30,8 +32,8 @@ flowchart TD
         packages__dsl2imgl__src__dsl2imgl__events__EventStore___append_jsonl["_append_jsonl"]
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay_pb["replay_pb"]
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay["replay"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_body{{_set_body CC=31}}
-        ...["+103 more"]
+        packages__dsl2imgl__src__dsl2imgl__schema_registry__all_verbs["all_verbs"]
+        ...["+145 more"]
     end
 
     subgraph Exporters

@@ -119,6 +119,10 @@ def capture_screen(
         if detail:
             errors.append(f"vdisplay-portal: {detail}")
 
+    if interactive:
+        if _try_portal_backends(path, allow_blank=allow_blank, errors=errors):
+            return path
+
     for name, runner in _non_portal_backends():
         try:
             result = runner(path)
@@ -155,31 +159,35 @@ def capture_screen(
             return path
         errors.append("vql: failed or blank")
 
-    if interactive:
-        for name, runner in _portal_backends():
-            try:
-                result = runner(path)
-                if isinstance(result, tuple):
-                    ok, detail = result
-                else:
-                    ok, detail = bool(result), ""
-                if ok:
-                    if allow_blank or not _is_blank_image(path):
-                        _last_capture_meta = {"method": name}
-                        return path
-                    _discard_capture_file(path)
-                    errors.append(f"{name}: captured but image is blank")
-                    continue
-                errors.append(f"{name}: {detail or 'command failed'}")
-            except Exception as exc:
-                errors.append(f"{name}: {exc}")
+    if not interactive:
+        if _try_portal_backends(path, allow_blank=allow_blank, errors=errors):
+            return path
 
     _discard_capture_file(path)
-    hint = _capture_failure_hint(interactive=interactive)
+    hint = _capture_failure_hint(interactive=interactive, errors=errors)
     raise BlankCaptureError(f"{hint}\nTried: {'; '.join(errors) or 'no backends'}")
 
 
-def _capture_failure_hint(*, interactive: bool) -> str:
+def _screen_recording_denied(errors: list[str]) -> bool:
+    needles = (
+        "Screen Recording permission",
+        "AccessDenied",
+        "Screenshot is not allowed",
+        "InteractiveScreenshot is not allowed",
+    )
+    joined = " ".join(errors)
+    return any(n in joined for n in needles)
+
+
+def _capture_failure_hint(*, interactive: bool, errors: list[str] | None = None) -> str:
+    errs = errors or []
+    if _screen_recording_denied(errs):
+        return (
+            "Brak uprawnień Screen Recording w GNOME.\n"
+            "Settings → Privacy → Screen Recording → włącz Cursor (lub terminal).\n"
+            "Potem: make capture-interactive\n"
+            "Jednorazowo z dialogiem: imgl capture --portal -o screen.png --verify"
+        )
     if interactive:
         return (
             "Mirror/driver capture failed; portal też nie zadziałał.\n"
@@ -292,8 +300,8 @@ def _discard_capture_file(path: Path) -> None:
 def _non_portal_backends() -> list[tuple[str, callable]]:
     if _is_wayland():
         order = (
+            ("gnome-shell", _capture_with_gnome_shell),
             ("grim", _capture_with_grim),
-            ("gnome-screenshot", _capture_with_gnome_screenshot),
         )
     else:
         order = (
@@ -311,16 +319,98 @@ def _portal_backends() -> list[tuple[str, callable]]:
     ]
 
 
+def _try_portal_backends(path: Path, *, allow_blank: bool, errors: list[str]) -> bool:
+    global _last_capture_meta
+    for name, runner in _portal_backends():
+        try:
+            result = runner(path)
+            if isinstance(result, tuple):
+                ok, detail = result
+            else:
+                ok, detail = bool(result), ""
+            if ok:
+                if allow_blank or not _is_blank_image(path):
+                    from imgl.freshness import mark_capture_fresh
+
+                    mark_capture_fresh(path)
+                    _last_capture_meta = {"method": name}
+                    return True
+                _discard_capture_file(path)
+                errors.append(f"{name}: captured but image is blank")
+                continue
+            errors.append(f"{name}: {detail or 'command failed'}")
+        except Exception as exc:
+            errors.append(f"{name}: {exc}")
+    return False
+
+
 def _run_command(cmd: list[str], path: Path, *, timeout: int = 20) -> bool:
     path.parent.mkdir(parents=True, exist_ok=True)
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, check=False)
     return proc.returncode == 0 and path.is_file() and path.stat().st_size > 0
 
 
-def _capture_with_grim(path: Path) -> bool:
+def _capture_with_gnome_shell(path: Path) -> tuple[bool, str]:
+    """GNOME Shell D-Bus screenshot (works on Mutter; grim needs wlroots)."""
+    if not shutil.which("gdbus"):
+        return False, "gdbus not found"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_file():
+        path.unlink()
+    try:
+        proc = subprocess.run(
+            [
+                "gdbus",
+                "call",
+                "--session",
+                "--dest",
+                "org.gnome.Shell.Screenshot",
+                "--object-path",
+                "/org/gnome/Shell/Screenshot",
+                "--method",
+                "org.gnome.Shell.Screenshot.Screenshot",
+                "false",
+                "false",
+                str(path),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            check=False,
+        )
+    except Exception as exc:
+        return False, str(exc)
+    if proc.returncode == 0 and path.is_file() and path.stat().st_size > 0:
+        return True, ""
+    detail = (proc.stderr or proc.stdout or "gnome-shell screenshot failed").strip()
+    if "AccessDenied" in detail or "not allowed" in detail.lower():
+        return False, (
+            "gnome-shell screenshot denied — enable Screen Recording for this app "
+            "(GNOME Settings → Privacy → Screen Recording)"
+        )
+    return False, detail
+
+
+def _capture_with_grim(path: Path) -> tuple[bool, str]:
     if not shutil.which("grim"):
-        return False
-    return _run_command(["grim", str(path)], path)
+        return False, "grim not installed"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        proc = subprocess.run(
+            ["grim", str(path)],
+            capture_output=True,
+            text=True,
+            timeout=20,
+            check=False,
+        )
+    except Exception as exc:
+        return False, str(exc)
+    if proc.returncode == 0 and path.is_file() and path.stat().st_size > 0:
+        return True, ""
+    detail = (proc.stderr or proc.stdout or "grim failed").strip()
+    if "wlr-screencopy" in detail:
+        detail = "grim unsupported on GNOME/Mutter (use gnome-shell or portal)"
+    return False, detail or "command failed"
 
 
 def _capture_with_gnome_screenshot(path: Path) -> bool:

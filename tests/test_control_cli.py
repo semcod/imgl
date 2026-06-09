@@ -91,6 +91,47 @@ def test_cli_execute_help() -> None:
     assert args.yaml is False
 
 
+def test_require_nlp2imgl_auto_installs_from_local_packages(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import builtins
+    import types
+
+    from imgl import control as control_mod
+
+    install_calls: list[str] = []
+    import_calls = 0
+
+    real_import = builtins.__import__
+
+    def fake_apply_nl_with_diag(*_args, **_kwargs):
+        return None
+
+    def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
+        nonlocal import_calls
+        if name == "nlp2imgl.control" or (
+            fromlist and "nlp2imgl.control" in ".".join(fromlist)
+        ):
+            import_calls += 1
+            if import_calls == 1:
+                raise ImportError("no nlp2imgl")
+            mod = types.ModuleType("nlp2imgl.control")
+            mod.apply_nl_with_diag = fake_apply_nl_with_diag
+            return mod
+        return real_import(name, globals, locals, fromlist, level)
+
+    def fake_install() -> None:
+        install_calls.append("install")
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+    monkeypatch.setattr(control_mod, "_control_packages_present", lambda: True)
+    monkeypatch.setattr("imgl.installs.install_control", fake_install)
+
+    fn = control_mod._require_nlp2imgl()
+    assert install_calls == ["install"]
+    assert fn is fake_apply_nl_with_diag
+
+
 def test_cli_default_output_is_markdown() -> None:
     from imgl.autodiag import resolve_cli_output_format
     from imgl.cli import _output_format, build_parser
