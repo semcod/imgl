@@ -36,6 +36,7 @@ sudo usermod -aG video $USER
 make capture-interactive
 # lub:
 imgl capture -o screen.png --verify
+imgl capture -o screen.png --verify --analyze   # + VQL + .capture.json
 
 # Wymuszenie portalu (region picker)
 imgl capture --portal -o screen.png
@@ -92,7 +93,11 @@ make execute-llm PROMPT='wpisz test w Chat input'
 imgl interact screen.png --window region-top --execute
 ```
 
-Po każdej akcji UI się zmienia — zrób nowy `capture` przed kolejnym krokiem.
+Po każdej akcji UI się zmienia — zrób nowy capture z analizą:
+
+```bash
+imgl capture -o screen.png --verify --analyze
+```
 
 ## Zalecana konfiguracja
 
@@ -109,6 +114,8 @@ scene = analyze("screen.png", config=ImglConfig(
 
 ## Powiązane przykłady
 
+- [docs/capture.md](../../../docs/capture.md)
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [workflows/window-picker](../../workflows/window-picker/README.md)
 - [configurations/per-window-llm](../../configurations/per-window-llm/README.md)
 - [applications/github-browser](../../applications/github-browser/README.md)

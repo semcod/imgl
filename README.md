@@ -78,8 +78,9 @@ Integracja z **Koru**: `cd ~/github/semcod/koru && make install-imgl-bridge`
 | Temat | Link |
 |-------|------|
 | Indeks | [docs/README.md](docs/README.md) |
-| Capture (mirror, portal, Wayland) | [docs/capture.md](docs/capture.md) |
-| Architektura (imgl / vql / nlp2uri) | [docs/architecture.md](docs/architecture.md) |
+| Capture (mirror, portal, `--analyze`) | [docs/capture.md](docs/capture.md) |
+| VQL eksport i vdisplay provenance | [docs/vql-export.md](docs/vql-export.md) |
+| Architektura (imgl / vdisplay / vql) | [docs/architecture.md](docs/architecture.md) |
 | Warstwa kontroli `*2imgl` | [docs/control-layer.md](docs/control-layer.md) |
 | NL ze shell (chat input, Enter/Ctrl+Enter) | [docs/nl-shell-examples.md](docs/nl-shell-examples.md) |
 | Głos + przeglądarka | [docs/voice-browser.md](docs/voice-browser.md) |
@@ -100,7 +101,9 @@ Pełna dokumentacja z przykładami dla różnych systemów, aplikacji i konfigur
 | IDE (Windsurf/VS Code) | [examples/applications/ide-editor](examples/applications/ide-editor/README.md) |
 | LLM per okno | [examples/configurations/per-window-llm](examples/configurations/per-window-llm/README.md) |
 | NL → URI (nlp2uri) | [examples/integrations/nlp2uri](examples/integrations/nlp2uri/README.md) |
+| Integracja uri2vql | [examples/integrations/uri2vql](examples/integrations/uri2vql/README.md) |
 | Pętla agenta | [examples/workflows/multi-step-agent](examples/workflows/multi-step-agent/README.md) |
+| Capture → VQL → akcja | [examples/workflows/capture-to-action](examples/workflows/capture-to-action/README.md) |
 | Web UI (port 8008) | [examples/workflows/web-ui](examples/workflows/web-ui/README.md) |
 
 Szybkie demo:
@@ -131,7 +134,9 @@ imgl vql /tmp/screen.png -o layout.vql.json
 # Capture (vdisplay mirror wbudowany w imgl[capture] — bez dialogu GNOME):
 make install-dev                              # vdisplay + mss w extra capture
 make capture-interactive                      # mirror capture → screen.png
+make capture-analyze                          # + VQL + .capture.json
 imgl capture -o screen.png --verify           # to samo bez make
+imgl capture -o screen.png --verify --analyze # capture + VQL + provenance w jednym kroku
 imgl capture --portal -o screen.png           # fallback: GNOME region picker
 
 imgl diagnose screen.png            # must show worth_analyzing: true
@@ -164,7 +169,8 @@ Sterowanie z zewnątrz (shell, curl, MCP, asystent głosowy):
 
 ```bash
 make install-control   # imgl install control
-make capture-interactive                            # lub: imgl capture -o screen.png --verify
+make capture-analyze                          # zalecane: capture + VQL
+make capture-interactive                      # lub: imgl capture -o screen.png --verify
 make serve-rest        # http://127.0.0.1:8219
 
 # DSL
@@ -184,7 +190,7 @@ make imgl-capture imgl-chat
 koru imgl execute "wpisz test w Chat input" --window region-bottom --dry-run
 ```
 
-Pełne przykłady: [docs/nl-shell-examples.md](docs/nl-shell-examples.md), [docs/control-layer.md](docs/control-layer.md).
+Pełne przykłady: [docs/nl-shell-examples.md](docs/nl-shell-examples.md), [docs/control-layer.md](docs/control-layer.md), [docs/vql-export.md](docs/vql-export.md).
 
 ### Window discovery (regiony na zrzucie)
 
@@ -307,12 +313,14 @@ scene = analyze("screen.png", config=ImglConfig(
 ```python
 from imgl import analyze, scene_to_vql, write_vql_program
 
-scene = analyze("screen.png")
+scene = analyze("screen.png")  # metadata.capture + window_os gdy vdisplay + sidecar
 program = scene_to_vql(scene, include_grid=True, grid=12)
 write_vql_program(scene, "layout.vql.json")
 ```
 
-Layers: `windows`, `ui_elements` (with OCR text in metadata), `text_regions`, optional `screen_regions`.
+Layers: `windows`, `ui_elements` (OCR text + optional `app_label` from vdisplay), `text_regions`, optional `screen_regions`.
+
+Sidecar files: `screen.capture.json` (provenance), cache `layout.vql.imgl.json`. See [docs/vql-export.md](docs/vql-export.md).
 
 ### Text-based actions
 

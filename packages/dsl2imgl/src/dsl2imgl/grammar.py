@@ -49,6 +49,10 @@ def _parse_capture(rest: list[str], cmd: dict[str, Any]) -> None:
     if f := pick_flag(rest, "OUT"):
         cmd["out"] = f
     cmd["interactive"] = "INTERACTIVE" in rest or pick_flag(rest, "INTERACTIVE") == "1"
+    if "ANALYZE" in rest:
+        cmd["analyze"] = True
+    if f := pick_flag(rest, "LANG"):
+        cmd["lang"] = f
 
 
 def _parse_analyze(rest: list[str], cmd: dict[str, Any]) -> None:

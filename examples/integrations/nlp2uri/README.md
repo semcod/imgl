@@ -73,5 +73,6 @@ wpisz test w search
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [workflows/multi-step-agent](../../workflows/multi-step-agent/README.md)
 - [integrations/uri2vql](../uri2vql/README.md)

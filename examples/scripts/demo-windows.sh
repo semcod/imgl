@@ -19,4 +19,5 @@ ls -1 "${IMAGE%.png}".region-*.png 2>/dev/null || ls -1 screen.region-*.png 2>/d
 
 echo
 echo "Następny krok:"
+echo "  imgl capture -o $IMAGE --verify --analyze   # opcjonalnie odśwież z VQL"
 echo "  imgl interact $IMAGE --llm --window region-top"

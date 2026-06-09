@@ -5,7 +5,9 @@
   "properties": {
     "verb": { "const": "CAPTURE" },
     "out": { "type": "string" },
-    "interactive": { "type": "boolean", "default": false }
+    "interactive": { "type": "boolean", "default": false },
+    "analyze": { "type": "boolean", "default": false },
+    "lang": { "type": "string" }
   },
   "additionalProperties": false
 }

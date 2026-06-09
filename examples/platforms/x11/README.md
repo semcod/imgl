@@ -20,6 +20,7 @@ sudo apt install tesseract-ocr tesseract-ocr-pol xdotool
 ```bash
 # mss / vdisplay — zwykle wystarczy
 imgl capture -o screen.png --verify
+imgl capture -o screen.png --verify --analyze   # + VQL + .capture.json
 
 # portal GNOME (gdy mirror nie działa)
 imgl capture --portal -o screen.png
@@ -28,10 +29,10 @@ imgl capture --portal -o screen.png
 ## Pełny workflow
 
 ```bash
+imgl capture -o screen.png --verify --analyze
 imgl diagnose screen.png
 imgl windows screen.png --export-crops
-imgl interact screen.png --llm --window region-top
-imgl interact screen.png --execute   # xdotool
+imgl interact screen.png --llm --window region-top --execute
 ```
 
 ## Side-by-side (dwa okna obok siebie)
@@ -55,5 +56,6 @@ Współrzędne w katalogu są w pikselach **zrzutu**. Przy mixed-DPI:
 
 ## Powiązane
 
+- [docs/capture.md](../../../docs/capture.md)
 - [configurations/execute-desktop](../../configurations/execute-desktop/README.md)
 - [workflows/capture-to-action](../../workflows/capture-to-action/README.md)

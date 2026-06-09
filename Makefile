@@ -15,7 +15,7 @@ FORMAT ?= markdown
 PROMPT ?=
 
 .PHONY: help venv install install-dev install-control install-full install-img2nl install-vdisplay install-vql
-.PHONY: capture capture-interactive verify-capture windows doctor doctor-full execute execute-dry execute-llm shot
+.PHONY: capture capture-interactive capture-analyze verify-capture windows doctor doctor-full execute execute-dry execute-llm shot
 .PHONY: test test-imgl test-dsl2imgl proto serve-rest serve-web demo-key demo-nl demo-chat
 
 help:
@@ -31,6 +31,7 @@ help:
 	@echo ""
 	@echo "Workflow:"
 	@echo "  make capture-interactive   portal GNOME → $(IMGL_IMAGE) (Wayland; wybierz region)"
+	@echo "  make capture-analyze       capture-interactive + VQL + .capture.json"
 	@echo "  make doctor-full           autodiagnostyka (markdown)"
 	@echo "  make execute-llm PROMPT='wpisz test w Chat input'"
 	@echo "  make shot PROMPT='wpisz test w Chat input'"
@@ -73,9 +74,14 @@ capture: install-dev
 	$(IMGL) capture --smart -o "$(IMGL_IMAGE)"
 
 capture-interactive: install-dev
-	rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)"
+	rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.capture.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)"
 	IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify
 	rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)"
+	@echo "export IMGL_IMAGE=$(IMGL_IMAGE)"
+
+capture-analyze: install-dev
+	rm -f "$(IMGL_IMAGE:.png=.vql.imgl.json)" "$(IMGL_IMAGE:.png=.vql.json)" "$(IMGL_IMAGE:.png=.capture.json)" "$(IMGL_IMAGE:.png=.captured_at)" "$(IMGL_IMAGE)"
+	IMGL_CAPTURE_PORTAL_FALLBACK=1 $(IMGL) capture --portal -o "$(IMGL_IMAGE)" --verify --analyze
 	@echo "export IMGL_IMAGE=$(IMGL_IMAGE)"
 
 verify-capture: install-dev
@@ -92,17 +98,17 @@ doctor-full: install-dev
 	$(IMGL) doctor --full --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)"
 
 execute: install-control
-	@test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1)
+	@test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1)
 	@test -n "$(PROMPT)" || (echo "Użycie: make execute PROMPT='wpisz test w Chat input'" && exit 1)
 	$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --format "$(FORMAT)"
 
 execute-dry: install-control
-	@test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1)
+	@test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1)
 	@test -n "$(PROMPT)" || (echo "Użycie: make execute-dry PROMPT='wpisz test w Chat input'" && exit 1)
 	$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --dry-run --format "$(FORMAT)"
 
 execute-llm: install-control
-	@test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-interactive" && exit 1)
+	@test -f "$(IMGL_IMAGE)" || (echo "Brak zrzutu — najpierw: make capture-analyze (lub make capture-interactive)" && exit 1)
 	@test -n "$(PROMPT)" || (echo "Użycie: make execute-llm PROMPT='wpisz test w Chat input'" && exit 1)
 	@test -n "$$OPENROUTER_API_KEY" || (echo "Brak OPENROUTER_API_KEY" && exit 1)
 	$(IMGL) execute "$(PROMPT)" --image "$(IMGL_IMAGE)" --window "$(IMGL_WINDOW)" --llm --format "$(FORMAT)"

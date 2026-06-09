@@ -4,15 +4,20 @@ Dwa tryby sterowania przez UI w przeglądarce (`imgl serve :8008`).
 
 ## Tryb 1: Web UI + mikrofon przeglądarki
 
-1. Uruchom serwer:
+1. Przygotuj zrzut (zalecane):
+   ```bash
+   make install-dev
+   imgl capture -o screen.png --verify --analyze
+   ```
+2. Uruchom serwer:
    ```bash
    imgl serve --port 8008 --image screen.png --llm --window region-bottom --execute
    ```
-2. Otwórz http://127.0.0.1:8008
-3. Włącz **Wykonuj na pulpicie**
-4. Użyj dyktowania systemowego (GNOME: Super+H) lub rozszerzenia do pola **NL** w UI
-5. Wpisz / dyktuj: `wpisz moje pytanie w Chat input` → Enter w UI
-6. Dyktuj: `ctrl+enter` lub kliknij akcję **KEY** w przyszłej wersji UI
+3. Otwórz http://127.0.0.1:8008
+4. Włącz **Wykonuj na pulpicie**
+5. Użyj dyktowania systemowego (GNOME: Super+H) lub rozszerzenia do pola **NL** w UI
+6. Wpisz / dyktuj: `wpisz moje pytanie w Chat input` → Enter w UI
+7. Dyktuj: `ctrl+enter` lub kliknij akcję **KEY** w przyszłej wersji UI
 
 ### Integracja Web Speech API (opcjonalna)
 
@@ -73,3 +78,5 @@ Wymaga `OPENROUTER_API_KEY` i zaznaczonego **Zrzut po akcji**.
 ## Bezpieczeństwo
 
 Domyślnie **dry-run**. Głos + `--execute` wykonuje prawdziwe kliknięcia — używaj tylko na zaufanym stanowisku.
+
+Zobacz też: [web-ui.md](web-ui.md), [vql-export.md](vql-export.md), [examples/workflows/web-ui](../examples/workflows/web-ui/README.md).

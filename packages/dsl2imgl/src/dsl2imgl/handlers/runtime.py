@@ -99,9 +99,23 @@ def handle_capture(cmd: dict[str, Any]) -> DslResult:
 
     out = cmd.get("out") or "screen.png"
     interactive = bool(cmd.get("interactive"))
+    analyze_after = bool(cmd.get("analyze"))
+    lang = cmd.get("lang") or "eng+pol"
     try:
         path = capture_screen(out, interactive=interactive)
-        return DslResult(ok=True, verb="CAPTURE", output=str(path), data={"path": str(path)})
+        data: dict[str, Any] = {"path": str(path)}
+        if analyze_after:
+            from imgl.export import write_vql_program
+            from imgl.pipeline import analyze
+            from imgl.scene_cache import save_scene_cache
+
+            vql_out = Path(path).with_suffix(".vql.json")
+            scene = analyze(str(Path(path).resolve()), lang=lang)
+            write_vql_program(scene, vql_out)
+            save_scene_cache(scene, vql_out)
+            data["vql_file"] = str(vql_out)
+            data["analyzed"] = True
+        return DslResult(ok=True, verb="CAPTURE", output=str(path), data=data)
     except Exception as exc:
         return DslResult(ok=False, verb="CAPTURE", error=str(exc))
 

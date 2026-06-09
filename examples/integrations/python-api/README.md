@@ -2,10 +2,14 @@
 
 Pełny dostęp programistyczny do pipeline imgl.
 
-## Analiza
+## Capture + analiza
 
 ```python
-from imgl import analyze, ImglConfig, scene_to_json, actions
+from imgl.capture_provenance import load_capture_meta, save_capture_meta
+from imgl import analyze, ImglConfig, scene_to_vql, write_vql_program
+
+# Po imgl capture — provenance w sidecar:
+meta = load_capture_meta("screen.png")  # method, display, monitor
 
 scene = analyze("screen.png", lang="eng+pol", config=ImglConfig(
     lang="eng+pol",
@@ -14,9 +18,19 @@ scene = analyze("screen.png", lang="eng+pol", config=ImglConfig(
     detect_inputs=True,
 ))
 
-print(scene.width, scene.height)
-print(len(scene.windows), "windows")
+# scene.metadata["capture"] — z .capture.json
+# scene.metadata["window_os"] — korelacja vdisplay (gdy zainstalowany)
 
+program = scene_to_vql(scene)
+write_vql_program(scene, "layout.vql.json")
+```
+
+## Analiza i akcje
+
+```python
+from imgl import analyze, actions
+
+scene = analyze("screen.png", lang="eng+pol")
 ui = actions(scene)
 print(ui.click("button", text="Save"))
 print(ui.type_into("alice", label="Username"))
@@ -61,7 +75,7 @@ session = InteractSession(
 resolved = prompt_to_imgl_uri("kliknij Follow", image="screen.png", catalog=catalog)
 result = resolve_imgl_uri(resolved.uri, session)
 assert result["ok"]
-print(result["x"], result["y"])
+print(result["x"], result["y"], result.get("image_path"))
 ```
 
 ## Wykonanie
@@ -71,7 +85,8 @@ from imgl.execute import execute_action
 
 payload = {k: v for k, v in result.items() if k not in {"ok", "uri_action"}}
 execute_action(payload, dry_run=True)   # test
-# execute_action(payload, dry_run=False)  # xdotool
+# execute_action(payload, dry_run=False)  # xdotool; ostrzeżenie przy DISPLAY mismatch
+# IMGL_STRICT_DISPLAY=1 — blokada przy mismatch
 ```
 
 ## Eksport
@@ -83,6 +98,8 @@ write_vql_program(scene, "layout.vql.json")
 html = scene_to_html(scene, embed_image=True)
 svg = scene_to_svg(scene, mode="overlay", background="screen.png")
 ```
+
+VQL zawiera `metadata.capture`, opcjonalnie `metadata.window_os` i `scene.relations` (`contains`).
 
 ## Mapa numerów
 
@@ -104,10 +121,11 @@ write_annotated_image(
 from imgl.scene_cache import load_or_analyze, save_scene_cache
 
 scene = load_or_analyze("screen.png", vql_file="layout.vql.json", lang="eng+pol")
-save_scene_cache(scene, "layout.vql.json")
+save_scene_cache(scene, "layout.vql.json")  # → layout.vql.imgl.json
 ```
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [workflows/capture-to-action](../../workflows/capture-to-action/README.md)
 - [configurations/per-window-llm](../../configurations/per-window-llm/README.md)

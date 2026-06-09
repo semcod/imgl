@@ -21,10 +21,12 @@ Scena `win-settings` z testów:
 ## Analiza zrzutu dialogu
 
 ```bash
-imgl capture -o dialog.png --verify
+imgl capture -o dialog.png --verify --analyze --lang eng+pol
 imgl annotate dialog.png --open
 imgl interact dialog.png
 ```
+
+Powstają: `dialog.vql.json`, `dialog.capture.json`, `dialog.vql.imgl.json`.
 
 ## Typowe komendy
 
@@ -70,5 +72,6 @@ W HTML elementy mają `data-text="Save"`, `data-type="button"` — przydatne do 
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [workflows/capture-to-action](../../workflows/capture-to-action/README.md)
 - [configurations/ocr-filtered](../../configurations/ocr-filtered/README.md)

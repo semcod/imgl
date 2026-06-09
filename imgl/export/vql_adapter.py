@@ -33,13 +33,17 @@ def scene_to_vql(
 ) -> dict[str, Any]:
     """Convert a Scene to a VQLProgram-compatible dict."""
     layers: list[dict[str, Any]] = []
+    window_os = dict(scene.metadata.get("window_os", {}))
 
     if include_grid and scene.source_image and Path(scene.source_image).is_file():
         grid_layer = _grid_layer(scene.source_image, grid=grid)
         if grid_layer:
             layers.append(grid_layer)
 
-    window_objects = [_window_to_object(window, scene.width, scene.height) for window in scene.windows]
+    window_objects = [
+        _window_to_object(window, scene.width, scene.height, os_meta=window_os.get(window.id))
+        for window in scene.windows
+    ]
     if window_objects:
         layers.append({"id": "windows", "objects": window_objects, "visible": True})
 
@@ -57,11 +61,30 @@ def scene_to_vql(
     if text_objects:
         layers.append({"id": "text_regions", "objects": text_objects, "visible": True})
 
+    all_objects = window_objects + ui_objects + text_objects
+    relations = _build_contains_relations(all_objects)
+
     image_url = ""
     if scene.source_image and Path(scene.source_image).is_file():
         image_url = f"file://{Path(scene.source_image).resolve()}"
 
     roles = dict(scene.metadata.get("roles", {}))
+    metadata: dict[str, Any] = {
+        "source": "imgl",
+        "image": scene.source_image or "",
+        "element_count": len(ui_objects),
+        "by_role": roles,
+        "detect_source": scene.metadata.get("detect_source", ""),
+        "ocr_backend": scene.metadata.get("ocr_backend", ""),
+        "lang": scene.metadata.get("lang", ""),
+        "analyzed_at": datetime.now(UTC).isoformat(),
+    }
+    capture = scene.metadata.get("capture")
+    if isinstance(capture, dict) and capture:
+        metadata["capture"] = capture
+    if window_os:
+        metadata["window_os"] = window_os
+
     return {
         "version": VQL_VERSION,
         "render_target": "svg",
@@ -72,19 +95,10 @@ def scene_to_vql(
             "url": image_url,
             "app": "desktop",
             "layers": layers,
-            "relations": [],
+            "relations": relations,
         },
         "validation": None,
-        "metadata": {
-            "source": "imgl",
-            "image": scene.source_image or "",
-            "element_count": len(ui_objects),
-            "by_role": roles,
-            "detect_source": scene.metadata.get("detect_source", ""),
-            "ocr_backend": scene.metadata.get("ocr_backend", ""),
-            "lang": scene.metadata.get("lang", ""),
-            "analyzed_at": datetime.now(UTC).isoformat(),
-        },
+        "metadata": metadata,
     }
 
 
@@ -200,7 +214,68 @@ def _object_from_bbox(
     }
 
 
-def _window_to_object(window: Window, width: int, height: int) -> dict[str, Any]:
+def _build_contains_relations(objects: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Infer contains relations from bbox nesting (window > panel > button)."""
+    role_rank = {
+        "window": 0,
+        "panel": 1,
+        "titlebar": 1,
+        "toolbar": 2,
+        "button": 3,
+        "icon_button": 3,
+        "input": 3,
+        "label": 4,
+        "text": 5,
+    }
+    relations: list[dict[str, Any]] = []
+    for parent in objects:
+        p_meta = parent.get("metadata", {})
+        p_role = p_meta.get("role", "")
+        p_bbox = p_meta.get("bbox", [])
+        if not p_bbox:
+            continue
+        for child in objects:
+            if parent.get("id") == child.get("id"):
+                continue
+            c_meta = child.get("metadata", {})
+            c_role = c_meta.get("role", "")
+            c_bbox = c_meta.get("bbox", [])
+            if not c_bbox:
+                continue
+            if role_rank.get(p_role, 9) >= role_rank.get(c_role, 9):
+                continue
+            if _bbox_contains(p_bbox, c_bbox):
+                relations.append(
+                    {
+                        "kind": "contains",
+                        "source": parent["id"],
+                        "target": child["id"],
+                        "args": {"parent_role": p_role, "child_role": c_role},
+                    }
+                )
+    return relations
+
+
+def _bbox_contains(outer: list[float | int], inner: list[float | int]) -> bool:
+    ox0, oy0, ox1, oy1 = outer[:4]
+    ix0, iy0, ix1, iy1 = inner[:4]
+    return ox0 <= ix0 and oy0 <= iy0 and ox1 >= ix1 and oy1 >= iy1
+
+
+def _window_to_object(
+    window: Window,
+    width: int,
+    height: int,
+    *,
+    os_meta: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    extra: dict[str, Any] = {"z": window.z, "title": window.title}
+    if os_meta:
+        extra["os_window_id"] = os_meta.get("window_id")
+        extra["app_label"] = os_meta.get("app_label")
+        extra["monitor_name"] = os_meta.get("monitor_name")
+        if os_meta.get("vision_iou") is not None:
+            extra["vision_iou"] = os_meta.get("vision_iou")
     return _object_from_bbox(
         obj_id=window.id,
         role="window",
@@ -209,7 +284,7 @@ def _window_to_object(window: Window, width: int, height: int) -> dict[str, Any]
         height=height,
         label=window.title or window.id,
         confidence=0.8,
-        extra_metadata={"z": window.z, "title": window.title},
+        extra_metadata=extra,
     )
 
 

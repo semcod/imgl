@@ -80,8 +80,12 @@ Moduł `imgl/window_scope.py`:
 
 Przy `--window region-top` vision LLM widzi **tylko** `screen.region-top.png` (crop), a współrzędne są mapowane z powrotem na pełny zrzut.
 
+Metadane VQL (`layout.vql.json`) mogą zawierać `metadata.window_os` z korelacji vdisplay — patrz [docs/vql-export.md](../../../docs/vql-export.md).
+
 ## Powiązane
 
+- [docs/capture.md](../../../docs/capture.md)
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [configurations/per-window-llm](../../configurations/per-window-llm/README.md)
 - [applications/github-browser](../../applications/github-browser/README.md)
 - [applications/ide-editor](../../applications/ide-editor/README.md)

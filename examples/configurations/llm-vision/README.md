@@ -77,5 +77,6 @@ imgl interact screen.png --llm --window region-top
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [configurations/per-window-llm](../per-window-llm/README.md)
 - [applications/github-browser](../../applications/github-browser/README.md)

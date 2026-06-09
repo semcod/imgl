@@ -67,6 +67,9 @@ def test_scene_to_vql_structure():
     assert button["metadata"]["text"] == "Save"
     assert button["center_x"] == 310.0
 
+    relations = program["scene"]["relations"]
+    assert any(rel["kind"] == "contains" and rel["target"] == "win-1-button-0" for rel in relations)
+
 
 def test_scene_to_vql_json_roundtrip():
     payload = scene_to_vql_json(_sample_scene())

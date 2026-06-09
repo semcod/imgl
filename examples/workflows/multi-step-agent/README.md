@@ -35,16 +35,16 @@ examples/scripts/demo-agent-loop.sh
 
 ```bash
 # Krok A — otwórz zakładkę
-imgl capture -o s1.png --verify
+imgl capture -o s1.png --verify --analyze
 imgl interact s1.png --llm --window region-top --execute <<<'3'   # Projects
 
 # Krok B — poczekaj na UI, nowy zrzut
 sleep 1
-imgl capture -o s2.png --verify
+imgl capture -o s2.png --verify --analyze
 imgl interact s2.png --llm --window region-top --execute <<<'kliknij Repositories'
 
 # Krok C — wpisz w search
-imgl capture -o s3.png --verify
+imgl capture -o s3.png --verify --analyze
 imgl interact s3.png --llm --window region-top --execute <<<'wpisz imgl w Type to search'
 ```
 
@@ -111,5 +111,7 @@ Agent (Cursor, koru, własny skrypt) może:
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
+- [docs/capture.md](../../../docs/capture.md)
 - [integrations/nlp2uri](../../integrations/nlp2uri/README.md)
 - [integrations/uri2vql](../../integrations/uri2vql/README.md)

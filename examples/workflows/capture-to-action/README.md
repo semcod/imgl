@@ -2,21 +2,39 @@
 
 Podstawowa ścieżka od zrzutu ekranu do konkretnej akcji myszy/klawiatury.
 
-## Krok 1 — Zrzut
+## Krok 1 — Zrzut (+ opcjonalnie VQL)
 
 ```bash
-make capture-interactive   # lub: imgl capture -o screen.png --verify
+# Zalecane: capture + analiza + VQL w jednym kroku
+imgl capture -o screen.png --verify --analyze --lang eng+pol
+
+# Lub osobno:
+make capture-interactive   # imgl capture -o screen.png --verify
+make capture-analyze       # + VQL + .capture.json
 imgl diagnose screen.png
 ```
 
+Po `--analyze` powstają:
+
+| Plik | Opis |
+|------|------|
+| `screen.png` | Zrzut (vdisplay mirror / portal) |
+| `screen.capture.json` | Provenance: method, display, monitor |
+| `screen.vql.json` | VQLProgram (warstwy UI, relations, metadata) |
+| `screen.vql.imgl.json` | Cache Scene (OCR) |
+
 Oczekiwany wynik diagnose: `worth_analyzing: true`. Jeśli `false` — zrzut jest pusty/czarny.
 
-## Krok 2 — Analiza
+Szczegóły formatów: [docs/vql-export.md](../../docs/vql-export.md).
+
+## Krok 2 — Analiza (gdy bez `--analyze`)
 
 ```bash
 imgl analyze screen.png -o screen.imgl.json --lang eng+pol
 imgl vql screen.png -o layout.vql.json
 ```
+
+`analyze()` automatycznie dołącza provenance z `.capture.json` i koreluje okna OS (vdisplay), gdy pakiet jest dostępny.
 
 ## Krok 3 — Znajdź element
 
@@ -40,14 +58,17 @@ Wyjście JSON:
   "y": 273,
   "element_id": "window_0-button-20",
   "element_type": "button",
-  "text": "Projects"
+  "text": "Projects",
+  "image_path": "/path/to/screen.png"
 }
 ```
+
+Pole `image_path` umożliwia guard DISPLAY przy execute (porównanie z `screen.capture.json`).
 
 ## Krok 4 — Interaktywny shell (zalecane)
 
 ```bash
-imgl interact screen.png -o layout.vql.json
+imgl interact screen.png --llm -o layout.vql.json
 ```
 
 W shellu:
@@ -64,6 +85,7 @@ W shellu:
 
 ```bash
 imgl interact screen.png --execute
+# DISPLAY mismatch → ostrzeżenie; blokada: IMGL_STRICT_DISPLAY=1
 # lub sucho:
 imgl find screen.png --text Follow --click   # tylko JSON, bez execute
 ```
@@ -71,16 +93,19 @@ imgl find screen.png --text Follow --click   # tylko JSON, bez execute
 ## Python API
 
 ```python
-from imgl import analyze, actions
+from imgl import analyze, actions, scene_to_vql, write_vql_program
 
 scene = analyze("screen.png", lang="eng+pol")
-ui = actions(scene)
+write_vql_program(scene, "layout.vql.json")
 
+ui = actions(scene)
 click = ui.click("button", text="Projects")
 type_action = ui.type_into("hello", label="Type to search")
 ```
 
 ## Powiązane
 
+- [docs/capture.md](../../docs/capture.md)
+- [docs/vql-export.md](../../docs/vql-export.md)
 - [integrations/python-api](../../integrations/python-api/README.md)
 - [configurations/execute-desktop](../../configurations/execute-desktop/README.md)

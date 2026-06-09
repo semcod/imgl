@@ -21,6 +21,17 @@ class BlankCaptureError(CaptureError):
 _last_capture_meta: dict[str, object] = {}
 
 
+def _finalize_capture(path: Path, meta: dict[str, object]) -> None:
+    """Record freshness sidecar, provenance JSON, and in-process capture meta."""
+    global _last_capture_meta
+    from imgl.capture_provenance import save_capture_meta
+    from imgl.freshness import mark_capture_fresh
+
+    mark_capture_fresh(path)
+    save_capture_meta(path, meta)
+    _last_capture_meta = dict(meta)
+
+
 def last_capture_meta() -> dict[str, object]:
     """Metadata from the most recent successful capture (method, display, …)."""
     return dict(_last_capture_meta)
@@ -132,10 +143,7 @@ def capture_screen(
                 ok, detail = bool(result), ""
             if ok:
                 if allow_blank or not _is_blank_image(path):
-                    from imgl.freshness import mark_capture_fresh
-
-                    mark_capture_fresh(path)
-                    _last_capture_meta = {"method": name}
+                    _finalize_capture(path, {"method": name})
                     return path
                 _discard_capture_file(path)
                 errors.append(f"{name}: captured but image is blank")
@@ -148,7 +156,7 @@ def capture_screen(
         try:
             if _capture_with_mss(path, monitor=monitor):
                 if allow_blank or not _is_blank_image(path):
-                    _last_capture_meta = {"method": "mss"}
+                    _finalize_capture(path, {"method": "mss"})
                     return path
                 errors.append("mss: captured but image is blank")
         except Exception as exc:
@@ -239,10 +247,7 @@ def _try_vdisplay_capture(
             prefer_mirror=prefer_mirror,
         )
         if allow_blank or not _is_blank_image(path):
-            from imgl.freshness import mark_capture_fresh
-
-            mark_capture_fresh(path)
-            _last_capture_meta = dict(meta)
+            _finalize_capture(path, dict(meta))
             return True, ""
         _discard_capture_file(path)
         return False, f"vdisplay {meta.get('method', 'capture')}: blank frame"
@@ -276,10 +281,7 @@ def _try_vql_capture(
         if captured.is_file():
             if captured.resolve() != path.resolve():
                 shutil.copy2(captured, path)
-            from imgl.freshness import mark_capture_fresh
-
-            mark_capture_fresh(path)
-            _last_capture_meta = {"method": "vql", "path": str(captured)}
+            _finalize_capture(path, {"method": "vql", "path": str(captured)})
         target = path if path.is_file() else captured
         if allow_blank or not _is_blank_image(target):
             return True
@@ -330,10 +332,7 @@ def _try_portal_backends(path: Path, *, allow_blank: bool, errors: list[str]) ->
                 ok, detail = bool(result), ""
             if ok:
                 if allow_blank or not _is_blank_image(path):
-                    from imgl.freshness import mark_capture_fresh
-
-                    mark_capture_fresh(path)
-                    _last_capture_meta = {"method": name}
+                    _finalize_capture(path, {"method": name})
                     return True
                 _discard_capture_file(path)
                 errors.append(f"{name}: captured but image is blank")

@@ -137,6 +137,12 @@ def resolve_imgl_uri(
     return {"ok": False, "error": f"Unknown action: {action_name}"}
 
 
+def _attach_image_path(payload: dict[str, Any], session: InteractSession) -> dict[str, Any]:
+    enriched = dict(payload)
+    enriched["image_path"] = session.image_path
+    return enriched
+
+
 def _resolve_click(qs: dict[str, list[str]], finder, session: InteractSession) -> dict[str, Any]:
     element_id = (qs.get("element_id") or [""])[0] or None
     text = (qs.get("text") or [""])[0] or None
@@ -154,7 +160,7 @@ def _resolve_click(qs: dict[str, list[str]], finder, session: InteractSession) -
                         f"Pole input — fokus. Wpisz tekst: "
                         f"wpisz WARTOŚĆ w {option.label!r}"
                     )
-                return {"ok": True, "uri_action": "click", **payload}
+                return {"ok": True, "uri_action": "click", **_attach_image_path(payload, session)}
         return {"ok": False, "error": f"element_id not found: {element_id}"}
 
     try:
@@ -164,7 +170,7 @@ def _resolve_click(qs: dict[str, list[str]], finder, session: InteractSession) -
             label=label,
             window=window,
         )
-        return {"ok": True, "uri_action": "click", **payload}
+        return {"ok": True, "uri_action": "click", **_attach_image_path(payload, session)}
     except ElementNotFoundError as exc:
         return {"ok": False, "error": str(exc)}
 
@@ -194,7 +200,7 @@ def _resolve_type(qs: dict[str, list[str]], finder, session: InteractSession) ->
                 payload = dict(option.action_payload)
                 payload["action"] = "type"
                 payload["text"] = value
-                return {"ok": True, "uri_action": "type", **payload}
+                return {"ok": True, "uri_action": "type", **_attach_image_path(payload, session)}
 
     for hint in (label, text):
         if not hint:
@@ -211,11 +217,11 @@ def _resolve_type(qs: dict[str, list[str]], finder, session: InteractSession) ->
                     payload = dict(option.action_payload)
                     payload["action"] = "type"
                     payload["text"] = value
-                    return {"ok": True, "uri_action": "type", **payload}
+                    return {"ok": True, "uri_action": "type", **_attach_image_path(payload, session)}
 
     try:
         payload = finder.type_into(value, label=label, text=text, window=window)
-        return {"ok": True, "uri_action": "type", **payload}
+        return {"ok": True, "uri_action": "type", **_attach_image_path(payload, session)}
     except ElementNotFoundError as exc:
         return {"ok": False, "error": str(exc)}
 

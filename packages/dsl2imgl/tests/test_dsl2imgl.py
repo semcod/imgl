@@ -28,10 +28,11 @@ def test_key_dry_run() -> None:
     assert result.verb == "KEY"
 
 
-def test_key_parses_trailing_image_window() -> None:
-    cmd = parse_line("KEY ctrl+Return IMAGE screen.png WINDOW region-bottom EXECUTE 0")
+def test_capture_analyze_flags() -> None:
+    cmd = parse_line("CAPTURE OUT screen.png INTERACTIVE ANALYZE LANG eng+pol")
     assert cmd is not None
-    assert cmd["keys"] == "ctrl+Return"
-    assert cmd["image"] == "screen.png"
-    assert cmd["window"] == "region-bottom"
-    assert cmd["execute"] is False
+    assert cmd["verb"] == "CAPTURE"
+    assert cmd["out"] == "screen.png"
+    assert cmd["interactive"] is True
+    assert cmd["analyze"] is True
+    assert cmd["lang"] == "eng+pol"

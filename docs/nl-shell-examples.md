@@ -10,7 +10,8 @@ make install-dev
 make install-control
 
 # zrzut (vdisplay mirror; portal fallback na Wayland)
-make capture-interactive
+imgl capture -o screen.png --verify --analyze
+# lub: make capture-interactive && imgl vql screen.png -o layout.vql.json
 
 # sprawdź regiony
 imgl windows screen.png

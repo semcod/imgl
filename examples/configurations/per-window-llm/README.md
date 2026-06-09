@@ -64,5 +64,6 @@ catalog = build_interactive_catalog(
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [workflows/window-picker](../../workflows/window-picker/README.md)
 - [platforms/gnome-wayland](../../platforms/gnome-wayland/README.md)

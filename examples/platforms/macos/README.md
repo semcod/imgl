@@ -25,6 +25,7 @@ Uprawnienia: **System Settings → Privacy → Screen Recording** dla terminala/
 
 ```bash
 imgl capture -o screen.png
+imgl capture -o screen.png --verify --analyze   # + VQL (bez vdisplay na macOS)
 imgl diagnose screen.png
 ```
 
@@ -58,5 +59,6 @@ imgl find screen.png --text Save --click
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [integrations/python-api](../../integrations/python-api/README.md)
 - [workflows/multi-step-agent](../../workflows/multi-step-agent/README.md)

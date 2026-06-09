@@ -18,4 +18,5 @@ printf 'lista\nquit\n' | imgl interact "$IMAGE" --llm --window "$WINDOW" 2>&1 | 
 
 echo
 echo "Interaktywnie:"
+echo "  imgl capture -o $IMAGE --verify --analyze   # gdy brak świeżego VQL"
 echo "  imgl interact $IMAGE --llm --window $WINDOW --annotate --open"

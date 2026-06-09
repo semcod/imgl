@@ -16,6 +16,7 @@ Widać: eksplorator plików, edytor, terminal, panel AI (Cascade).
 ## Analiza regionu IDE
 
 ```bash
+imgl capture -o screen.png --verify --analyze   # gdy potrzebny świeży zrzut
 imgl interact screen.png --llm --window region-bottom
 ```
 
@@ -68,5 +69,6 @@ imgl find screen.png --window region-bottom --list
 
 ## Powiązane
 
+- [docs/capture.md](../../../docs/capture.md)
 - [workflows/multi-step-agent](../../workflows/multi-step-agent/README.md)
 - [platforms/gnome-wayland](../../platforms/gnome-wayland/README.md)

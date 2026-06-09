@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import time
@@ -27,35 +28,77 @@ class ExecuteResult:
 
 def execute_action(action: dict[str, Any], *, dry_run: bool = False) -> ExecuteResult:
     """Run a click/type/key action on the desktop."""
+    mismatch = _display_mismatch_warning(action)
+    strict = os.environ.get("IMGL_STRICT_DISPLAY", "").strip().lower() in {"1", "true", "yes", "on"}
+    if mismatch and strict and not dry_run:
+        return ExecuteResult(ok=False, method="display-guard", message=mismatch)
+
     kind = action.get("action")
     if kind == "key":
         keys = str(action.get("keys") or action.get("text") or "")
         if dry_run:
             return ExecuteResult(ok=True, method="dry-run", message=f"key {keys}", dry_run=True)
-        return execute_keys(keys)
+        result = execute_keys(keys)
+        return _append_display_warning(result, mismatch)
+
     if kind not in {"click", "type"}:
         return ExecuteResult(ok=False, method="none", message=f"Unsupported action: {kind}")
 
     x = int(action.get("x", 0))
     y = int(action.get("y", 0))
     if dry_run:
+        message = f"{kind} @ ({x}, {y})"
+        if mismatch:
+            message = f"{message}; warning: {mismatch}"
         return ExecuteResult(
             ok=True,
             method="dry-run",
-            message=f"{kind} @ ({x}, {y})",
+            message=message,
             dry_run=True,
         )
 
     if shutil.which("xdotool"):
-        return _execute_xdotool(kind, x, y, action.get("text", ""))
+        result = _execute_xdotool(kind, x, y, action.get("text", ""))
+        return _append_display_warning(result, mismatch)
 
     if shutil.which("ydotool"):
-        return _execute_ydotool(kind, x, y, action.get("text", ""))
+        result = _execute_ydotool(kind, x, y, action.get("text", ""))
+        return _append_display_warning(result, mismatch)
 
     return ExecuteResult(
         ok=False,
         method="none",
         message="No desktop automation tool found (install xdotool or ydotool)",
+    )
+
+
+def _display_mismatch_warning(action: dict[str, Any]) -> str | None:
+    image = action.get("image_path") or action.get("source_image")
+    if not image:
+        return None
+    try:
+        from imgl.capture_provenance import load_capture_meta
+
+        capture = load_capture_meta(image)
+    except ImportError:
+        return None
+    capture_display = str(capture.get("display") or "").strip()
+    if not capture_display:
+        return None
+    current = os.environ.get("DISPLAY", "").strip()
+    if current and capture_display != current:
+        return f"DISPLAY mismatch: captured on {capture_display}, executing on {current}"
+    return None
+
+
+def _append_display_warning(result: ExecuteResult, warning: str | None) -> ExecuteResult:
+    if not warning or not result.ok:
+        return result
+    return ExecuteResult(
+        ok=result.ok,
+        method=result.method,
+        message=f"{result.message}; warning: {warning}",
+        dry_run=result.dry_run,
     )
 
 

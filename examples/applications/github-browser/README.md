@@ -15,6 +15,7 @@ imgl windows screen.png --export-crops
 
 ```bash
 export OPENROUTER_API_KEY=sk-or-...   # lub .env
+imgl capture -o screen.png --verify --analyze   # opcjonalnie, gdy brak screen.png
 imgl interact screen.png --llm --window region-top --annotate --open
 ```
 
@@ -60,7 +61,7 @@ imgl find screen.png --text Follow --click
 ## Uwagi
 
 - Etykiety OCR mogą różnić się od wizualnych (`ff Projects` vs `Projects`) — LLM i snap OCR to korygują
-- Po kliknięciu zakładki UI się zmienia → **nowy capture**
+- Po kliknięciu zakładki UI się zmienia → **nowy capture** (`imgl capture --analyze`)
 - Przyciski w README (`img2nl`, `nlp2cmd`) to linki — LLM je wykrywa jako klikalne
 
 ## Skrypt demo
@@ -71,5 +72,6 @@ examples/scripts/demo-github.sh screen.png
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [workflows/window-picker](../../workflows/window-picker/README.md)
 - [configurations/per-window-llm](../../configurations/per-window-llm/README.md)

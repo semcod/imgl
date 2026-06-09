@@ -54,5 +54,6 @@ catalog = build_interactive_catalog(
 
 ## Powiązane
 
+- [docs/vql-export.md](../../../docs/vql-export.md)
 - [configurations/llm-vision](../llm-vision/README.md)
 - [workflows/window-picker](../../workflows/window-picker/README.md)

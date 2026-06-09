@@ -28,11 +28,16 @@ flowchart TB
     H[handlers/runtime.py]
   end
 
+  subgraph transport [vdisplay — opcjonalnie]
+    VD[mirror / portal]
+  end
+
   subgraph domain [imgl/]
-    CAP[capture]
+    CAP[capture + .capture.json]
     PIPE[pipeline / catalog]
+    VQL[export/vql_adapter]
     N2I[nlp2uri.py]
-    EXE[execute.py]
+    EXE[execute.py + DISPLAY guard]
   end
 
   NL --> DSL
@@ -42,7 +47,21 @@ flowchart TB
   REST --> DSL
   WEB --> domain
   DSL --> H --> domain
+  VD --> CAP
+  CAP --> PIPE --> VQL
 ```
+
+## Pipeline capture → VQL
+
+| Warstwa | Repo / moduł | Rola |
+|---------|--------------|------|
+| Transport | `vdisplay` | PNG + metadane OS (okna WM, display) |
+| Semantyka | `imgl` | OCR, Scene, katalog, execute |
+| Eksport | `vql` (format) | `*.vql.json`, URI `vql://window/imgl` |
+
+Po `imgl capture --analyze` powstają sidecary: `.capture.json`, `.vql.json`, `.vql.imgl.json`.
+
+Szczegóły: [docs/vql-export.md](../docs/vql-export.md).
 
 ## Paczki
 
@@ -72,7 +91,7 @@ pip install -e "packages/mcp2imgl[mcp]"   # opcjonalnie
 
 ```text
 HEALTH
-CAPTURE [OUT screen.png] [INTERACTIVE]
+CAPTURE [OUT screen.png] [INTERACTIVE] [ANALYZE] [LANG eng+pol]
 ANALYZE screen.png [WINDOW region-bottom] [LLM]
 ACTIONS screen.png [WINDOW region-top] [LLM]
 RESOLVE "kliknij Projects" IMAGE screen.png WINDOW region-top

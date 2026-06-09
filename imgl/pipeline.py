@@ -90,7 +90,10 @@ def analyze(
             **(_content_metadata(content_diag) if content_diag else {}),
         },
     )
-    return scale_scene_to_screen(scene, scale=prepared.scale)
+    scaled = scale_scene_to_screen(scene, scale=prepared.scale)
+    from imgl.capture_provenance import enrich_scene_provenance
+
+    return enrich_scene_provenance(scaled)
 
 
 def _content_metadata(diag: dict) -> dict:

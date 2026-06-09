@@ -180,6 +180,22 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Smart capture with OCR cache clear and X11 fallback",
     )
+    capture_parser.add_argument(
+        "--analyze",
+        action="store_true",
+        help="After capture, run OCR/layout analysis and write VQL program",
+    )
+    capture_parser.add_argument(
+        "--vql-out",
+        type=Path,
+        default=None,
+        help="VQL output path for --analyze (default: <png>.vql.json)",
+    )
+    capture_parser.add_argument(
+        "--lang",
+        default="eng+pol",
+        help="OCR language for --analyze (default: eng+pol)",
+    )
 
     doctor_parser = subparsers.add_parser(
         "doctor",
@@ -768,6 +784,15 @@ def main(argv: list[str] | None = None) -> int:
         meta = last_capture_meta()
         method = meta.get("method", "unknown")
         print(f"Captured {path} (method={method})", file=sys.stderr)
+        if args.analyze:
+            from imgl.pipeline import analyze
+            from imgl.scene_cache import save_scene_cache
+
+            vql_out = args.vql_out or path.with_suffix(".vql.json")
+            scene = analyze(str(path.resolve()), lang=args.lang)
+            write_vql_program(scene, vql_out)
+            save_scene_cache(scene, vql_out)
+            print(f"Analyzed → {vql_out}", file=sys.stderr)
         print(str(path.resolve()))
         return 0
 

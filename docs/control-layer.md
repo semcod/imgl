@@ -33,6 +33,8 @@ cli2imgl
 mcp2imgl serve
 ```
 
+Pełny pipeline capture → VQL: [vql-export.md](vql-export.md).
+
 ## Faza 4 — Schema + Protobuf + EventStore
 
 `dsl2imgl` utrzymuje trzy reprezentacje komendy:
@@ -58,8 +60,8 @@ REST/MCP akceptują: `text/plain`, `application/json`, `application/x-protobuf`.
 | Verb | Typ | Opis |
 |------|-----|------|
 | `HEALTH` | query | Status |
-| `CAPTURE` | command | Zrzut ekranu |
-| `ANALYZE` | query | OCR + layout + opcjonalnie LLM |
+| `CAPTURE` | command | Zrzut ekranu (+ opcjonalnie `--analyze` w CLI) |
+| `ANALYZE` | query | OCR + layout + VQL + provenance |
 | `ACTIONS` | query | Lista akcji z katalogu |
 | `RESOLVE` | query | NL → URI → payload (bez kliku) |
 | `CLICK` / `EXECUTE` | command | Klik lub NL z wykonaniem |
@@ -71,6 +73,7 @@ REST/MCP akceptują: `text/plain`, `application/json`, `application/x-protobuf`.
 ```bash
 dsl2imgl exec 'HEALTH'
 dsl2imgl exec 'CAPTURE INTERACTIVE'
+dsl2imgl exec 'CAPTURE OUT screen.png ANALYZE LANG eng+pol'
 dsl2imgl exec 'ACTIONS screen.png WINDOW region-bottom LLM'
 dsl2imgl exec 'TYPE "opisz projekt" IN "Chat input" IMAGE screen.png WINDOW region-bottom EXECUTE 1'
 dsl2imgl exec 'KEY ctrl+Return EXECUTE 1'
