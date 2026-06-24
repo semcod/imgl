@@ -1,5 +1,5 @@
 flowchart TD
-%% generated in 0.00s
+%% generated in 0.01s
     subgraph examples__scripts
         examples__scripts__demo_nlp2uri__main["main"]
     end
@@ -210,6 +210,19 @@ flowchart TD
     subgraph imgl__export
         imgl__export___escape__escape_html["escape_html"]
         imgl__export___escape__escape_xml["escape_xml"]
+        imgl__export__vql_adapter__scene_to_vql{{scene_to_vql CC=19}}
+        imgl__export__vql_adapter__scene_to_vql_json["scene_to_vql_json"]
+        imgl__export__vql_adapter__validate_vql_export["validate_vql_export"]
+        imgl__export__vql_adapter__write_vql_program["write_vql_program"]
+        imgl__export__vql_adapter___grid_layer["_grid_layer"]
+        imgl__export__vql_adapter___bbox_norm["_bbox_norm"]
+        imgl__export__vql_adapter___location_label("_location_label CC=9")
+        imgl__export__vql_adapter___object_from_bbox["_object_from_bbox"]
+        imgl__export__vql_adapter___build_contains_relations("_build_contains_relations CC=8")
+        imgl__export__vql_adapter___bbox_contains["_bbox_contains"]
+        imgl__export__vql_adapter___window_to_object["_window_to_object"]
+        imgl__export__vql_adapter___element_to_object["_element_to_object"]
+        imgl__export__vql_adapter___ocr_to_object["_ocr_to_object"]
         imgl__export__html_export__scene_to_html["scene_to_html"]
         imgl__export__html_export___default_title["_default_title"]
         imgl__export__html_export___background_layer["_background_layer"]
@@ -240,19 +253,11 @@ flowchart TD
         imgl__export__svg_export___render_window_svg["_render_window_svg"]
         imgl__export__svg_export___render_element_svg["_render_element_svg"]
         imgl__export__svg_export___element_css_class["_element_css_class"]
-        imgl__export__vql_adapter__scene_to_vql{{scene_to_vql CC=19}}
-        imgl__export__vql_adapter__scene_to_vql_json["scene_to_vql_json"]
-        imgl__export__vql_adapter__validate_vql_export["validate_vql_export"]
-        imgl__export__vql_adapter__write_vql_program["write_vql_program"]
-        imgl__export__vql_adapter___grid_layer["_grid_layer"]
-        imgl__export__vql_adapter___bbox_norm["_bbox_norm"]
-        imgl__export__vql_adapter___location_label("_location_label CC=9")
-        imgl__export__vql_adapter___object_from_bbox["_object_from_bbox"]
-        imgl__export__vql_adapter___build_contains_relations("_build_contains_relations CC=8")
-        imgl__export__vql_adapter___bbox_contains["_bbox_contains"]
-        imgl__export__vql_adapter___window_to_object["_window_to_object"]
-        imgl__export__vql_adapter___element_to_object["_element_to_object"]
-        imgl__export__vql_adapter___ocr_to_object["_ocr_to_object"]
+        imgl__export__actuation_layers__bbox_center("bbox_center CC=10")
+        imgl__export__actuation_layers__bbox_area["bbox_area"]
+        imgl__export__actuation_layers__layer_from_bbox["layer_from_bbox"]
+        imgl__export__actuation_layers__scene_to_actuation_layers{{scene_to_actuation_layers CC=33}}
+        imgl__export__actuation_layers__imgl_result_to_actuation_layers["imgl_result_to_actuation_layers"]
     end
     subgraph imgl__freshness
         imgl__freshness__is_valid_png["is_valid_png"]
@@ -362,6 +367,17 @@ flowchart TD
         imgl__scene_cache__save_scene_cache["save_scene_cache"]
         imgl__scene_cache__load_or_analyze["load_or_analyze"]
     end
+    subgraph imgl__targets
+        imgl__targets___has_chat_token["_has_chat_token"]
+        imgl__targets___bbox_center_x["_bbox_center_x"]
+        imgl__targets___bbox_center_y["_bbox_center_y"]
+        imgl__targets__normalize_actuation_element{{normalize_actuation_element CC=15}}
+        imgl__targets__normalize_actuation_elements["normalize_actuation_elements"]
+        imgl__targets___target_result["_target_result"]
+        imgl__targets__resolve_chat_target{{resolve_chat_target CC=47}}
+        imgl__targets__resolve_editor_target{{resolve_editor_target CC=18}}
+        imgl__targets__resolve_actuation_target["resolve_actuation_target"]
+    end
     subgraph imgl__terminal_md
         imgl__terminal_md___c["_c"]
         imgl__terminal_md__stdout_color_enabled["stdout_color_enabled"]
@@ -407,6 +423,22 @@ flowchart TD
         imgl__vdisplay_bridge__list_vision_windows["list_vision_windows"]
         imgl__vdisplay_bridge__correlate_windows{{correlate_windows CC=18}}
         imgl__vdisplay_bridge__build_window_control_report{{build_window_control_report CC=19}}
+    end
+    subgraph imgl__vdisplay_context
+        imgl__vdisplay_context__from_vdisplay_context("from_vdisplay_context CC=10")
+        imgl__vdisplay_context__enrich_scene_from_vdisplay["enrich_scene_from_vdisplay"]
+        imgl__vdisplay_context___metadata_from_context("_metadata_from_context CC=8")
+    end
+    subgraph imgl__vision_ops
+        imgl__vision_ops__TemplateMatchResult__to_dict["to_dict"]
+        imgl__vision_ops__template_available["template_available"]
+        imgl__vision_ops___png_to_gray_array["_png_to_gray_array"]
+        imgl__vision_ops___dedupe_matches["_dedupe_matches"]
+        imgl__vision_ops__match_template_png("match_template_png CC=11")
+        imgl__vision_ops__diff_png_bytes("diff_png_bytes CC=11")
+        imgl__vision_ops___crop_png_region["_crop_png_region"]
+        imgl__vision_ops___confidence_color["_confidence_color"]
+        imgl__vision_ops__render_match_overlay_png("render_match_overlay_png CC=10")
     end
     subgraph imgl__web
         imgl__web__app__create_app["create_app"]
@@ -522,16 +554,16 @@ flowchart TD
         packages__dsl2imgl__src__dsl2imgl__schema_registry__schema_for_verb["schema_for_verb"]
         packages__dsl2imgl__src__dsl2imgl__schema_registry__all_verbs["all_verbs"]
         packages__dsl2imgl__src__dsl2imgl__schema_registry__validate_schemas["validate_schemas"]
-        packages__dsl2imgl__src__dsl2imgl__codec__validate_payload["validate_payload"]
-        packages__dsl2imgl__src__dsl2imgl__codec__parse_text["parse_text"]
-        packages__dsl2imgl__src__dsl2imgl__codec__envelope_to_bytes["envelope_to_bytes"]
-        packages__dsl2imgl__src__dsl2imgl__codec__envelope_from_bytes["envelope_from_bytes"]
-        packages__dsl2imgl__src__dsl2imgl__codec__envelope_to_json["envelope_to_json"]
-        packages__dsl2imgl__src__dsl2imgl__codec__envelope_from_json["envelope_from_json"]
-        packages__dsl2imgl__src__dsl2imgl__codec__roundtrip_text["roundtrip_text"]
-        packages__dsl2imgl__src__dsl2imgl__result__DslResult__to_dict["to_dict"]
-        packages__dsl2imgl__src__dsl2imgl__result__DslResult__to_json["to_json"]
         packages__dsl2imgl__src__dsl2imgl__grammar__split_command["split_command"]
+        packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag["pick_flag"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___strip_prompt_tokens["_strip_prompt_tokens"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags["_apply_image_window_flags"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_capture["_parse_capture"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_analyze["_parse_analyze"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_actions["_parse_actions"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve["_parse_resolve"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_click["_parse_click"]
+        packages__dsl2imgl__src__dsl2imgl__grammar___parse_type["_parse_type"]
     end
     subgraph packages__mcp2imgl
         packages__mcp2imgl__src__mcp2imgl__cli__main["main"]
@@ -628,6 +660,23 @@ flowchart TD
     packages__dsl2imgl__src__dsl2imgl__schema_registry__schema_for_verb --> packages__dsl2imgl__src__dsl2imgl__schema_registry___load_schemas
     packages__dsl2imgl__src__dsl2imgl__schema_registry__all_verbs --> packages__dsl2imgl__src__dsl2imgl__schema_registry___load_schemas
     packages__dsl2imgl__src__dsl2imgl__schema_registry__validate_schemas --> packages__dsl2imgl__src__dsl2imgl__schema_registry___load_schemas
+    packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_capture --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_analyze --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_actions --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve --> packages__dsl2imgl__src__dsl2imgl__grammar___strip_prompt_tokens
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_type --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_key --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_click
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_type
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_key
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_execute
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_agent --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
+    packages__dsl2imgl__src__dsl2imgl__grammar___parse_agent --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
+    packages__dsl2imgl__src__dsl2imgl__grammar__parse_line --> packages__dsl2imgl__src__dsl2imgl__grammar__split_command
     packages__dsl2imgl__src__dsl2imgl__codec__validate_payload --> packages__dsl2imgl__src__dsl2imgl__schema_registry__schema_for_verb
     packages__dsl2imgl__src__dsl2imgl__codec__parse_text --> packages__dsl2imgl__src__dsl2imgl__grammar__parse_line
     packages__dsl2imgl__src__dsl2imgl__codec__parse_text --> packages__dsl2imgl__src__dsl2imgl__codec__validate_payload
@@ -641,6 +690,24 @@ flowchart TD
     packages__dsl2imgl__src__dsl2imgl__codec__roundtrip_text --> packages__dsl2imgl__src__dsl2imgl__codec__envelope_from_bytes
     packages__dsl2imgl__src__dsl2imgl__codec__roundtrip_text --> packages__dsl2imgl__src__dsl2imgl__grammar__to_text
     packages__dsl2imgl__src__dsl2imgl__codec__roundtrip_text --> packages__dsl2imgl__src__dsl2imgl__codec__envelope_to_bytes
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__scene_cache__load_or_analyze
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__window_scope__apply_discovered_windows
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__interact___build_session_catalog
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__window_scope__summarize_windows
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act --> imgl__nlp2uri__prompt_to_imgl_uri
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act --> imgl__interact__resolve_imgl_uri
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act --> imgl__execute__execute_action
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__capture__capture_screen
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__pipeline__analyze
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__export__vql_adapter__write_vql_program
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__scene_cache__save_scene_cache
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_analyze --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_actions --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_resolve --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_resolve --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act
+    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> imgl__execute__execute_action
     packages__nlp2imgl__src__nlp2imgl__cli__main --> packages__nlp2imgl__src__nlp2imgl__cli_parser__build_parser
     packages__nlp2imgl__src__nlp2imgl__to_dsl__use_llm_enabled --> imgl__llm_catalog___load_env_files
     packages__nlp2imgl__src__nlp2imgl__to_dsl__to_dsl --> packages__nlp2imgl__src__nlp2imgl__to_dsl__use_llm_enabled
@@ -697,6 +764,25 @@ flowchart TD
     imgl__autodiag___render_markdown --> imgl__autodiag___derive_current_next
     imgl__autodiag___render_markdown --> imgl__autodiag___yaml_codeblock
     imgl__autodiag___render_markdown --> imgl__autodiag___markdown_payload
+    imgl__cli___output_format --> imgl__autodiag__resolve_cli_output_format
+    imgl__cli__build_parser --> imgl__cli___add_common_args
+    imgl__cli__main --> imgl__cli__build_parser
+    imgl__cli__main --> packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor
+    imgl__cli__main --> imgl__terminal_md__print_report
+    imgl__cli__main --> imgl__control__run_map
+    imgl__cli__main --> packages__rest2imgl__src__rest2imgl__app__create_app
+    imgl__cli__main --> imgl__diagnose__diagnose_content
+    imgl__cli___check_blank_before_analyze --> imgl__diagnose__diagnose_content
+    imgl__cli___check_blank_before_analyze --> imgl__diagnose__worth_analyzing
+    imgl__cli___run_image_command --> imgl__cli___apply_config_overrides
+    imgl__cli___run_image_command --> imgl__cli___check_blank_before_analyze
+    imgl__cli___run_image_command --> imgl__pipeline__analyze
+    imgl__cli___run_image_command --> imgl__cli___write_output
+    imgl__cli___run_image_command --> imgl__export__html_export__scene_to_html
+    imgl__cli___run_image_command --> imgl__export__svg_export__scene_to_svg
+    imgl__cli___run_image_command --> imgl__scene_cache__load_or_analyze
+    imgl__cli___run_image_command --> imgl__export__vql_adapter__write_vql_program
+    imgl__cli___run_image_command --> imgl__scene_cache__save_scene_cache
     imgl__scene_cache__load_cached_scene --> imgl__scene_cache__scene_cache_path
     imgl__scene_cache__load_cached_scene --> imgl__export__json_export__scene_from_json
     imgl__scene_cache__save_scene_cache --> imgl__scene_cache__scene_cache_path
@@ -707,6 +793,55 @@ flowchart TD
     imgl__nlp2uri__prompt_to_imgl_uri --> imgl__nlp2uri___delegate_vql_nlp2uri
     imgl__nlp2uri___delegate_vql_nlp2uri --> imgl__uri__uri_for_imgl_list
     imgl__nlp2uri___match_catalog_action --> imgl__nlp2uri___find_catalog_input
+    imgl__interact___build_session_catalog --> imgl__catalog__build_interactive_catalog
+    imgl__interact__resolve_imgl_uri --> imgl__actions__actions
+    imgl__interact__resolve_imgl_uri --> imgl__interact___annotate_catalog
+    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__load_or_analyze
+    imgl__interact__resolve_imgl_uri --> imgl__export__vql_adapter__write_vql_program
+    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__save_scene_cache
+    imgl__interact__resolve_imgl_uri --> imgl__interact___build_session_catalog
+    imgl__interact__resolve_imgl_uri --> imgl__interact___resolve_click
+    imgl__interact__resolve_imgl_uri --> imgl__interact___resolve_type
+    imgl__interact___resolve_click --> imgl__interact___attach_image_path
+    imgl__interact___resolve_type --> imgl__interact___attach_image_path
+    imgl__interact___annotate_catalog --> imgl__export__annotate_export__write_annotated_image
+    imgl__interact___annotate_catalog --> imgl__window_scope__get_discovered_window
+    imgl__interact___annotate_catalog --> imgl__export__annotate_export__default_annotated_path
+    imgl__interact___annotate_catalog --> imgl__export__annotate_export__open_image
+    imgl__interact___select_window --> imgl__window_scope__get_discovered_window
+    imgl__interact___select_window --> imgl__interact___build_session_catalog
+    imgl__interact___select_window --> imgl__interact___annotate_catalog
+    imgl__interact___select_window --> imgl__export__annotate_export__default_annotated_path
+    imgl__interact___export_window_previews --> imgl__window_scope__discover_windows
+    imgl__interact___export_window_previews --> imgl__export__annotate_export__write_window_preview_images
+    imgl__interact___prepare_interactive_session --> imgl__scene_cache__load_or_analyze
+    imgl__interact___prepare_interactive_session --> imgl__window_scope__apply_discovered_windows
+    imgl__interact___prepare_interactive_session --> imgl__export__vql_adapter__write_vql_program
+    imgl__interact___prepare_interactive_session --> imgl__scene_cache__save_scene_cache
+    imgl__interact___prepare_interactive_session --> imgl__window_scope__discover_windows
+    imgl__interact___prepare_interactive_session --> imgl__window_scope__summarize_windows
+    imgl__interact___show_initial_shell_views --> imgl__interact___build_session_catalog
+    imgl__interact___show_initial_shell_views --> imgl__interact___print_catalog_banner
+    imgl__interact___show_initial_shell_views --> imgl__window_scope__format_window_picker
+    imgl__interact___show_initial_shell_views --> imgl__catalog__format_catalog_table
+    imgl__interact___show_initial_shell_views --> imgl__interact___select_window
+    imgl__interact___print_actions_phase_hints --> imgl__interact___annotate_catalog
+    imgl__interact___print_actions_phase_hints --> imgl__export__annotate_export__default_annotated_path
+    imgl__interact___print_actions_phase_hints --> imgl__uri__uri_for_imgl_list
+    imgl__interact___handle_resolved_shell_action --> imgl__interact___build_session_catalog
+    imgl__interact___handle_resolved_shell_action --> imgl__execute__execute_action
+    imgl__interact__run_interactive_shell --> imgl__interact___prepare_interactive_session
+    imgl__interact__run_interactive_shell --> imgl__interact___show_initial_shell_views
+    imgl__interact__run_interactive_shell --> imgl__interact___print_actions_phase_hints
+    imgl__interact__run_interactive_shell --> imgl__interact___read_shell_prompt
+    imgl__interact__run_interactive_shell --> imgl__nlp2uri__prompt_to_imgl_uri
+    imgl__interact__run_interactive_shell --> imgl__interact__resolve_imgl_uri
+    imgl__interact__run_interactive_shell --> imgl__interact___handle_resolved_shell_action
+    imgl__interact__run_interactive_shell --> imgl__interact___handle_window_phase_prompt
+    imgl__interact___handle_window_phase_prompt --> imgl__interact___export_window_previews
+    imgl__interact___handle_window_phase_prompt --> imgl__interact___build_session_catalog
+    imgl__interact___handle_window_phase_prompt --> imgl__interact___print_catalog_banner
+    imgl__interact___handle_window_phase_prompt --> imgl__catalog__format_catalog_table
     imgl__actions__SceneActions__find --> imgl__actions___iter_elements
     imgl__actions__SceneActions__find --> imgl__actions___find_label_for_input
     imgl__actions__SceneActions__find --> imgl__actions___text_matches
@@ -730,6 +865,43 @@ flowchart TD
     imgl__catalog__build_interactive_catalog --> imgl__llm_catalog__refine_catalog_with_llm
     imgl__catalog__build_interactive_catalog --> imgl__catalog_heuristic___find_window
     imgl__catalog__format_catalog_table --> imgl__catalog___truncate
+    imgl__capture___finalize_capture --> imgl__freshness__mark_capture_fresh
+    imgl__capture___finalize_capture --> imgl__capture_provenance__save_capture_meta
+    imgl__capture___portal_fallback_enabled --> imgl__capture___is_wayland
+    imgl__capture___vdisplay_portal_in_chain_enabled --> imgl__capture___portal_fallback_enabled
+    imgl__capture__capture_screen --> imgl__capture__default_capture_path
+    imgl__capture__capture_screen --> imgl__installs__ensure_vdisplay
+    imgl__capture__capture_screen --> imgl__capture___try_vdisplay_capture
+    imgl__capture__capture_screen --> imgl__capture___vdisplay_portal_in_chain_enabled
+    imgl__capture__capture_screen --> imgl__capture___non_portal_backends
+    imgl__capture__capture_screen --> imgl__capture___vql_capture_enabled
+    imgl__capture__capture_screen --> imgl__capture___discard_capture_file
+    imgl__capture__capture_screen --> imgl__capture___capture_failure_hint
+    imgl__capture__capture_screen --> imgl__capture___prefer_mirror
+    imgl__capture__capture_screen --> imgl__capture___try_portal_backends
+    imgl__capture__capture_screen --> imgl__capture___is_wayland
+    imgl__capture__capture_screen --> imgl__capture___try_vql_capture
+    imgl__capture___capture_failure_hint --> imgl__capture___screen_recording_denied
+    imgl__capture___capture_failure_hint --> imgl__capture___is_wayland
+    imgl__capture___try_vdisplay_capture --> imgl__capture___discard_capture_file
+    imgl__capture___try_vdisplay_capture --> imgl__capture___finalize_capture
+    imgl__capture___try_vdisplay_capture --> imgl__capture___is_blank_image
+    imgl__capture___try_vql_capture --> imgl__capture___discard_capture_file
+    imgl__capture___try_vql_capture --> imgl__capture___finalize_capture
+    imgl__capture___try_vql_capture --> imgl__capture___is_blank_image
+    imgl__capture___non_portal_backends --> imgl__capture___is_wayland
+    imgl__capture___portal_backends --> imgl__capture___capture_with_portal
+    imgl__capture___try_portal_backends --> imgl__capture___portal_backends
+    imgl__capture___try_portal_backends --> imgl__capture___discard_capture_file
+    imgl__capture___try_portal_backends --> imgl__capture___finalize_capture
+    imgl__capture___try_portal_backends --> imgl__capture___is_blank_image
+    imgl__capture___capture_with_gnome_screenshot --> imgl__capture___run_command
+    imgl__capture___capture_with_scrot --> imgl__capture___run_command
+    imgl__capture___capture_with_portal --> imgl__capture___portal_python
+    imgl__capture___capture_with_portal --> imgl__capture___portal_script
+    imgl__capture___is_blank_image --> imgl__diagnose__diagnose_content
+    imgl__capture___is_blank_image --> imgl__diagnose__worth_analyzing
+    imgl__capture__capture_status_message --> imgl__capture___is_blank_image
     imgl__preprocess__load_image --> imgl__paths__resolve_image_path
     imgl__preprocess__preprocess --> imgl__preprocess__load_image
     imgl__layout__find_containing_window --> imgl__geometry__center_in
@@ -830,6 +1002,11 @@ flowchart TD
     imgl__catalog_filter__filter_catalog --> imgl__catalog_filter___window_score
     imgl__catalog_filter___renumber --> imgl__catalog_filter___replace_index_in_uri
     imgl__paths__resolve_image_path_optional --> imgl__paths__resolve_image_path
+    imgl__execute__execute_action --> imgl__execute___display_mismatch_warning
+    imgl__execute__execute_action --> imgl__execute__execute_keys
+    imgl__execute__execute_action --> imgl__execute___append_display_warning
+    imgl__execute___display_mismatch_warning --> imgl__capture_provenance__load_capture_meta
+    imgl__execute__execute_keys --> imgl__execute___normalize_keys
     imgl__pipeline__analyze --> imgl__preprocess__preprocess
     imgl__pipeline__analyze --> imgl__ocr__get_ocr_backend
     imgl__pipeline__analyze --> imgl__detect__img2vql_bridge__detect_ui_merged
@@ -923,6 +1100,19 @@ flowchart TD
     imgl__catalog_heuristic___element_option --> imgl__catalog_heuristic__infer_input_label
     imgl__catalog_heuristic___element_option --> imgl__uri__uri_for_imgl_click
     imgl__catalog_heuristic___find_window --> imgl__window_scope__get_discovered_window
+    imgl__export__vql_adapter__scene_to_vql --> imgl__export__vql_adapter___build_contains_relations
+    imgl__export__vql_adapter__scene_to_vql --> imgl__export__vql_adapter___grid_layer
+    imgl__export__vql_adapter__scene_to_vql --> imgl__export__vql_adapter___window_to_object
+    imgl__export__vql_adapter__scene_to_vql --> imgl__export__vql_adapter___ocr_to_object
+    imgl__export__vql_adapter__scene_to_vql_json --> imgl__export__vql_adapter__scene_to_vql
+    imgl__export__vql_adapter__write_vql_program --> imgl__export__vql_adapter__scene_to_vql_json
+    imgl__export__vql_adapter__write_vql_program --> imgl__export__vql_adapter__validate_vql_export
+    imgl__export__vql_adapter___object_from_bbox --> imgl__export__vql_adapter___location_label
+    imgl__export__vql_adapter___object_from_bbox --> imgl__export__vql_adapter___bbox_norm
+    imgl__export__vql_adapter___build_contains_relations --> imgl__export__vql_adapter___bbox_contains
+    imgl__export__vql_adapter___window_to_object --> imgl__export__vql_adapter___object_from_bbox
+    imgl__export__vql_adapter___element_to_object --> imgl__export__vql_adapter___object_from_bbox
+    imgl__export__vql_adapter___ocr_to_object --> imgl__export__vql_adapter___object_from_bbox
     imgl__export__html_export__scene_to_html --> imgl__export__html_export___background_layer
     imgl__export__html_export__scene_to_html --> imgl__export__html_export___default_title
     imgl__export__html_export__scene_to_html --> imgl__export__html_export___render_window
@@ -1004,166 +1194,8 @@ flowchart TD
     imgl__web__session__WebSession__analyze --> imgl__scene_cache__save_scene_cache
     imgl__web__session__WebSession__analyze --> imgl__window_scope__summarize_windows
     imgl__web__session__WebSession__capture --> imgl__capture__capture_screen
-    imgl__web__session__WebSession__select_window --> imgl__window_scope__get_discovered_window
-    imgl__web__session__WebSession__resolve_prompt --> imgl__nlp2uri__prompt_to_imgl_uri
-    imgl__web__session__WebSession__resolve_prompt --> imgl__interact__resolve_imgl_uri
-    imgl__web__session__WebSession__act --> imgl__execute__execute_action
-    imgl__web__session__WebSession___refresh_annotated_png --> imgl__export__annotate_export__scene_to_annotated_image
-    imgl__web__session__WebSession___refresh_annotated_png --> imgl__window_scope__get_discovered_window
-    imgl__web__agent__pick_agent_action --> imgl__llm_catalog___load_env_files
-    imgl__web__agent__pick_agent_action --> imgl__web__agent___parse_agent_json
-    imgl__web__agent__pick_agent_action --> imgl__llm_catalog__llm_available
-    imgl__classify__gui_heuristics__classify_scene_elements --> imgl__classify__gui_heuristics___label_candidates
-    imgl__classify__gui_heuristics__classify_scene_elements --> imgl__classify__gui_heuristics___build_inputs
-    imgl__classify__gui_heuristics__classify_scene_elements --> imgl__classify__gui_heuristics___match_ocr_to_bbox
-    imgl__classify__gui_heuristics__classify_scene_elements --> imgl__geometry__center_in
-    imgl__classify__gui_heuristics___text_or_label --> imgl__classify__gui_heuristics___word_count
-    imgl__classify__gui_heuristics___label_candidates --> imgl__classify__gui_heuristics___word_count
-    imgl__classify__gui_heuristics___match_ocr_to_bbox --> imgl__geometry__center_in
-    imgl__classify__gui_heuristics___match_ocr_to_bbox --> imgl__geometry__iou
-    imgl__classify__gui_heuristics___nearest_label --> imgl__geometry__bbox_distance
-    imgl__classify__gui_heuristics___ocr_inside_frame --> imgl__geometry__center_in
-    imgl__classify__gui_heuristics___build_inputs --> imgl__classify__gui_heuristics___ocr_inside_frame
-    imgl__classify__gui_heuristics___build_inputs --> imgl__classify__gui_heuristics___nearest_label
-    imgl__classify__gui_heuristics___build_inputs --> imgl__classify__gui_heuristics___normalize_confidence
-    packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_capture --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_analyze --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_actions --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve --> packages__dsl2imgl__src__dsl2imgl__grammar___strip_prompt_tokens
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_resolve --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_type --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_key --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_click
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_type
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_key
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_interaction_verb --> packages__dsl2imgl__src__dsl2imgl__grammar___parse_execute
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_agent --> packages__dsl2imgl__src__dsl2imgl__grammar___apply_image_window_flags
-    packages__dsl2imgl__src__dsl2imgl__grammar___parse_agent --> packages__dsl2imgl__src__dsl2imgl__grammar__pick_flag
-    packages__dsl2imgl__src__dsl2imgl__grammar__parse_line --> packages__dsl2imgl__src__dsl2imgl__grammar__split_command
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__scene_cache__load_or_analyze
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__window_scope__apply_discovered_windows
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__interact___build_session_catalog
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session --> imgl__window_scope__summarize_windows
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act --> imgl__nlp2uri__prompt_to_imgl_uri
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act --> imgl__interact__resolve_imgl_uri
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act --> imgl__execute__execute_action
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__capture__capture_screen
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__pipeline__analyze
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__export__vql_adapter__write_vql_program
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_capture --> imgl__scene_cache__save_scene_cache
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_analyze --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_actions --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_resolve --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_resolve --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___build_interact_session
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act
-    packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute --> imgl__execute__execute_action
-    imgl__cli___output_format --> imgl__autodiag__resolve_cli_output_format
-    imgl__cli__build_parser --> imgl__cli___add_common_args
-    imgl__cli__main --> imgl__cli__build_parser
-    imgl__cli__main --> packages__nlp2imgl__src__nlp2imgl__cli_commands__run_doctor
-    imgl__cli__main --> imgl__terminal_md__print_report
-    imgl__cli__main --> imgl__control__run_map
-    imgl__cli__main --> packages__rest2imgl__src__rest2imgl__app__create_app
-    imgl__cli__main --> imgl__diagnose__diagnose_content
-    imgl__cli___check_blank_before_analyze --> imgl__diagnose__diagnose_content
-    imgl__cli___check_blank_before_analyze --> imgl__diagnose__worth_analyzing
-    imgl__cli___run_image_command --> imgl__cli___apply_config_overrides
-    imgl__cli___run_image_command --> imgl__cli___check_blank_before_analyze
-    imgl__cli___run_image_command --> imgl__pipeline__analyze
-    imgl__cli___run_image_command --> imgl__cli___write_output
-    imgl__cli___run_image_command --> imgl__export__html_export__scene_to_html
-    imgl__cli___run_image_command --> imgl__export__svg_export__scene_to_svg
-    imgl__cli___run_image_command --> imgl__scene_cache__load_or_analyze
-    imgl__cli___run_image_command --> imgl__export__vql_adapter__write_vql_program
-    imgl__cli___run_image_command --> imgl__scene_cache__save_scene_cache
-    imgl__interact___build_session_catalog --> imgl__catalog__build_interactive_catalog
-    imgl__interact__resolve_imgl_uri --> imgl__actions__actions
-    imgl__interact__resolve_imgl_uri --> imgl__interact___annotate_catalog
-    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__load_or_analyze
-    imgl__interact__resolve_imgl_uri --> imgl__export__vql_adapter__write_vql_program
-    imgl__interact__resolve_imgl_uri --> imgl__scene_cache__save_scene_cache
-    imgl__interact__resolve_imgl_uri --> imgl__interact___build_session_catalog
-    imgl__interact__resolve_imgl_uri --> imgl__interact___resolve_click
-    imgl__interact__resolve_imgl_uri --> imgl__interact___resolve_type
-    imgl__interact___resolve_click --> imgl__interact___attach_image_path
-    imgl__interact___resolve_type --> imgl__interact___attach_image_path
-    imgl__interact___annotate_catalog --> imgl__export__annotate_export__write_annotated_image
-    imgl__interact___annotate_catalog --> imgl__window_scope__get_discovered_window
-    imgl__interact___annotate_catalog --> imgl__export__annotate_export__default_annotated_path
-    imgl__interact___annotate_catalog --> imgl__export__annotate_export__open_image
-    imgl__interact___select_window --> imgl__window_scope__get_discovered_window
-    imgl__interact___select_window --> imgl__interact___build_session_catalog
-    imgl__interact___select_window --> imgl__interact___annotate_catalog
-    imgl__interact___select_window --> imgl__export__annotate_export__default_annotated_path
-    imgl__interact___export_window_previews --> imgl__window_scope__discover_windows
-    imgl__interact___export_window_previews --> imgl__export__annotate_export__write_window_preview_images
-    imgl__interact___prepare_interactive_session --> imgl__scene_cache__load_or_analyze
-    imgl__interact___prepare_interactive_session --> imgl__window_scope__apply_discovered_windows
-    imgl__interact___prepare_interactive_session --> imgl__export__vql_adapter__write_vql_program
-    imgl__interact___prepare_interactive_session --> imgl__scene_cache__save_scene_cache
-    imgl__interact___prepare_interactive_session --> imgl__window_scope__discover_windows
-    imgl__interact___prepare_interactive_session --> imgl__window_scope__summarize_windows
-    imgl__interact___show_initial_shell_views --> imgl__interact___build_session_catalog
-    imgl__interact___show_initial_shell_views --> imgl__interact___print_catalog_banner
-    imgl__interact___show_initial_shell_views --> imgl__window_scope__format_window_picker
-    imgl__interact___show_initial_shell_views --> imgl__catalog__format_catalog_table
-    imgl__interact___show_initial_shell_views --> imgl__interact___select_window
-    imgl__interact___print_actions_phase_hints --> imgl__interact___annotate_catalog
-    imgl__interact___print_actions_phase_hints --> imgl__export__annotate_export__default_annotated_path
-    imgl__interact___print_actions_phase_hints --> imgl__uri__uri_for_imgl_list
-    imgl__interact___handle_resolved_shell_action --> imgl__interact___build_session_catalog
-    imgl__interact___handle_resolved_shell_action --> imgl__execute__execute_action
-    imgl__interact__run_interactive_shell --> imgl__interact___prepare_interactive_session
-    imgl__interact__run_interactive_shell --> imgl__interact___show_initial_shell_views
-    imgl__interact__run_interactive_shell --> imgl__interact___print_actions_phase_hints
-    imgl__interact__run_interactive_shell --> imgl__interact___read_shell_prompt
-    imgl__interact__run_interactive_shell --> imgl__nlp2uri__prompt_to_imgl_uri
-    imgl__interact__run_interactive_shell --> imgl__interact__resolve_imgl_uri
-    imgl__interact__run_interactive_shell --> imgl__interact___handle_resolved_shell_action
-    imgl__interact__run_interactive_shell --> imgl__interact___handle_window_phase_prompt
-    imgl__interact___handle_window_phase_prompt --> imgl__interact___export_window_previews
-    imgl__interact___handle_window_phase_prompt --> imgl__interact___build_session_catalog
-    imgl__interact___handle_window_phase_prompt --> imgl__interact___print_catalog_banner
-    imgl__interact___handle_window_phase_prompt --> imgl__catalog__format_catalog_table
-    imgl__capture___finalize_capture --> imgl__freshness__mark_capture_fresh
-    imgl__capture___finalize_capture --> imgl__capture_provenance__save_capture_meta
-    imgl__capture___portal_fallback_enabled --> imgl__capture___is_wayland
-    imgl__capture___vdisplay_portal_in_chain_enabled --> imgl__capture___portal_fallback_enabled
-    imgl__capture__capture_screen --> imgl__capture__default_capture_path
-    imgl__capture__capture_screen --> imgl__installs__ensure_vdisplay
-    imgl__capture__capture_screen --> imgl__capture___try_vdisplay_capture
-    imgl__capture__capture_screen --> imgl__capture___vdisplay_portal_in_chain_enabled
-    imgl__capture__capture_screen --> imgl__capture___non_portal_backends
-    imgl__capture__capture_screen --> imgl__capture___vql_capture_enabled
-    imgl__capture__capture_screen --> imgl__capture___discard_capture_file
-    imgl__capture__capture_screen --> imgl__capture___capture_failure_hint
-    imgl__capture__capture_screen --> imgl__capture___prefer_mirror
-    imgl__capture__capture_screen --> imgl__capture___try_portal_backends
-    imgl__capture__capture_screen --> imgl__capture___is_wayland
-    imgl__capture__capture_screen --> imgl__capture___try_vql_capture
-    imgl__capture___capture_failure_hint --> imgl__capture___screen_recording_denied
-    imgl__capture___capture_failure_hint --> imgl__capture___is_wayland
-    imgl__capture___try_vdisplay_capture --> imgl__capture___discard_capture_file
-    imgl__capture___try_vdisplay_capture --> imgl__capture___finalize_capture
-    imgl__capture___try_vdisplay_capture --> imgl__capture___is_blank_image
-    imgl__capture___try_vql_capture --> imgl__capture___discard_capture_file
-    imgl__capture___try_vql_capture --> imgl__capture___finalize_capture
-    imgl__capture___try_vql_capture --> imgl__capture___is_blank_image
-    imgl__capture___non_portal_backends --> imgl__capture___is_wayland
-    imgl__capture___portal_backends --> imgl__capture___capture_with_portal
-    imgl__capture___try_portal_backends --> imgl__capture___portal_backends
-    imgl__capture___try_portal_backends --> imgl__capture___discard_capture_file
-    imgl__capture___try_portal_backends --> imgl__capture___finalize_capture
-    imgl__capture___try_portal_backends --> imgl__capture___is_blank_image
-    imgl__capture___capture_with_gnome_screenshot --> imgl__capture___run_command
-    imgl__capture___capture_with_scrot --> imgl__capture___run_command
-    imgl__capture___capture_with_portal --> imgl__capture___portal_python
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class packages__uri2imgl__src__uri2imgl__decode__uri_to_dsl,packages__nlp2imgl__src__nlp2imgl__to_dsl__to_dsl,packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag,imgl__autodiag__diagnose_capture,imgl__autodiag__build_operation_step,imgl__autodiag___derive_current_next,imgl__autodiag___markdown_payload,imgl__autodiag___actionable_hints,imgl__nlp2uri__prompt_to_imgl_uri,imgl__actions__SceneActions__find,imgl__terminal_md__colorize_markdown,imgl__window_scope___regions_from_balanced_gutters,imgl__catalog_filter___keep_element,imgl__control__smart_capture,imgl__control__capture_interactive,imgl__vdisplay_bridge__correlate_windows,imgl__vdisplay_bridge__build_window_control_report,imgl__detect__local___detect_panels_simple,imgl__web__session__WebSession__act,imgl__web__agent__pick_agent_action,imgl__classify__gui_heuristics__classify_scene_elements,imgl__cli__main,imgl__cli___run_image_command,imgl__interact___resolve_click,imgl__interact___resolve_type,imgl__interact__run_interactive_shell,imgl__capture__capture_screen,imgl__capture___capture_with_portal,imgl__export__vql_adapter__scene_to_vql highCC
-    class packages__dsl2imgl__src__dsl2imgl__bus__dispatch,packages__dsl2imgl__src__dsl2imgl__cli__main,imgl__autodiag__build_execute_report,imgl__autodiag___overall_verdict,imgl__nlp2uri___find_catalog_by_text,imgl__nlp2uri___find_catalog_input,imgl__nlp2uri___match_catalog_action,imgl__actions___iter_elements,imgl__catalog__format_catalog_table,imgl__layout__extract_window_titles,imgl__terminal_md___highlight_bash_line,imgl__llm_catalog___load_env_files,imgl__llm_catalog__refine_catalog_with_llm,imgl__llm_catalog___llm_json_to_options,imgl__llm_catalog___snap_options_to_scene,imgl__llm_catalog___best_label_match,imgl__window_scope__pick_focus_window,imgl__window_scope__get_discovered_window,imgl__window_scope___split_monolithic_window,imgl__window_scope___detect_layout_mode,imgl__window_scope___image_gutter_candidates,imgl__window_scope___split_by_element_y_gaps,imgl__window_scope___best_vertical_split,imgl__catalog_filter__filter_catalog,imgl__catalog_filter___element_score,imgl__pipeline__analyze,imgl__control__run_execute,imgl__capture_provenance___correlate_os_windows,imgl__diagnose___diagnose_fallback,imgl__diagnose___recommendation medCC
+    class packages__uri2imgl__src__uri2imgl__decode__uri_to_dsl,packages__nlp2imgl__src__nlp2imgl__to_dsl__to_dsl,packages__nlp2imgl__src__nlp2imgl__control__apply_nl_with_diag,imgl__autodiag__diagnose_capture,imgl__autodiag__build_operation_step,imgl__autodiag___derive_current_next,imgl__autodiag___markdown_payload,imgl__autodiag___actionable_hints,imgl__cli__main,imgl__cli___run_image_command,imgl__nlp2uri__prompt_to_imgl_uri,imgl__interact___resolve_click,imgl__interact___resolve_type,imgl__interact__run_interactive_shell,imgl__actions__SceneActions__find,imgl__capture__capture_screen,imgl__capture___capture_with_portal,imgl__terminal_md__colorize_markdown,imgl__window_scope___regions_from_balanced_gutters,imgl__catalog_filter___keep_element,imgl__control__smart_capture,imgl__control__capture_interactive,imgl__vdisplay_bridge__correlate_windows,imgl__vdisplay_bridge__build_window_control_report,imgl__export__vql_adapter__scene_to_vql,imgl__detect__local___detect_panels_simple,imgl__web__session__WebSession__act,imgl__web__agent__pick_agent_action,imgl__classify__gui_heuristics__classify_scene_elements,imgl__targets__normalize_actuation_element highCC
+    class packages__dsl2imgl__src__dsl2imgl__bus__dispatch,packages__dsl2imgl__src__dsl2imgl__cli__main,packages__dsl2imgl__src__dsl2imgl__grammar__to_text,packages__dsl2imgl__src__dsl2imgl__handlers__runtime___run_prompt_act,packages__dsl2imgl__src__dsl2imgl__handlers__runtime__handle_execute,imgl__autodiag__build_execute_report,imgl__autodiag___overall_verdict,imgl__nlp2uri___find_catalog_by_text,imgl__nlp2uri___find_catalog_input,imgl__nlp2uri___match_catalog_action,imgl__interact__resolve_imgl_uri,imgl__interact___show_initial_shell_views,imgl__interact___print_actions_phase_hints,imgl__interact___handle_resolved_shell_action,imgl__interact___print_catalog_banner,imgl__interact___handle_window_phase_prompt,imgl__actions___iter_elements,imgl__catalog__format_catalog_table,imgl__capture___try_vdisplay_capture,imgl__capture___try_vql_capture,imgl__capture___try_portal_backends,imgl__capture___capture_with_gnome_shell,imgl__capture___capture_with_grim,imgl__layout__extract_window_titles,imgl__terminal_md___highlight_bash_line,imgl__llm_catalog___load_env_files,imgl__llm_catalog__refine_catalog_with_llm,imgl__llm_catalog___llm_json_to_options,imgl__llm_catalog___snap_options_to_scene,imgl__llm_catalog___best_label_match medCC

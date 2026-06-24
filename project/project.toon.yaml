@@ -1,25 +1,24 @@
-# imgl | 503 func | 70f | 155168L | python | 2026-06-09
+# imgl | 529 func | 74f | 142115L | python | 2026-06-24
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.8  critical=62 (limit:10)  dup=0  cycles=0
+  CC̄=5.0  critical=71 (limit:10)  dup=0  cycles=0
 
 ALERTS[20]:
   !!! cc_exceeded      main = 64 (limit:15)
   !!! high_fan_out     main = 61 (limit:10)
+  !!! cc_exceeded      resolve_chat_target = 47 (limit:15)
   !!! high_fan_out     create_app = 45 (limit:10)
+  !!! cc_exceeded      scene_to_actuation_layers = 33 (limit:15)
   !!! cc_exceeded      _derive_current_next = 32 (limit:15)
   !!! cc_exceeded      _resolve_type = 30 (limit:15)
   !!! cc_exceeded      WebSession.act = 29 (limit:15)
   !!! cc_exceeded      prompt_to_imgl_uri = 28 (limit:15)
-  !!! high_fan_out     smart_capture = 28 (limit:10)
   !!! high_fan_out     _run_image_command = 28 (limit:10)
-  !!! cc_exceeded      classify_scene_elements = 27 (limit:15)
 
-MODULES[122] (top by size):
+MODULES[126] (top by size):
   M[layout.vql.json] 63208L C:0 F:0 CC↑0 D:0 (json)
   M[screen.vql.json] 51347L C:0 F:0 CC↑0 D:0 (json)
-  M[layout.vql.imgl.json] 13915L C:0 F:0 CC↑0 D:0 (json)
   M[screen.vql.imgl.json] 11260L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
   M[imgl/cli.py] 958L C:0 F:9 CC↑64 D:0 (python)
@@ -32,21 +31,22 @@ MODULES[122] (top by size):
   M[imgl/web/session.py] 452L C:5 F:18 CC↑29 D:0 (python)
   M[imgl/detect/local.py] 374L C:1 F:20 CC↑23 D:0 (python)
   M[imgl/export/vql_adapter.py] 362L C:0 F:13 CC↑19 D:4 (python)
-  LANGS: python:84/json:14/shell:7/yaml:7/toml:7/proto:2/other:1
+  M[imgl/control.py] 357L C:0 F:16 CC↑25 D:1 (python)
+  LANGS: python:88/json:14/shell:7/yaml:7/toml:7/proto:2/other:1
 
 HOTSPOTS[10]:
   ★ main fan=61  // Orchestrates 61 calls
   ★ create_app fan=45  // Orchestrates 45 calls
-  ★ smart_capture fan=28  // Capture with cache invalidation and optional vdisplay X11 fallback.
   ★ _run_image_command fan=28  // Orchestrates 28 calls
+  ★ smart_capture fan=28  // Capture with cache invalidation and optional vdisplay X11 fallback.
   ★ build_parser fan=25  // Orchestrates 25 calls
 
 REFACTOR[15]:
   [1] H/L Split _derive_current_next (CC=32)
-  [2] H/L Split prompt_to_imgl_uri (CC=28)
-  [3] H/L Split smart_capture (CC=25)
-  [4] H/L Split WebSession.act (CC=29)
-  [5] H/L Split classify_scene_elements (CC=27)
+  [2] H/L Split main (CC=64)
+  [3] H/L Split prompt_to_imgl_uri (CC=28)
+  [4] H/L Split _resolve_type (CC=30)
+  [5] H/L Split capture_screen (CC=26)
 
 EVOLUTION:
-  2026-06-09 CC̄=4.8 crit=62 155168L // Automated analysis
+  2026-06-24 CC̄=5.0 crit=71 142115L // Automated analysis

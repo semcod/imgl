@@ -1,5 +1,5 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('imgl', '0.7.7', 'python').
+project_metadata('imgl', '0.7.8', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('app.doql.less', 216, 'less').

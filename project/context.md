@@ -5,12 +5,12 @@
 
 - **Project**: /home/tom/github/semcod/imgl
 - **Primary Language**: python
-- **Languages**: python: 84, json: 14, yaml: 7, shell: 7, toml: 7
+- **Languages**: python: 88, json: 14, yaml: 7, shell: 7, toml: 7
 - **Analysis Mode**: static
-- **Total Functions**: 503
-- **Total Classes**: 38
-- **Modules**: 122
-- **Entry Points**: 120
+- **Total Functions**: 529
+- **Total Classes**: 40
+- **Modules**: 126
+- **Entry Points**: 128
 
 ## Architecture by Module
 
@@ -47,6 +47,10 @@
 - **Classes**: 1
 - **File**: `interact.py`
 
+### packages.dsl2imgl.src.dsl2imgl.grammar
+- **Functions**: 16
+- **File**: `grammar.py`
+
 ### imgl.actions
 - **Functions**: 16
 - **Classes**: 4
@@ -59,10 +63,6 @@
 ### imgl.control
 - **Functions**: 16
 - **File**: `control.py`
-
-### packages.dsl2imgl.src.dsl2imgl.grammar
-- **Functions**: 16
-- **File**: `grammar.py`
 
 ### imgl.export.annotate_export
 - **Functions**: 14
@@ -86,6 +86,10 @@
 - **Classes**: 1
 - **File**: `diagnose.py`
 
+### imgl.cli
+- **Functions**: 9
+- **File**: `cli.py`
+
 ### imgl.freshness
 - **Functions**: 9
 - **File**: `freshness.py`
@@ -97,10 +101,6 @@
 ### imgl.installs
 - **Functions**: 9
 - **File**: `installs.py`
-
-### imgl.classify.gui_heuristics
-- **Functions**: 9
-- **File**: `gui_heuristics.py`
 
 ## Key Entry Points
 
@@ -118,6 +118,10 @@ Main execution flows into the system:
 ### imgl.web.session.WebSession.act
 - **Calls**: self._step_record, self.history.append, self.resolve_index, self._step_record, self.history.append, result.get, self._step_record, self.history.append
 
+### imgl.vision_ops.match_template_png
+> Find template occurrences in a screenshot using OpenCV matchTemplate.
+- **Calls**: imgl.vision_ops.template_available, imgl.vision_ops._png_to_gray_array, imgl.vision_ops._png_to_gray_array, None.get, cv2.matchTemplate, zip, matches.sort, RuntimeError
+
 ### imgl.types.Scene.from_dict
 - **Calls**: data.get, cls, BBox, Element, Window, element_from_dict, OcrBox, data.get
 
@@ -130,11 +134,21 @@ Main execution flows into the system:
 ### examples.scripts.demo-nlp2uri.main
 - **Calls**: print, imgl.pipeline.analyze, imgl.window_scope.apply_discovered_windows, imgl.catalog.build_interactive_catalog, InteractSession, print, print, imgl.nlp2uri.prompt_to_imgl_uri
 
+### imgl.vision_ops.render_match_overlay_png
+> Draw numbered bounding boxes and confidence labels on a screenshot.
+- **Calls**: None.convert, Image.new, ImageDraw.Draw, list, Image.alpha_composite, io.BytesIO, None.save, out.getvalue
+
 ### packages.dsl2imgl.src.dsl2imgl.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, exec_p.add_argument, sub.add_parser, argparse.ArgumentParser, legacy.add_argument, legacy.add_argument
 
 ### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture
 - **Calls**: bool, bool, cmd.get, cmd.get, cmd.get, cmd.get, imgl.capture.capture_screen, DslResult
+
+### imgl.vdisplay_context.from_vdisplay_context
+> Merge vdisplay ScreenContext into IMGL scene metadata.
+
+Returns ``{"ok": bool, "scene": dict|None, "metadata": dict, "error": str|None}``.
+- **Calls**: str, None.expanduser, imgl.vdisplay_context._metadata_from_context, imgl_analyze, scene.metadata.update, path.is_file, payload.get, isinstance
 
 ### imgl.actions.SceneActions.find
 > Find elements matching type, text, label, or window.
@@ -165,8 +179,9 @@ Main execution flows into the system:
 > Analyze screenshot, pick focus window, export crop PNG.
 - **Calls**: ImglConfig, imgl.pipeline.analyze, imgl.window_scope.apply_discovered_windows, imgl.window_scope.scope_to_focus_window, str, str, len, str
 
-### imgl.control.run_doctor
-- **Calls**: imgl.autodiag.render_report, str, str, imgl.control.default_window, imgl.vdisplay_bridge.build_window_control_report, imgl.autodiag.diagnose_capture, capture.get, imgl.control.default_image_path
+### imgl.vision_ops.diff_png_bytes
+> Compare two PNG payloads and report whether they differ meaningfully.
+- **Calls**: None.convert, None.convert, before_image.get_flattened_data, after_image.get_flattened_data, zip, imgl.vision_ops._crop_png_region, imgl.vision_ops._crop_png_region, after_image.resize
 
 ### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions
 - **Calls**: cmd.get, packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session, DslResult, opt.to_dict, DslResult, cmd.get, bool, json.dumps
@@ -174,6 +189,9 @@ Main execution flows into the system:
 ### imgl.capture._capture_with_gnome_shell
 > GNOME Shell D-Bus screenshot (works on Mutter; grim needs wlroots).
 - **Calls**: path.parent.mkdir, path.is_file, None.strip, shutil.which, path.unlink, subprocess.run, path.is_file, detail.lower
+
+### imgl.control.run_doctor
+- **Calls**: imgl.autodiag.render_report, str, str, imgl.control.default_window, imgl.vdisplay_bridge.build_window_control_report, imgl.autodiag.diagnose_capture, capture.get, imgl.control.default_image_path
 
 ### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze
 - **Calls**: cmd.get, packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session, DslResult, DslResult, cmd.get, bool, cmd.get, len
@@ -185,21 +203,8 @@ Main execution flows into the system:
 ### packages.rest2imgl.src.rest2imgl.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, parser.parse_args, uvicorn.run, packages.rest2imgl.src.rest2imgl.app.create_app
 
-### packages.nlp2imgl.src.nlp2imgl.cli_commands.run_apply
-- **Calls**: packages.nlp2imgl.src.nlp2imgl.control.apply_nl_with_diag, packages.nlp2imgl.src.nlp2imgl.cli_commands._print_apply_payload, packages.nlp2imgl.src.nlp2imgl.cli_commands.output_format, None.get, bool, payload.get, checks.get, payload.get
-
 ### packages.dsl2imgl.src.dsl2imgl.grammar._parse_interaction_verb
 - **Calls**: None.upper, packages.dsl2imgl.src.dsl2imgl.grammar._apply_image_window_flags, packages.dsl2imgl.src.dsl2imgl.grammar._parse_click, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, str, packages.dsl2imgl.src.dsl2imgl.grammar._parse_type, packages.dsl2imgl.src.dsl2imgl.grammar._parse_key, packages.dsl2imgl.src.dsl2imgl.grammar._parse_execute
-
-### imgl.capture._capture_with_grim
-- **Calls**: path.parent.mkdir, None.strip, shutil.which, subprocess.run, path.is_file, str, str, path.stat
-
-### packages.dsl2imgl.src.dsl2imgl.events.EventStore.append_command
-- **Calls**: StoredEvent, self.path.parent.mkdir, uuid.uuid4, self._append_pb, self._append_jsonl, int, time.time
-
-### imgl.actions.SceneActions.type_into
-> Resolve a type action for an input field.
-- **Calls**: self.find_one, None.to_dict, self.find_one, ElementNotFoundError, target.element.metadata.get, imgl.actions._format_query, TypeAction
 
 ## Process Flows
 
@@ -242,44 +247,36 @@ handle_execute [packages.dsl2imgl.src.dsl2imgl.handlers.runtime]
 act [imgl.web.session.WebSession]
 ```
 
-### Flow 5: from_dict
+### Flow 5: match_template_png
+```
+match_template_png [imgl.vision_ops]
+  └─> template_available
+  └─> _png_to_gray_array
+```
+
+### Flow 6: from_dict
 ```
 from_dict [imgl.types.Scene]
 ```
 
-### Flow 6: _append_pb
+### Flow 7: _append_pb
 ```
 _append_pb [packages.dsl2imgl.src.dsl2imgl.events.EventStore]
 ```
 
-### Flow 7: _append_jsonl
+### Flow 8: _append_jsonl
 ```
 _append_jsonl [packages.dsl2imgl.src.dsl2imgl.events.EventStore]
 ```
 
-### Flow 8: handle_capture
+### Flow 9: render_match_overlay_png
+```
+render_match_overlay_png [imgl.vision_ops]
+```
+
+### Flow 10: handle_capture
 ```
 handle_capture [packages.dsl2imgl.src.dsl2imgl.handlers.runtime]
-```
-
-### Flow 9: find
-```
-find [imgl.actions.SceneActions]
-  └─ →> _iter_elements
-      └─> _window_matches
-      └─ →> get_discovered_window
-          └─> discover_windows
-  └─ →> _iter_elements
-      └─> _window_matches
-      └─ →> get_discovered_window
-          └─> discover_windows
-```
-
-### Flow 10: run
-```
-run [imgl.ocr.tesseract.TesseractOcr]
-  └─ →> ocr_lang_attempts
-      └─> normalize_ocr_lang
 ```
 
 ## Key Classes
@@ -349,6 +346,10 @@ run [imgl.ocr.tesseract.TesseractOcr]
 - **Methods**: 1
 - **Key Methods**: imgl.types.Window.to_dict
 
+### imgl.execute.ExecuteResult
+- **Methods**: 1
+- **Key Methods**: imgl.execute.ExecuteResult.to_dict
+
 ### imgl.catalog_types.InteractiveOption
 > One selectable UI target with mouse/keyboard affordances.
 - **Methods**: 1
@@ -367,10 +368,6 @@ run [imgl.ocr.tesseract.TesseractOcr]
 ### imgl.web.session.StepRecord
 - **Methods**: 1
 - **Key Methods**: imgl.web.session.StepRecord.to_dict
-
-### imgl.web.session.AgentState
-- **Methods**: 1
-- **Key Methods**: imgl.web.session.AgentState.to_dict
 
 ## Data Transformation Functions
 
@@ -393,6 +390,39 @@ Key functions that process and transform data:
 
 ### packages.dsl2imgl.src.dsl2imgl.schema_registry.validate_schemas
 - **Output to**: None.items, None.get, packages.dsl2imgl.src.dsl2imgl.schema_registry._load_schemas, errors.append, None.get
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_capture
+- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_analyze
+- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_actions
+- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_resolve
+- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar._strip_prompt_tokens, packages.dsl2imgl.src.dsl2imgl.grammar._apply_image_window_flags
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_click
+- **Output to**: None.isdigit, int, None.strip, None.strip, None.join
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_type
+- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, rest.index, None.strip, None.split, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_key
+- **Output to**: keys_tokens.append, None.join, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_execute
+- **Output to**: None.strip, None.strip, None.join
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_interaction_verb
+- **Output to**: None.upper, packages.dsl2imgl.src.dsl2imgl.grammar._apply_image_window_flags, packages.dsl2imgl.src.dsl2imgl.grammar._parse_click, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, str
+
+### packages.dsl2imgl.src.dsl2imgl.grammar._parse_agent
+- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar._apply_image_window_flags, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, None.strip, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, int
+
+### packages.dsl2imgl.src.dsl2imgl.grammar.parse_line
+- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.split_command, None.upper, _VERB_PARSERS.get, parser
 
 ### packages.dsl2imgl.src.dsl2imgl.codec.validate_payload
 - **Output to**: None.upper, packages.dsl2imgl.src.dsl2imgl.schema_registry.schema_for_verb, jsonschema.validate, ValueError, str
@@ -418,41 +448,6 @@ Key functions that process and transform data:
 ### imgl.autodiag._parse_typed_text
 - **Output to**: _TYPED_RE.search, match.group
 
-### imgl.autodiag._parse_keys
-- **Output to**: _KEY_RE.search, None.strip, match.group
-
-### imgl.actions._format_query
-- **Output to**: parts.append, parts.append, parts.append, parts.append, None.join
-
-### imgl.catalog.format_catalog_table
-> Human-readable numbered list for the interactive shell.
-- **Output to**: lines.append, lines.append, lines.append, None.join, lines.append
-
-### imgl.preprocess.preprocess
-> Load and optionally downscale an image for analysis.
-- **Output to**: imgl.preprocess.load_image, max, PreprocessedImage, max, max
-
-### imgl.llm_catalog._parse_json_payload
-- **Output to**: json.loads, re.search, json.loads, match.group
-
-### imgl.window_scope.format_window_picker
-- **Output to**: lines.extend, None.join, lines.append, lines.append, len
-
-### imgl.web.agent._parse_agent_json
-- **Output to**: raw.strip, re.search, fence.group, text.find, text.rfind
-
-### packages.dsl2imgl.src.dsl2imgl.grammar._parse_capture
-- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
-
-### packages.dsl2imgl.src.dsl2imgl.grammar._parse_analyze
-- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
-
-### packages.dsl2imgl.src.dsl2imgl.grammar._parse_actions
-- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag
-
-### packages.dsl2imgl.src.dsl2imgl.grammar._parse_resolve
-- **Output to**: packages.dsl2imgl.src.dsl2imgl.grammar._strip_prompt_tokens, packages.dsl2imgl.src.dsl2imgl.grammar._apply_image_window_flags
-
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
@@ -460,6 +455,8 @@ Functions exposed as public API (no underscore prefix):
 - `imgl.cli.main` - 131 calls
 - `imgl.cli.build_parser` - 116 calls
 - `imgl.web.app.create_app` - 107 calls
+- `imgl.targets.resolve_chat_target` - 51 calls
+- `imgl.export.actuation_layers.scene_to_actuation_layers` - 45 calls
 - `imgl.control.smart_capture` - 42 calls
 - `imgl.autodiag.diagnose_capture` - 41 calls
 - `imgl.terminal_md.colorize_markdown` - 40 calls
@@ -474,6 +471,7 @@ Functions exposed as public API (no underscore prefix):
 - `imgl.vdisplay_bridge.build_window_control_report` - 32 calls
 - `imgl.coords.scale_scene_to_screen` - 29 calls
 - `imgl.classify.gui_heuristics.classify_scene_elements` - 29 calls
+- `imgl.vision_ops.match_template_png` - 29 calls
 - `imgl.types.Scene.from_dict` - 28 calls
 - `imgl.control.capture_interactive` - 28 calls
 - `imgl.execute.execute_action` - 27 calls
@@ -481,22 +479,19 @@ Functions exposed as public API (no underscore prefix):
 - `imgl.control.run_execute` - 25 calls
 - `imgl.export.annotate_export.scene_to_annotated_image` - 25 calls
 - `packages.nlp2imgl.src.nlp2imgl.cli_parser.build_parser` - 24 calls
+- `imgl.vision_ops.render_match_overlay_png` - 24 calls
 - `imgl.web.agent.pick_agent_action` - 23 calls
 - `packages.dsl2imgl.src.dsl2imgl.cli.main` - 22 calls
 - `imgl.pipeline.analyze` - 22 calls
 - `imgl.detect.rectangles.detect_input_frames` - 22 calls
 - `packages.dsl2imgl.src.dsl2imgl.bus.dispatch` - 21 calls
-- `imgl.freshness.image_freshness` - 21 calls
 - `packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture` - 21 calls
-- `imgl.export.annotate_export.write_window_preview_images` - 20 calls
+- `imgl.freshness.image_freshness` - 21 calls
+- `imgl.targets.resolve_editor_target` - 21 calls
 - `packages.dsl2imgl.src.dsl2imgl.grammar.to_text` - 20 calls
+- `imgl.export.annotate_export.write_window_preview_images` - 20 calls
+- `imgl.vdisplay_context.from_vdisplay_context` - 20 calls
 - `packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl` - 19 calls
-- `imgl.interact.resolve_imgl_uri` - 19 calls
-- `imgl.actions.SceneActions.find` - 18 calls
-- `imgl.autodiag.build_execute_report` - 17 calls
-- `imgl.ocr.tesseract.TesseractOcr.run` - 17 calls
-- `imgl.web.session.SessionManager.create` - 17 calls
-- `imgl.interact.run_interactive_shell` - 17 calls
 
 ## System Interactions
 
@@ -522,6 +517,10 @@ graph TD
     act --> _step_record
     act --> append
     act --> resolve_index
+    match_template_png --> template_available
+    match_template_png --> _png_to_gray_array
+    match_template_png --> get
+    match_template_png --> matchTemplate
     from_dict --> get
     from_dict --> cls
     from_dict --> BBox
@@ -530,10 +529,6 @@ graph TD
     _append_pb --> DslEvent
     _append_pb --> CopyFrom
     _append_pb --> DslResult
-    _append_pb --> SerializeToString
-    _append_jsonl --> to_dict
-    _append_jsonl --> DslEvent
-    _append_jsonl --> CopyFrom
 ```
 
 ## Reverse Engineering Guidelines
