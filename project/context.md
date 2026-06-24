@@ -5,12 +5,12 @@
 
 - **Project**: /home/tom/github/semcod/imgl
 - **Primary Language**: python
-- **Languages**: python: 88, json: 14, yaml: 7, shell: 7, toml: 7
+- **Languages**: python: 88, json: 14, yaml: 7, toml: 7, shell: 7
 - **Analysis Mode**: static
-- **Total Functions**: 552
+- **Total Functions**: 569
 - **Total Classes**: 40
 - **Modules**: 126
-- **Entry Points**: 145
+- **Entry Points**: 146
 
 ## Architecture by Module
 
@@ -18,17 +18,17 @@
 - **Functions**: 32
 - **File**: `pb_codec.py`
 
+### imgl.autodiag
+- **Functions**: 32
+- **File**: `autodiag.py`
+
 ### imgl.window_scope
-- **Functions**: 29
+- **Functions**: 30
 - **Classes**: 1
 - **File**: `window_scope.py`
 
-### imgl.autodiag
-- **Functions**: 29
-- **File**: `autodiag.py`
-
 ### imgl.capture
-- **Functions**: 28
+- **Functions**: 29
 - **Classes**: 2
 - **File**: `capture.py`
 
@@ -41,24 +41,24 @@
 - **Classes**: 1
 - **File**: `local.py`
 
+### imgl.interact
+- **Functions**: 20
+- **Classes**: 1
+- **File**: `interact.py`
+
 ### imgl.web.session
 - **Functions**: 18
 - **Classes**: 5
 - **File**: `session.py`
 
-### imgl.interact
+### imgl.actions
 - **Functions**: 17
-- **Classes**: 1
-- **File**: `interact.py`
+- **Classes**: 4
+- **File**: `actions.py`
 
 ### packages.dsl2imgl.src.dsl2imgl.grammar
 - **Functions**: 16
 - **File**: `grammar.py`
-
-### imgl.actions
-- **Functions**: 16
-- **Classes**: 4
-- **File**: `actions.py`
 
 ### imgl.llm_catalog
 - **Functions**: 16
@@ -72,17 +72,21 @@
 - **Functions**: 14
 - **File**: `annotate_export.py`
 
-### imgl.export.vql_adapter
-- **Functions**: 13
-- **File**: `vql_adapter.py`
-
 ### imgl.targets
 - **Functions**: 13
 - **File**: `targets.py`
 
+### imgl.export.vql_adapter
+- **Functions**: 13
+- **File**: `vql_adapter.py`
+
 ### imgl.vdisplay_bridge
 - **Functions**: 12
 - **File**: `vdisplay_bridge.py`
+
+### imgl.terminal_md
+- **Functions**: 11
+- **File**: `terminal_md.py`
 
 ### imgl.types
 - **Functions**: 10
@@ -98,10 +102,6 @@
 - **Functions**: 9
 - **Classes**: 2
 - **File**: `vision_ops.py`
-
-### imgl.freshness
-- **Functions**: 9
-- **File**: `freshness.py`
 
 ## Key Entry Points
 
@@ -157,18 +157,14 @@ Returns ``{"ok": bool, "scene": dict|None, "metadata": dict, "error": str|None}`
 ### imgl.cli._handle_serve
 - **Calls**: WebSettings, packages.rest2imgl.src.rest2imgl.app.create_app, print, uvicorn.run, local_screen.is_file, print, Path.cwd, session.capture
 
-### imgl.actions.SceneActions.find
-> Find elements matching type, text, label, or window.
-- **Calls**: imgl.actions._iter_elements, targets.append, imgl.actions._iter_elements, ActionTarget, any, imgl.actions._find_label_for_input, _infer_input_label, imgl.actions._text_matches
+### imgl.cli._handle_diagnose
+- **Calls**: imgl.diagnose.diagnose_content, imgl.cli._write_output, imgl.paths.resolve_image_path, diag.get, str, diag.get, diag.get, diag.get
 
 ### imgl.ocr.tesseract.TesseractOcr.run
 - **Calls**: imgl.ocr.lang.ocr_lang_attempts, len, range, ImportError, RuntimeError, None.strip, int, int
 
 ### imgl.web.session.SessionManager.create
 - **Calls**: None.resolve, work.mkdir, WebSession, None.is_file, cls, None.resolve, img.is_file, session.analyze
-
-### imgl.cli._handle_diagnose
-- **Calls**: imgl.diagnose.diagnose_content, imgl.cli._write_output, imgl.paths.resolve_image_path, diag.get, str, diag.get, diag.get, diag.get
 
 ### packages.uri2imgl.src.uri2imgl.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, dec.add_argument, sub.add_parser, run.add_argument, run.add_argument, parser.parse_args
@@ -199,9 +195,11 @@ Returns ``{"ok": bool, "scene": dict|None, "metadata": dict, "error": str|None}`
 ### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions
 - **Calls**: cmd.get, packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session, DslResult, opt.to_dict, DslResult, cmd.get, bool, json.dumps
 
-### imgl.capture._capture_with_gnome_shell
-> GNOME Shell D-Bus screenshot (works on Mutter; grim needs wlroots).
-- **Calls**: path.parent.mkdir, path.is_file, None.strip, shutil.which, path.unlink, subprocess.run, path.is_file, detail.lower
+### imgl.cli.main
+- **Calls**: imgl.cli.build_parser, parser.parse_args, ImglConfig, _COMMAND_HANDLERS.get, handler, imgl.paths.resolve_image_path, imgl.cli._run_image_command, print
+
+### imgl.cli._handle_find
+- **Calls**: imgl.pipeline.analyze, imgl.actions.actions, imgl.cli._write_output, finder.list_actions, json.dumps, finder.click, finder.type_into, finder.find
 
 ### imgl.control.run_doctor
 - **Calls**: imgl.autodiag.render_report, str, str, imgl.control.default_window, imgl.vdisplay_bridge.build_window_control_report, imgl.autodiag.diagnose_capture, capture.get, imgl.control.default_image_path
@@ -306,26 +304,30 @@ _handle_windows [imgl.cli]
 
 ### imgl.actions.SceneActions
 > Find and interact with elements in a Scene.
-- **Methods**: 5
-- **Key Methods**: imgl.actions.SceneActions.find, imgl.actions.SceneActions.find_one, imgl.actions.SceneActions.click, imgl.actions.SceneActions.type_into, imgl.actions.SceneActions.list_actions
+- **Methods**: 6
+- **Key Methods**: imgl.actions.SceneActions.find, imgl.actions.SceneActions._find_labeled_inputs, imgl.actions.SceneActions.find_one, imgl.actions.SceneActions.click, imgl.actions.SceneActions.type_into, imgl.actions.SceneActions.list_actions
 
 ### imgl.types.BBox
 - **Methods**: 4
 - **Key Methods**: imgl.types.BBox.as_xyxy, imgl.types.BBox.contains, imgl.types.BBox.to_dict, imgl.types.BBox.from_xyxy
-
-### imgl.actions.ActionTarget
-> A resolved UI element that can be clicked or typed into.
-- **Methods**: 3
-- **Key Methods**: imgl.actions.ActionTarget.center, imgl.actions.ActionTarget.click_coords, imgl.actions.ActionTarget.to_click_action
 
 ### imgl.web.session.SessionManager
 > Single global session for local desktop control.
 - **Methods**: 3
 - **Key Methods**: imgl.web.session.SessionManager.__init__, imgl.web.session.SessionManager.create, imgl.web.session.SessionManager.auto_select_first_window
 
+### imgl.actions.ActionTarget
+> A resolved UI element that can be clicked or typed into.
+- **Methods**: 3
+- **Key Methods**: imgl.actions.ActionTarget.center, imgl.actions.ActionTarget.click_coords, imgl.actions.ActionTarget.to_click_action
+
 ### packages.dsl2imgl.src.dsl2imgl.result.DslResult
 - **Methods**: 2
 - **Key Methods**: packages.dsl2imgl.src.dsl2imgl.result.DslResult.to_dict, packages.dsl2imgl.src.dsl2imgl.result.DslResult.to_json
+
+### imgl.types.Scene
+- **Methods**: 2
+- **Key Methods**: imgl.types.Scene.to_dict, imgl.types.Scene.from_dict
 
 ### imgl.actions.TypeAction
 > Type text into an input field.
@@ -337,10 +339,6 @@ _handle_windows [imgl.cli]
 - **Methods**: 2
 - **Key Methods**: imgl.window_scope.WindowSummary.label, imgl.window_scope.WindowSummary.bbox
 
-### imgl.types.Scene
-- **Methods**: 2
-- **Key Methods**: imgl.types.Scene.to_dict, imgl.types.Scene.from_dict
-
 ### packages.dsl2imgl.src.dsl2imgl.events.StoredEvent
 - **Methods**: 1
 - **Key Methods**: packages.dsl2imgl.src.dsl2imgl.events.StoredEvent.to_dict
@@ -348,10 +346,6 @@ _handle_windows [imgl.cli]
 ### imgl.vision_ops.TemplateMatchResult
 - **Methods**: 1
 - **Key Methods**: imgl.vision_ops.TemplateMatchResult.to_dict
-
-### imgl.nlp2uri.ResolvedImglUri
-- **Methods**: 1
-- **Key Methods**: imgl.nlp2uri.ResolvedImglUri.to_dict
 
 ### imgl.types.OcrBox
 - **Methods**: 1
@@ -383,6 +377,10 @@ _handle_windows [imgl.cli]
 > Extract word-level bounding boxes using pytesseract.
 - **Methods**: 1
 - **Key Methods**: imgl.ocr.tesseract.TesseractOcr.run
+
+### imgl.web.session.StepRecord
+- **Methods**: 1
+- **Key Methods**: imgl.web.session.StepRecord.to_dict
 
 ## Data Transformation Functions
 
@@ -451,19 +449,18 @@ Key functions that process and transform data:
 ### packages.nlp2imgl.src.nlp2imgl.cli_commands.output_format
 - **Output to**: imgl.autodiag.resolve_cli_output_format
 
-### imgl.actions._format_query
-- **Output to**: parts.append, parts.append, parts.append, parts.append, None.join
+### imgl.cli._add_output_format_flags
+- **Output to**: parser.add_mutually_exclusive_group, group.add_argument, group.add_argument
+
+### imgl.cli._output_format
+- **Output to**: imgl.autodiag.resolve_cli_output_format
+
+### imgl.cli.build_parser
+- **Output to**: argparse.ArgumentParser, parser.add_argument, parser.add_subparsers, subparsers.add_parser, imgl.cli._add_common_args
 
 ### imgl.catalog.format_catalog_table
 > Human-readable numbered list for the interactive shell.
 - **Output to**: lines.append, lines.append, lines.append, None.join, lines.append
-
-### imgl.preprocess.preprocess
-> Load and optionally downscale an image for analysis.
-- **Output to**: imgl.preprocess.load_image, max, PreprocessedImage, max, max
-
-### imgl.llm_catalog._parse_json_payload
-- **Output to**: json.loads, re.search, json.loads, match.group
 
 ## Public API Surface
 
@@ -474,14 +471,10 @@ Functions exposed as public API (no underscore prefix):
 - `imgl.export.actuation_layers.scene_to_actuation_layers` - 45 calls
 - `imgl.control.smart_capture` - 42 calls
 - `imgl.autodiag.diagnose_capture` - 41 calls
-- `imgl.terminal_md.colorize_markdown` - 40 calls
-- `imgl.nlp2uri.prompt_to_imgl_uri` - 37 calls
 - `packages.rest2imgl.src.rest2imgl.app.create_app` - 36 calls
 - `packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute` - 35 calls
 - `imgl.web.session.WebSession.act` - 34 calls
-- `imgl.capture.capture_screen` - 33 calls
 - `imgl.export.vql_adapter.scene_to_vql` - 33 calls
-- `imgl.autodiag.build_operation_step` - 33 calls
 - `imgl.vdisplay_bridge.correlate_windows` - 32 calls
 - `imgl.vdisplay_bridge.build_window_control_report` - 32 calls
 - `imgl.vision_ops.match_template_png` - 29 calls
@@ -493,8 +486,11 @@ Functions exposed as public API (no underscore prefix):
 - `examples.scripts.demo-nlp2uri.main` - 25 calls
 - `imgl.control.run_execute` - 25 calls
 - `imgl.export.annotate_export.scene_to_annotated_image` - 25 calls
+- `imgl.autodiag.build_operation_step` - 25 calls
+- `imgl.capture.capture_screen` - 25 calls
 - `packages.nlp2imgl.src.nlp2imgl.cli_parser.build_parser` - 24 calls
 - `imgl.vision_ops.render_match_overlay_png` - 24 calls
+- `imgl.nlp2uri.prompt_to_imgl_uri` - 24 calls
 - `imgl.web.agent.pick_agent_action` - 23 calls
 - `packages.dsl2imgl.src.dsl2imgl.cli.main` - 22 calls
 - `imgl.pipeline.analyze` - 22 calls
@@ -508,7 +504,8 @@ Functions exposed as public API (no underscore prefix):
 - `imgl.export.annotate_export.write_window_preview_images` - 20 calls
 - `packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl` - 19 calls
 - `imgl.interact.resolve_imgl_uri` - 19 calls
-- `imgl.actions.SceneActions.find` - 18 calls
+- `imgl.targets.resolve_chat_target` - 17 calls
+- `imgl.ocr.tesseract.TesseractOcr.run` - 17 calls
 
 ## System Interactions
 

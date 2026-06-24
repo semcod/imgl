@@ -51,6 +51,34 @@ def doctor_capture(image: str | Path | None = None, *, locale: str = "pl") -> di
     return diagnose_capture(img, locale=locale)
 
 
+def _blocked_capture_response(
+    *,
+    prompt: str,
+    img: str,
+    win: str | None,
+    effective_dry: bool,
+    capture: dict[str, Any],
+    error_summary: str,
+    blocked_by: str,
+    build_execute_report,
+) -> dict[str, Any]:
+    report = build_execute_report(
+        prompt=prompt,
+        image=img,
+        window=win,
+        dry_run=effective_dry,
+        capture=capture,
+        result={"ok": False, "backend": "imgl", "error": error_summary},
+    )
+    return {
+        "ok": False,
+        "backend": "imgl",
+        "error": report["verdict"],
+        "blocked_by": blocked_by,
+        "diagnostics": report,
+    }
+
+
 def apply_nl_with_diag(
     prompt: str,
     *,
@@ -80,46 +108,18 @@ def apply_nl_with_diag(
     capture = diagnose_capture(img, locale=locale) if do_diag else {}
 
     if do_diag and should_block_stale_capture(capture):
-        report = build_execute_report(
-            prompt=prompt,
-            image=img,
-            window=win,
-            dry_run=effective_dry,
-            capture=capture,
-            result={
-                "ok": False,
-                "backend": "imgl",
-                "error": capture.get("summary") or "stale screenshot",
-            },
+        return _blocked_capture_response(
+            prompt=prompt, img=img, win=win, effective_dry=effective_dry,
+            capture=capture, error_summary=capture.get("summary") or "stale screenshot",
+            blocked_by="stale_capture", build_execute_report=build_execute_report,
         )
-        return {
-            "ok": False,
-            "backend": "imgl",
-            "error": report["verdict"],
-            "blocked_by": "stale_capture",
-            "diagnostics": report,
-        }
 
     if do_diag and should_block_blank_capture(capture) and do_execute:
-        report = build_execute_report(
-            prompt=prompt,
-            image=img,
-            window=win,
-            dry_run=effective_dry,
-            capture=capture,
-            result={
-                "ok": False,
-                "backend": "imgl",
-                "error": capture.get("summary") or "blank or unusable capture",
-            },
+        return _blocked_capture_response(
+            prompt=prompt, img=img, win=win, effective_dry=effective_dry,
+            capture=capture, error_summary=capture.get("summary") or "blank or unusable capture",
+            blocked_by="capture_diagnose", build_execute_report=build_execute_report,
         )
-        return {
-            "ok": False,
-            "backend": "imgl",
-            "error": report["verdict"],
-            "blocked_by": "capture_diagnose",
-            "diagnostics": report,
-        }
 
     result = apply_nl(
         prompt,

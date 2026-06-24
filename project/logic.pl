@@ -1,18 +1,18 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('imgl', '0.7.8', 'python').
+project_metadata('imgl', '0.7.11', 'python').
 
 % ── Project Files ────────────────────────────────────────
-project_file('app.doql.less', 216, 'less').
+project_file('app.doql.less', 221, 'less').
 project_file('examples/img2nl-vql-flow.sh', 11, 'shell').
 project_file('examples/scripts/demo-agent-loop.sh', 49, 'shell').
 project_file('examples/scripts/demo-github.sh', 23, 'shell').
 project_file('examples/scripts/demo-nlp2uri.py', 80, 'python').
 project_file('examples/scripts/demo-windows.sh', 24, 'shell').
-project_file('imgl/__init__.py', 52, 'python').
+project_file('imgl/__init__.py', 87, 'python').
 project_file('imgl/__main__.py', 7, 'python').
 project_file('imgl/actions.py', 272, 'python').
-project_file('imgl/autodiag.py', 531, 'python').
-project_file('imgl/capture.py', 560, 'python').
+project_file('imgl/autodiag.py', 554, 'python').
+project_file('imgl/capture.py', 551, 'python').
 project_file('imgl/capture_provenance.py', 115, 'python').
 project_file('imgl/catalog.py', 92, 'python').
 project_file('imgl/catalog_filter.py', 139, 'python').
@@ -20,7 +20,7 @@ project_file('imgl/catalog_heuristic.py', 257, 'python').
 project_file('imgl/catalog_types.py', 47, 'python').
 project_file('imgl/classify/__init__.py', 6, 'python').
 project_file('imgl/classify/gui_heuristics.py', 262, 'python').
-project_file('imgl/cli.py', 959, 'python').
+project_file('imgl/cli.py', 1004, 'python').
 project_file('imgl/config.py', 24, 'python').
 project_file('imgl/control.py', 358, 'python').
 project_file('imgl/coords.py', 71, 'python').
@@ -30,8 +30,9 @@ project_file('imgl/detect/local.py', 375, 'python').
 project_file('imgl/detect/rectangles.py', 97, 'python').
 project_file('imgl/diagnose.py', 248, 'python').
 project_file('imgl/execute.py', 206, 'python').
-project_file('imgl/export/__init__.py', 31, 'python').
+project_file('imgl/export/__init__.py', 43, 'python').
 project_file('imgl/export/_escape.py', 20, 'python').
+project_file('imgl/export/actuation_layers.py', 123, 'python').
 project_file('imgl/export/annotate_export.py', 300, 'python').
 project_file('imgl/export/html_export.py', 150, 'python').
 project_file('imgl/export/json_export.py', 23, 'python').
@@ -40,10 +41,10 @@ project_file('imgl/export/vql_adapter.py', 363, 'python').
 project_file('imgl/freshness.py', 152, 'python').
 project_file('imgl/geometry.py', 38, 'python').
 project_file('imgl/installs.py', 126, 'python').
-project_file('imgl/interact.py', 666, 'python').
+project_file('imgl/interact.py', 693, 'python').
 project_file('imgl/layout.py', 109, 'python').
 project_file('imgl/llm_catalog.py', 522, 'python').
-project_file('imgl/nlp2uri.py', 283, 'python').
+project_file('imgl/nlp2uri.py', 294, 'python').
 project_file('imgl/ocr/__init__.py', 13, 'python').
 project_file('imgl/ocr/base.py', 15, 'python').
 project_file('imgl/ocr/lang.py', 33, 'python').
@@ -52,10 +53,13 @@ project_file('imgl/paths.py', 42, 'python').
 project_file('imgl/pipeline.py', 120, 'python').
 project_file('imgl/preprocess.py', 64, 'python').
 project_file('imgl/scene_cache.py', 64, 'python').
+project_file('imgl/targets.py', 263, 'python').
 project_file('imgl/terminal_md.py', 211, 'python').
 project_file('imgl/types.py', 171, 'python').
 project_file('imgl/uri.py', 119, 'python').
 project_file('imgl/vdisplay_bridge.py', 254, 'python').
+project_file('imgl/vdisplay_context.py', 81, 'python').
+project_file('imgl/vision_ops.py', 278, 'python').
 project_file('imgl/web/__init__.py', 11, 'python').
 project_file('imgl/web/agent.py', 153, 'python').
 project_file('imgl/web/app.py', 287, 'python').
@@ -97,6 +101,7 @@ project_file('packages/uri2imgl/src/uri2imgl/decode.py', 36, 'python').
 project_file('project.sh', 59, 'shell').
 project_file('tests/conftest.py', 12, 'python').
 project_file('tests/test_actions.py', 140, 'python').
+project_file('tests/test_actuation_layers.py', 44, 'python').
 project_file('tests/test_annotate.py', 59, 'python').
 project_file('tests/test_autodiag.py', 149, 'python').
 project_file('tests/test_capture_paths.py', 106, 'python').
@@ -120,8 +125,10 @@ project_file('tests/test_nlp2imgl_llm.py', 29, 'python').
 project_file('tests/test_nlp2uri_fixes.py', 63, 'python').
 project_file('tests/test_ocr_lang.py', 17, 'python').
 project_file('tests/test_scene_cache.py', 90, 'python').
+project_file('tests/test_targets.py', 59, 'python').
 project_file('tests/test_terminal_md.py', 49, 'python').
 project_file('tests/test_vdisplay_bridge.py', 51, 'python').
+project_file('tests/test_vision_ops.py', 84, 'python').
 project_file('tests/test_vql_export.py', 120, 'python').
 project_file('tests/test_web.py', 121, 'python').
 project_file('tests/test_window_scope.py', 221, 'python').
@@ -138,7 +145,8 @@ python_function('imgl/actions.py', '_find_label_for_input', 3, 6, 5).
 python_function('imgl/autodiag.py', 'img2nl_root', 0, 1, 4).
 python_function('imgl/autodiag.py', 'img2nl_available', 0, 1, 2).
 python_function('imgl/autodiag.py', 'diagnose_capture', 1, 16, 16).
-python_function('imgl/autodiag.py', 'build_operation_step', 1, 19, 9).
+python_function('imgl/autodiag.py', '_extract_result_context', 1, 8, 3).
+python_function('imgl/autodiag.py', 'build_operation_step', 1, 12, 9).
 python_function('imgl/autodiag.py', '_compact_result', 1, 6, 3).
 python_function('imgl/autodiag.py', 'build_execute_report', 0, 8, 7).
 python_function('imgl/autodiag.py', 'resolve_cli_output_format', 0, 7, 1).
@@ -151,11 +159,14 @@ python_function('imgl/autodiag.py', 'diagnostics_enabled', 0, 1, 1).
 python_function('imgl/autodiag.py', '_yaml_codeblock', 1, 1, 2).
 python_function('imgl/autodiag.py', '_shell_quote', 1, 3, 2).
 python_function('imgl/autodiag.py', '_capture_next_cmd', 1, 1, 1).
-python_function('imgl/autodiag.py', '_derive_current_next', 1, 32, 7).
+python_function('imgl/autodiag.py', '_derive_stale', 2, 2, 2).
+python_function('imgl/autodiag.py', '_derive_op_failed', 1, 9, 4).
+python_function('imgl/autodiag.py', '_derive_current_next', 1, 23, 8).
 python_function('imgl/autodiag.py', '_markdown_payload', 1, 18, 1).
 python_function('imgl/autodiag.py', '_render_markdown', 1, 6, 7).
 python_function('imgl/autodiag.py', '_overall_verdict', 2, 10, 1).
-python_function('imgl/autodiag.py', '_actionable_hints', 1, 19, 6).
+python_function('imgl/autodiag.py', '_capture_verdict_hints', 2, 6, 3).
+python_function('imgl/autodiag.py', '_actionable_hints', 1, 14, 5).
 python_function('imgl/autodiag.py', '_compact_features', 1, 6, 1).
 python_function('imgl/autodiag.py', '_scene_class', 1, 2, 2).
 python_function('imgl/autodiag.py', '_parse_coords', 1, 2, 3).
@@ -170,7 +181,7 @@ python_function('imgl/capture.py', '_portal_fallback_enabled', 0, 2, 4).
 python_function('imgl/capture.py', '_vdisplay_portal_in_chain_enabled', 0, 2, 4).
 python_function('imgl/capture.py', 'default_capture_path', 1, 2, 6).
 python_function('imgl/capture.py', '_is_wayland', 0, 3, 3).
-python_function('imgl/capture.py', 'capture_screen', 1, 26, 21).
+python_function('imgl/capture.py', 'capture_screen', 1, 20, 19).
 python_function('imgl/capture.py', '_screen_recording_denied', 1, 2, 2).
 python_function('imgl/capture.py', '_capture_failure_hint', 0, 5, 2).
 python_function('imgl/capture.py', '_try_vdisplay_capture', 1, 10, 12).
@@ -178,7 +189,8 @@ python_function('imgl/capture.py', '_try_vql_capture', 1, 8, 9).
 python_function('imgl/capture.py', '_discard_capture_file', 1, 3, 3).
 python_function('imgl/capture.py', '_non_portal_backends', 0, 2, 2).
 python_function('imgl/capture.py', '_portal_backends', 0, 1, 1).
-python_function('imgl/capture.py', '_try_portal_backends', 1, 8, 8).
+python_function('imgl/capture.py', '_try_backend_list', 2, 8, 7).
+python_function('imgl/capture.py', '_try_portal_backends', 1, 1, 2).
 python_function('imgl/capture.py', '_run_command', 2, 3, 4).
 python_function('imgl/capture.py', '_capture_with_gnome_shell', 1, 11, 9).
 python_function('imgl/capture.py', '_capture_with_grim', 1, 10, 7).
@@ -224,10 +236,27 @@ python_function('imgl/cli.py', '_output_format', 1, 1, 1).
 python_function('imgl/cli.py', '_add_common_args', 1, 1, 1).
 python_function('imgl/cli.py', 'build_parser', 0, 1, 7).
 python_function('imgl/cli.py', '_write_output', 2, 2, 2).
-python_function('imgl/cli.py', 'main', 1, 64, 57).
+python_function('imgl/cli.py', '_handle_doctor', 2, 2, 4).
+python_function('imgl/cli.py', '_handle_map', 2, 2, 4).
+python_function('imgl/cli.py', '_handle_execute', 2, 4, 6).
+python_function('imgl/cli.py', '_handle_shot', 2, 3, 6).
+python_function('imgl/cli.py', '_handle_verify', 2, 3, 3).
+python_function('imgl/cli.py', '_handle_install', 2, 6, 6).
+python_function('imgl/cli.py', '_handle_serve', 2, 10, 10).
+python_function('imgl/cli.py', '_handle_diagnose', 2, 4, 8).
+python_function('imgl/cli.py', '_handle_interact', 2, 3, 6).
+python_function('imgl/cli.py', '_handle_windows', 2, 11, 18).
+python_function('imgl/cli.py', '_handle_capture', 2, 13, 14).
+python_function('imgl/cli.py', 'main', 1, 4, 9).
 python_function('imgl/cli.py', '_check_blank_before_analyze', 1, 5, 4).
 python_function('imgl/cli.py', '_apply_config_overrides', 2, 2, 1).
-python_function('imgl/cli.py', '_run_image_command', 3, 19, 28).
+python_function('imgl/cli.py', '_handle_analyze', 3, 1, 3).
+python_function('imgl/cli.py', '_handle_html', 3, 1, 3).
+python_function('imgl/cli.py', '_handle_svg', 3, 3, 4).
+python_function('imgl/cli.py', '_handle_vql', 3, 2, 5).
+python_function('imgl/cli.py', '_handle_annotate', 3, 4, 10).
+python_function('imgl/cli.py', '_handle_find', 3, 6, 11).
+python_function('imgl/cli.py', '_run_image_command', 3, 3, 5).
 python_function('imgl/control.py', 'default_image_path', 0, 3, 5).
 python_function('imgl/control.py', 'default_window', 0, 3, 2).
 python_function('imgl/control.py', '_vql_cache_paths', 1, 1, 1).
@@ -293,6 +322,11 @@ python_function('imgl/execute.py', 'execute_keys', 1, 5, 5).
 python_function('imgl/execute.py', '_normalize_keys', 1, 9, 8).
 python_function('imgl/export/_escape.py', 'escape_html', 1, 1, 1).
 python_function('imgl/export/_escape.py', 'escape_xml', 1, 1, 1).
+python_function('imgl/export/actuation_layers.py', 'bbox_center', 1, 10, 3).
+python_function('imgl/export/actuation_layers.py', 'bbox_area', 1, 6, 4).
+python_function('imgl/export/actuation_layers.py', 'layer_from_bbox', 0, 4, 2).
+python_function('imgl/export/actuation_layers.py', 'scene_to_actuation_layers', 1, 33, 7).
+python_function('imgl/export/actuation_layers.py', 'imgl_result_to_actuation_layers', 1, 3, 3).
 python_function('imgl/export/annotate_export.py', 'default_annotated_path', 1, 3, 3).
 python_function('imgl/export/annotate_export.py', 'scene_to_annotated_image', 2, 8, 19).
 python_function('imgl/export/annotate_export.py', 'write_annotated_image', 3, 1, 5).
@@ -362,7 +396,10 @@ python_function('imgl/interact.py', '_build_session_catalog', 1, 2, 1).
 python_function('imgl/interact.py', 'resolve_imgl_uri', 2, 13, 16).
 python_function('imgl/interact.py', '_attach_image_path', 2, 1, 1).
 python_function('imgl/interact.py', '_resolve_click', 3, 17, 5).
-python_function('imgl/interact.py', '_resolve_type', 3, 30, 6).
+python_function('imgl/interact.py', '_resolve_type_no_value', 2, 7, 1).
+python_function('imgl/interact.py', '_resolve_type_by_element_id', 3, 4, 2).
+python_function('imgl/interact.py', '_resolve_type_by_hints', 4, 10, 3).
+python_function('imgl/interact.py', '_resolve_type', 3, 14, 7).
 python_function('imgl/interact.py', '_annotate_catalog', 1, 6, 7).
 python_function('imgl/interact.py', '_select_window', 2, 6, 6).
 python_function('imgl/interact.py', '_export_window_previews', 1, 4, 5).
@@ -397,7 +434,9 @@ python_function('imgl/llm_catalog.py', '_merge_heuristic_inputs', 2, 4, 5).
 python_function('imgl/llm_catalog.py', '_overlaps_catalog', 2, 4, 3).
 python_function('imgl/llm_catalog.py', '_renumber_options', 1, 2, 3).
 python_function('imgl/llm_catalog.py', '_best_label_match', 2, 13, 5).
-python_function('imgl/nlp2uri.py', 'prompt_to_imgl_uri', 1, 28, 15).
+python_function('imgl/nlp2uri.py', 'prompt_to_imgl_uri', 1, 15, 13).
+python_function('imgl/nlp2uri.py', '_resolve_click_intent', 2, 3, 5).
+python_function('imgl/nlp2uri.py', '_resolve_type_intent', 2, 12, 6).
 python_function('imgl/nlp2uri.py', '_delegate_vql_nlp2uri', 1, 5, 5).
 python_function('imgl/nlp2uri.py', '_find_catalog_by_text', 2, 9, 1).
 python_function('imgl/nlp2uri.py', '_find_catalog_input', 2, 9, 2).
@@ -417,6 +456,19 @@ python_function('imgl/scene_cache.py', 'scene_cache_path', 1, 2, 3).
 python_function('imgl/scene_cache.py', 'load_cached_scene', 2, 5, 7).
 python_function('imgl/scene_cache.py', 'save_scene_cache', 2, 1, 3).
 python_function('imgl/scene_cache.py', 'load_or_analyze', 1, 5, 7).
+python_function('imgl/targets.py', '_has_chat_token', 1, 1, 3).
+python_function('imgl/targets.py', '_bbox_center_x', 1, 5, 3).
+python_function('imgl/targets.py', '_bbox_center_y', 1, 5, 3).
+python_function('imgl/targets.py', 'normalize_actuation_element', 1, 15, 3).
+python_function('imgl/targets.py', 'normalize_actuation_elements', 1, 3, 2).
+python_function('imgl/targets.py', '_target_result', 1, 3, 1).
+python_function('imgl/targets.py', '_find_ask_candidate', 1, 12, 7).
+python_function('imgl/targets.py', '_find_chat_token_candidate', 1, 5, 4).
+python_function('imgl/targets.py', '_find_panel_candidate', 1, 12, 7).
+python_function('imgl/targets.py', '_find_input_candidate', 1, 12, 6).
+python_function('imgl/targets.py', 'resolve_chat_target', 1, 13, 8).
+python_function('imgl/targets.py', 'resolve_editor_target', 1, 18, 8).
+python_function('imgl/targets.py', 'resolve_actuation_target', 1, 2, 2).
 python_function('imgl/terminal_md.py', '_c', 2, 1, 1).
 python_function('imgl/terminal_md.py', 'stdout_color_enabled', 0, 6, 5).
 python_function('imgl/terminal_md.py', '_verdict_color', 1, 1, 3).
@@ -446,6 +498,17 @@ python_function('imgl/vdisplay_bridge.py', 'suggest_imgl_region', 1, 5, 3).
 python_function('imgl/vdisplay_bridge.py', 'list_vision_windows', 1, 4, 10).
 python_function('imgl/vdisplay_bridge.py', 'correlate_windows', 2, 18, 7).
 python_function('imgl/vdisplay_bridge.py', 'build_window_control_report', 1, 19, 20).
+python_function('imgl/vdisplay_context.py', 'from_vdisplay_context', 1, 10, 12).
+python_function('imgl/vdisplay_context.py', 'enrich_scene_from_vdisplay', 2, 1, 2).
+python_function('imgl/vdisplay_context.py', '_metadata_from_context', 1, 8, 3).
+python_function('imgl/vision_ops.py', 'template_available', 0, 2, 0).
+python_function('imgl/vision_ops.py', '_png_to_gray_array', 1, 1, 5).
+python_function('imgl/vision_ops.py', '_dedupe_matches', 1, 5, 3).
+python_function('imgl/vision_ops.py', 'match_template_png', 2, 11, 16).
+python_function('imgl/vision_ops.py', 'diff_png_bytes', 2, 11, 8).
+python_function('imgl/vision_ops.py', '_crop_png_region', 2, 1, 6).
+python_function('imgl/vision_ops.py', '_confidence_color', 1, 5, 0).
+python_function('imgl/vision_ops.py', 'render_match_overlay_png', 2, 10, 20).
 python_function('imgl/web/__init__.py', 'create_app', 0, 1, 1).
 python_function('imgl/web/agent.py', '_catalog_lines', 1, 5, 2).
 python_function('imgl/web/agent.py', '_history_lines', 2, 4, 3).
@@ -602,6 +665,9 @@ python_function('tests/test_actions.py', 'test_find_one_not_found', 0, 2, 3).
 python_function('tests/test_actions.py', 'test_click_raises_when_missing', 0, 1, 4).
 python_function('tests/test_actions.py', 'test_list_actions', 0, 4, 4).
 python_function('tests/test_actions.py', 'test_cli_find_command', 2, 3, 9).
+python_function('tests/test_actuation_layers.py', 'test_scene_to_actuation_layers_flattens_window_elements_and_ocr', 0, 8, 4).
+python_function('tests/test_actuation_layers.py', 'test_bbox_area_supports_w_h', 0, 2, 1).
+python_function('tests/test_actuation_layers.py', 'test_imgl_result_to_actuation_layers_requires_ok', 0, 3, 1).
 python_function('tests/test_annotate.py', '_scene', 0, 1, 4).
 python_function('tests/test_annotate.py', 'test_default_annotated_path', 0, 2, 2).
 python_function('tests/test_annotate.py', 'test_write_annotated_image', 1, 3, 8).
@@ -737,6 +803,9 @@ python_function('tests/test_ocr_lang.py', 'test_ocr_lang_attempts_fallback', 0, 
 python_function('tests/test_scene_cache.py', 'test_scale_scene_to_screen_doubles_coords', 0, 5, 5).
 python_function('tests/test_scene_cache.py', 'test_scene_cache_roundtrip', 1, 4, 9).
 python_function('tests/test_scene_cache.py', 'test_load_or_analyze_uses_cache', 2, 2, 9).
+python_function('tests/test_targets.py', 'test_resolve_chat_prefers_panel_over_send_chat_ocr_label', 0, 3, 1).
+python_function('tests/test_targets.py', 'test_resolve_editor_prefers_window_0', 0, 3, 1).
+python_function('tests/test_targets.py', 'test_resolve_chat_picks_bottom_right_input', 0, 2, 1).
 python_function('tests/test_terminal_md.py', 'test_stdout_color_disabled_with_no_color', 1, 2, 2).
 python_function('tests/test_terminal_md.py', 'test_colorize_markdown_adds_ansi_when_forced', 0, 5, 3).
 python_function('tests/test_terminal_md.py', 'test_colorize_markdown_plain_when_disabled', 0, 2, 1).
@@ -745,6 +814,11 @@ python_function('tests/test_vdisplay_bridge.py', 'test_suggest_imgl_region_botto
 python_function('tests/test_vdisplay_bridge.py', 'test_suggest_imgl_region_top', 0, 2, 1).
 python_function('tests/test_vdisplay_bridge.py', 'test_correlate_windows_finds_overlap', 0, 4, 2).
 python_function('tests/test_vdisplay_bridge.py', 'test_vdisplay_available_is_bool', 0, 2, 2).
+python_function('tests/test_vision_ops.py', '_tiny_png', 0, 1, 4).
+python_function('tests/test_vision_ops.py', 'test_match_template_png_finds_exact_copy', 0, 3, 3).
+python_function('tests/test_vision_ops.py', 'test_diff_png_bytes_detects_change', 0, 3, 6).
+python_function('tests/test_vision_ops.py', 'test_render_match_overlay_png', 0, 3, 5).
+python_function('tests/test_vision_ops.py', 'test_from_vdisplay_context_metadata_without_image', 0, 4, 1).
 python_function('tests/test_vql_export.py', '_sample_scene', 0, 1, 5).
 python_function('tests/test_vql_export.py', 'test_scene_to_vql_structure', 0, 20, 4).
 python_function('tests/test_vql_export.py', 'test_scene_to_vql_json_roundtrip', 0, 3, 3).
@@ -818,6 +892,9 @@ python_method('Window', 'to_dict', 0, 4, 1).
 python_class('imgl/types.py', 'Scene').
 python_method('Scene', 'to_dict', 0, 4, 1).
 python_method('Scene', 'from_dict', 2, 5, 8).
+python_class('imgl/vision_ops.py', 'TemplateMatchResult').
+python_method('TemplateMatchResult', 'to_dict', 0, 1, 1).
+python_class('imgl/vision_ops.py', 'MatchOverlayItem').
 python_class('imgl/web/app.py', 'SettingsBody').
 python_class('imgl/web/app.py', 'WindowBody').
 python_class('imgl/web/app.py', 'ActBody').
@@ -926,6 +1003,7 @@ sumd_interface('api', '').
 sumd_interface('mcp', 'stdio').
 sumd_interface('cli', 'click').
 sumd_interface('cli', '').
+sumd_interface('web', '').
 sumd_workflow('venv', 'manual').
 sumd_workflow_step('venv', 1, 'test -x "$(PY)" || $(PYTHON) -m venv "$(VENV)"').
 sumd_workflow('install', 'manual').

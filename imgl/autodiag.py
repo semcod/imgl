@@ -110,14 +110,20 @@ def diagnose_capture(image_path: str | Path, *, locale: str = "pl") -> dict[str,
     }
 
 
-def build_operation_step(result: dict[str, Any], *, dry_run: bool) -> dict[str, Any]:
+def _extract_result_context(
+    result: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], str]:
     data = result.get("data") or {}
     execute = data.get("execute") or {}
     action = data.get("action") or execute.get("action") or {}
     message = str(
         execute.get("message") or result.get("output") or result.get("error") or ""
     ).strip()
+    return data, execute, action, message
 
+
+def build_operation_step(result: dict[str, Any], *, dry_run: bool) -> dict[str, Any]:
+    data, execute, action, message = _extract_result_context(result)
     verb = str(result.get("verb") or action.get("action") or "").upper() or None
     executed = bool(execute.get("ok")) and not bool(execute.get("dry_run", dry_run))
     method = str(execute.get("method") or ("dry-run" if dry_run else "none"))
@@ -360,6 +366,25 @@ def _derive_current_next(report: dict[str, Any]) -> tuple[str | None, str | None
     return (None, None)
 
 
+_CAPTURE_PAYLOAD_KEYS = (
+    "verdict", "scene_class", "source", "path", "width", "height",
+    "mtime_iso", "age_seconds", "max_age_seconds", "is_fresh",
+    "worth_analyzing", "is_blank", "recommendation", "summary",
+    "img2nl_available", "error",
+)
+
+_DISPLAY_KEYS = (
+    "display", "os_windows", "vision_windows", "correlation",
+    "target_os_window", "target_vision_window", "recommendations",
+)
+
+
+def _capture_payload_section(capture: dict[str, Any]) -> dict[str, Any] | None:
+    if not (capture.get("path") or capture.get("verdict")):
+        return None
+    return {k: capture[k] for k in _CAPTURE_PAYLOAD_KEYS if k in capture and capture[k] is not None}
+
+
 def _markdown_payload(report: dict[str, Any]) -> dict[str, Any]:
     """Structure for markdown YAML blocks (no markdown tables)."""
     capture = report.get("capture") or {}
@@ -370,44 +395,16 @@ def _markdown_payload(report: dict[str, Any]) -> dict[str, Any]:
     for key in ("current", "next_cmd", "prompt", "image", "window", "dry_run", "llm_ready"):
         if key in report and report[key] is not None:
             payload[key] = report[key]
-    if capture.get("path") or capture.get("verdict"):
-        payload["zrzut"] = {
-            k: capture[k]
-            for k in (
-                "verdict",
-                "scene_class",
-                "source",
-                "path",
-                "width",
-                "height",
-                "mtime_iso",
-                "age_seconds",
-                "max_age_seconds",
-                "is_fresh",
-                "worth_analyzing",
-                "is_blank",
-                "recommendation",
-                "summary",
-                "img2nl_available",
-                "error",
-            )
-            if k in capture and capture[k] is not None
-        }
+    zrzut = _capture_payload_section(capture)
+    if zrzut is not None:
+        payload["zrzut"] = zrzut
     if report.get("operation"):
         payload["operacja"] = report["operation"]
     if report.get("checks"):
         payload["sprawdzenia"] = report["checks"]
     if report.get("result"):
         payload["wynik"] = report["result"]
-    for key in (
-        "display",
-        "os_windows",
-        "vision_windows",
-        "correlation",
-        "target_os_window",
-        "target_vision_window",
-        "recommendations",
-    ):
+    for key in _DISPLAY_KEYS:
         if report.get(key):
             payload[key] = report[key]
     if report.get("co_zrobic"):
@@ -449,24 +446,28 @@ def _overall_verdict(capture: dict[str, Any], operation: dict[str, Any], *, dry_
     return "uncertain"
 
 
-def _actionable_hints(report: dict[str, Any]) -> list[str]:
-    hints: list[str] = []
-    capture = report.get("capture") or {}
-    operation = report.get("operation") or {}
+def _capture_verdict_hints(capture: dict[str, Any], image: str) -> list[str]:
     verdict = capture.get("verdict")
-    image = str(report.get("image") or capture.get("path") or "screen.png")
-
     if verdict == "stale_capture" or not capture.get("is_fresh", True):
-        hints.append(
+        return [
             f"Zrzut starszy niż {capture.get('max_age_seconds', 60)}s — "
             f"`{_capture_next_cmd(image)}`, potem ponów execute/apply."
-        )
-    elif verdict == "blank_capture":
-        hints.append(f"Zrzut pusty — `{_capture_next_cmd(image)}`.")
-    elif verdict == "flat_monochrome":
-        hints.append(f"Zrzut jednokolorowy — `{_capture_next_cmd(image)}`.")
-    elif verdict == "error":
-        hints.append(f"img2nl: `pip install -e {img2nl_root()}[analyze]`.")
+        ]
+    if verdict == "blank_capture":
+        return [f"Zrzut pusty — `{_capture_next_cmd(image)}`."]
+    if verdict == "flat_monochrome":
+        return [f"Zrzut jednokolorowy — `{_capture_next_cmd(image)}`."]
+    if verdict == "error":
+        return [f"img2nl: `pip install -e {img2nl_root()}[analyze]`."]
+    return []
+
+
+def _actionable_hints(report: dict[str, Any]) -> list[str]:
+    capture = report.get("capture") or {}
+    operation = report.get("operation") or {}
+    image = str(report.get("image") or capture.get("path") or "screen.png")
+
+    hints = _capture_verdict_hints(capture, image)
 
     op_error = str(operation.get("error") or operation.get("message") or "")
     if "element not found" in op_error.lower():

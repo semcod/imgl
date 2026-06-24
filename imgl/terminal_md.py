@@ -142,6 +142,39 @@ def _highlight_inline(text: str) -> str:
     return _INLINE_CODE_RE.sub(code_sub, text)
 
 
+def _render_fence_line(line: str, fence_lang: str) -> str:
+    if fence_lang == "yaml":
+        return _highlight_yaml_line(line)
+    if fence_lang == "bash":
+        return _highlight_bash_line(line)
+    return _c("white", line)
+
+
+def _render_normal_line(line: str) -> str:
+    if line.startswith("# "):
+        return _c("bright_magenta", f"{_BOLD}{line}{_RESET}")
+    if line.startswith("## "):
+        title = line[3:]
+        color = {
+            "Current": "bright_yellow",
+            "Next": "bright_green",
+            "Szczegóły": "bright_cyan",
+        }.get(title, "bright_cyan")
+        return f"{_FG[color]}{_BOLD}## {title}{_RESET}"
+    if line.startswith("**Werdykt:**"):
+        match = _INLINE_CODE_RE.search(line)
+        if match:
+            verdict = match.group(1)
+            colored = _c(_verdict_color(verdict), verdict)
+            prefix = _highlight_inline(line[: match.start()])
+            suffix = line[match.end() :]
+            return f"{prefix}`{colored}`{suffix}"
+        return _highlight_inline(line)
+    if line.startswith("- "):
+        return _c("bright_yellow", "- ") + _highlight_inline(line[2:])
+    return _highlight_inline(line)
+
+
 def colorize_markdown(text: str, *, enabled: bool | None = None) -> str:
     """Add ANSI styling for headers, verdict, and fenced yaml/bash blocks."""
     if enabled is None:
@@ -162,40 +195,10 @@ def colorize_markdown(text: str, *, enabled: bool | None = None) -> str:
             label = fence.group(1) or "code"
             out.append(_c("bright_black", f"```{label}" if in_fence else "```"))
             continue
-
         if in_fence:
-            if fence_lang == "yaml":
-                out.append(_highlight_yaml_line(line))
-            elif fence_lang == "bash":
-                out.append(_highlight_bash_line(line))
-            else:
-                out.append(_c("white", line))
-            continue
-
-        if line.startswith("# "):
-            out.append(_c("bright_magenta", f"{_BOLD}{line}{_RESET}"))
-        elif line.startswith("## "):
-            title = line[3:]
-            color = {
-                "Current": "bright_yellow",
-                "Next": "bright_green",
-                "Szczegóły": "bright_cyan",
-            }.get(title, "bright_cyan")
-            out.append(f"{_FG[color]}{_BOLD}## {title}{_RESET}")
-        elif line.startswith("**Werdykt:**"):
-            match = _INLINE_CODE_RE.search(line)
-            if match:
-                verdict = match.group(1)
-                colored = _c(_verdict_color(verdict), verdict)
-                prefix = _highlight_inline(line[: match.start()])
-                suffix = line[match.end() :]
-                out.append(f"{prefix}`{colored}`{suffix}")
-            else:
-                out.append(_highlight_inline(line))
-        elif line.startswith("- "):
-            out.append(_c("bright_yellow", "- ") + _highlight_inline(line[2:]))
+            out.append(_render_fence_line(line, fence_lang))
         else:
-            out.append(_highlight_inline(line))
+            out.append(_render_normal_line(line))
 
     return "\n".join(out) + ("\n" if text.endswith("\n") else "")
 

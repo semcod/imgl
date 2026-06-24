@@ -175,36 +175,44 @@ def _resolve_click(qs: dict[str, list[str]], finder, session: InteractSession) -
         return {"ok": False, "error": str(exc)}
 
 
-def _resolve_type(qs: dict[str, list[str]], finder, session: InteractSession) -> dict[str, Any]:
-    if not qs.get("value"):
-        element_id = (qs.get("element_id") or [""])[0] or None
-        hint = "type action requires value= (np. wpisz hello w Username)"
-        if element_id:
-            for option in session.catalog:
-                if option.element_id == element_id and option.category == "input":
-                    hint = (
-                        f"Brak value=. Wybierz numer {option.index} aby ustawić fokus, "
-                        f"lub: wpisz TEKST w {option.label!r}"
-                    )
-                    break
-        return {"ok": False, "error": hint}
-    value = qs["value"][0]
-    text = (qs.get("text") or [""])[0] or None
-    label = (qs.get("label") or [""])[0] or None
-    window = (qs.get("window") or [""])[0] or None
+def _resolve_type_no_value(qs: dict[str, list[str]], session: InteractSession) -> dict[str, Any]:
     element_id = (qs.get("element_id") or [""])[0] or None
-
+    hint = "type action requires value= (np. wpisz hello w Username)"
     if element_id:
         for option in session.catalog:
             if option.element_id == element_id and option.category == "input":
-                payload = dict(option.action_payload)
-                payload["action"] = "type"
-                payload["text"] = value
-                return {"ok": True, "uri_action": "type", **_attach_image_path(payload, session)}
+                hint = (
+                    f"Brak value=. Wybierz numer {option.index} aby ustawić fokus, "
+                    f"lub: wpisz TEKST w {option.label!r}"
+                )
+                break
+    return {"ok": False, "error": hint}
 
+
+def _resolve_type_by_element_id(
+    element_id: str,
+    value: str,
+    session: InteractSession,
+) -> dict[str, Any] | None:
+    for option in session.catalog:
+        if option.element_id == element_id and option.category == "input":
+            payload = dict(option.action_payload)
+            payload["action"] = "type"
+            payload["text"] = value
+            return {"ok": True, "uri_action": "type", **_attach_image_path(payload, session)}
+    return None
+
+
+def _resolve_type_by_hints(
+    label: str | None,
+    text: str | None,
+    value: str,
+    session: InteractSession,
+) -> dict[str, Any] | None:
     for hint in (label, text):
         if not hint:
             continue
+        query = hint.casefold()
         for option in session.catalog:
             if option.category != "input":
                 continue
@@ -212,12 +220,31 @@ def _resolve_type(qs: dict[str, list[str]], finder, session: InteractSession) ->
                 if not candidate:
                     continue
                 cand = candidate.casefold()
-                query = hint.casefold()
                 if query == cand or query in cand or cand in query:
                     payload = dict(option.action_payload)
                     payload["action"] = "type"
                     payload["text"] = value
                     return {"ok": True, "uri_action": "type", **_attach_image_path(payload, session)}
+    return None
+
+
+def _resolve_type(qs: dict[str, list[str]], finder, session: InteractSession) -> dict[str, Any]:
+    if not qs.get("value"):
+        return _resolve_type_no_value(qs, session)
+    value = qs["value"][0]
+    text = (qs.get("text") or [""])[0] or None
+    label = (qs.get("label") or [""])[0] or None
+    window = (qs.get("window") or [""])[0] or None
+    element_id = (qs.get("element_id") or [""])[0] or None
+
+    if element_id:
+        result = _resolve_type_by_element_id(element_id, value, session)
+        if result:
+            return result
+
+    result = _resolve_type_by_hints(label, text, value, session)
+    if result:
+        return result
 
     try:
         payload = finder.type_into(value, label=label, text=text, window=window)

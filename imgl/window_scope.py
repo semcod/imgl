@@ -519,6 +519,26 @@ def _element_gap_gutters(window_bbox: BBox, elements: list[Element]) -> list[tup
     return gutters
 
 
+def _score_gutter_candidate(
+    gutter_start: int,
+    gutter_end: int,
+    elements: list[Element],
+    y0: int,
+    y1: int,
+    min_region: int,
+) -> float | None:
+    above = sum(1 for e in elements if e.bbox.y + e.bbox.h // 2 < gutter_start)
+    below = sum(1 for e in elements if e.bbox.y + e.bbox.h // 2 > gutter_end)
+    if above < 8 or below < 8:
+        return None
+    balance = min(above, below) / max(above, below)
+    if balance < 0.18:
+        return None
+    if gutter_start - y0 < min_region or y1 - gutter_end < min_region:
+        return None
+    return balance
+
+
 def _regions_from_balanced_gutters(
     window_bbox: BBox,
     elements: list[Element],
@@ -533,24 +553,9 @@ def _regions_from_balanced_gutters(
 
     scored: list[tuple[float, tuple[int, int, int]]] = []
     for gutter_start, gutter_end, _ in candidates:
-        above = sum(
-            1
-            for element in elements
-            if element.bbox.y + element.bbox.h // 2 < gutter_start
-        )
-        below = sum(
-            1
-            for element in elements
-            if element.bbox.y + element.bbox.h // 2 > gutter_end
-        )
-        if above < 8 or below < 8:
-            continue
-        balance = min(above, below) / max(above, below)
-        if balance < 0.18:
-            continue
-        if gutter_start - y0 < min_region or y1 - gutter_end < min_region:
-            continue
-        scored.append((balance, (gutter_start, gutter_end, gutter_end - gutter_start)))
+        balance = _score_gutter_candidate(gutter_start, gutter_end, elements, y0, y1, min_region)
+        if balance is not None:
+            scored.append((balance, (gutter_start, gutter_end, gutter_end - gutter_start)))
 
     if not scored:
         return []

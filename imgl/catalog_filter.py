@@ -76,6 +76,26 @@ def _replace_index_in_uri(uri: str, _index: int) -> str:
     return uri
 
 
+def _text_quality_check(
+    text: str,
+    element_id: str,
+    category: str,
+    max_button_chars: int,
+) -> bool:
+    if not text or text == element_id:
+        return False
+    if _SYMBOL_HEAVY_RE.match(text):
+        return False
+    if _CODE_RE.search(text):
+        return False
+    if category == "button" and len(text) > max_button_chars:
+        return False
+    if category == "input" and len(text) > 80:
+        return False
+    alpha = sum(ch.isalnum() for ch in text)
+    return alpha >= max(2, len(text) // 4)
+
+
 def _keep_element(
     option: InteractiveOption,
     *,
@@ -91,26 +111,7 @@ def _keep_element(
     if _GENERIC_ID_RE.match(text) or _GENERIC_ID_RE.match(option.label):
         return False
 
-    if not text or text == option.element_id:
-        return False
-
-    if _SYMBOL_HEAVY_RE.match(text):
-        return False
-
-    if _CODE_RE.search(text):
-        return False
-
-    if option.category == "button" and len(text) > max_button_chars:
-        return False
-
-    if option.category == "input" and len(text) > 80:
-        return False
-
-    alpha = sum(ch.isalnum() for ch in text)
-    if alpha < max(2, len(text) // 4):
-        return False
-
-    return True
+    return _text_quality_check(text, option.element_id, option.category, max_button_chars)
 
 
 def _element_score(option: InteractiveOption) -> float:

@@ -144,23 +144,8 @@ def capture_screen(
         if _try_portal_backends(path, allow_blank=allow_blank, errors=errors):
             return path
 
-    for name, runner in _non_portal_backends():
-        try:
-            result = runner(path)
-            if isinstance(result, tuple):
-                ok, detail = result
-            else:
-                ok, detail = bool(result), ""
-            if ok:
-                if allow_blank or not _is_blank_image(path):
-                    _finalize_capture(path, {"method": name})
-                    return path
-                _discard_capture_file(path)
-                errors.append(f"{name}: captured but image is blank")
-                continue
-            errors.append(f"{name}: {detail or 'command failed'}")
-        except Exception as exc:
-            errors.append(f"{name}: {exc}")
+    if _try_backend_list(path, _non_portal_backends(), allow_blank=allow_blank, errors=errors):
+        return path
 
     if not _is_wayland():
         try:
@@ -331,15 +316,17 @@ def _portal_backends() -> list[tuple[str, callable]]:
     ]
 
 
-def _try_portal_backends(path: Path, *, allow_blank: bool, errors: list[str]) -> bool:
-    global _last_capture_meta
-    for name, runner in _portal_backends():
+def _try_backend_list(
+    path: Path,
+    backends: list,
+    *,
+    allow_blank: bool,
+    errors: list[str],
+) -> bool:
+    for name, runner in backends:
         try:
             result = runner(path)
-            if isinstance(result, tuple):
-                ok, detail = result
-            else:
-                ok, detail = bool(result), ""
+            ok, detail = result if isinstance(result, tuple) else (bool(result), "")
             if ok:
                 if allow_blank or not _is_blank_image(path):
                     _finalize_capture(path, {"method": name})
@@ -351,6 +338,10 @@ def _try_portal_backends(path: Path, *, allow_blank: bool, errors: list[str]) ->
         except Exception as exc:
             errors.append(f"{name}: {exc}")
     return False
+
+
+def _try_portal_backends(path: Path, *, allow_blank: bool, errors: list[str]) -> bool:
+    return _try_backend_list(path, _portal_backends(), allow_blank=allow_blank, errors=errors)
 
 
 def _run_command(cmd: list[str], path: Path, *, timeout: int = 20) -> bool:

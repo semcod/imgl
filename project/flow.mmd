@@ -26,7 +26,6 @@ flowchart TD
     subgraph Core
         packages__rest2imgl__src__rest2imgl__cli__main["main"]
         packages__uri2imgl__src__uri2imgl__cli__main["main"]
-        packages__uri2imgl__src__uri2imgl__decode__uri_to_dsl{{uri_to_dsl CC=18}}
         packages__mcp2imgl__src__mcp2imgl__cli__main["main"]
         packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl["execute_dsl"]
         packages__dsl2imgl__src__dsl2imgl__bus__dispatch_json["dispatch_json"]
@@ -39,7 +38,8 @@ flowchart TD
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay_pb["replay_pb"]
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay["replay"]
         packages__dsl2imgl__src__dsl2imgl__pb_codec___set_capture_body["_set_capture_body"]
-        ...["+154 more"]
+        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_analyze_body["_set_analyze_body"]
+        ...["+149 more"]
     end
 
     subgraph Exporters

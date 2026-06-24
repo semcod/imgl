@@ -1,4 +1,4 @@
-# code2llm/evolution | 551 func | 73f | 2026-06-24
+# code2llm/evolution | 568 func | 73f | 2026-06-24
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
@@ -6,41 +6,41 @@ NEXT[10] (ranked by impact):
       WHY: CC=25 exceeds 15
       EFFORT: ~1h  IMPACT: 700
 
-  [2] !! SPLIT-FUNC      prompt_to_imgl_uri  CC=28  fan=24
-      WHY: CC=28 exceeds 15
-      EFFORT: ~1h  IMPACT: 672
-
-  [3] !! SPLIT-FUNC      capture_screen  CC=26  fan=21
-      WHY: CC=26 exceeds 15
-      EFFORT: ~1h  IMPACT: 546
-
-  [4] !! SPLIT-FUNC      classify_scene_elements  CC=27  fan=17
+  [2] !! SPLIT-FUNC      classify_scene_elements  CC=27  fan=17
       WHY: CC=27 exceeds 15
       EFFORT: ~1h  IMPACT: 459
 
-  [5] !  SPLIT-FUNC      build_window_control_report  CC=19  fan=24
+  [3] !  SPLIT-FUNC      build_window_control_report  CC=19  fan=24
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 456
 
-  [6] !! SPLIT-FUNC      WebSession.act  CC=29  fan=15
+  [4] !! SPLIT-FUNC      WebSession.act  CC=29  fan=15
       WHY: CC=29 exceeds 15
       EFFORT: ~1h  IMPACT: 435
 
-  [7] !  SPLIT-FUNC      _detect_panels_simple  CC=23  fan=16
+  [5] !  SPLIT-FUNC      capture_screen  CC=20  fan=19
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 380
+
+  [6] !  SPLIT-FUNC      _detect_panels_simple  CC=23  fan=16
       WHY: CC=23 exceeds 15
       EFFORT: ~1h  IMPACT: 368
 
-  [8] !  SPLIT-FUNC      colorize_markdown  CC=18  fan=20
-      WHY: CC=18 exceeds 15
-      EFFORT: ~1h  IMPACT: 360
-
-  [9] !  SPLIT-FUNC      scene_to_vql  CC=19  fan=18
+  [7] !  SPLIT-FUNC      scene_to_vql  CC=19  fan=18
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 342
 
-  [10] !! SPLIT-FUNC      scene_to_actuation_layers  CC=33  fan=10
+  [8] !! SPLIT-FUNC      scene_to_actuation_layers  CC=33  fan=10
       WHY: CC=33 exceeds 15
       EFFORT: ~1h  IMPACT: 330
+
+  [9] !  SPLIT-FUNC      capture_interactive  CC=16  fan=20
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 320
+
+  [10] !  SPLIT-FUNC      pick_agent_action  CC=20  fan=15
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 300
 
 
 RISKS[3]:
@@ -49,10 +49,10 @@ RISKS[3]:
   ⚠ Splitting screen.vql.imgl.json may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          4.8 → ≤3.4
+  CC̄:          4.7 → ≤3.3
   max-CC:      33 → ≤16
   god-modules: 11 → 0
-  high-CC(≥15): 30 → ≤15
+  high-CC(≥15): 21 → ≤10
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=5.0 → now CC̄=4.8
+  prev CC̄=4.8 → now CC̄=4.7

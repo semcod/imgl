@@ -125,60 +125,11 @@ def prompt_to_imgl_uri(
 
     click_match = _CLICK_RE.search(text)
     if click_match:
-        target_text = click_match.group(2).strip().strip('"\'')
-        payload = None
-        option_index = None
-        if catalog:
-            matched = _find_catalog_by_text(catalog, target_text)
-            if matched:
-                payload = matched.action_payload
-                option_index = matched.index
-                return ResolvedImglUri(
-                    uri=matched.action_uri,
-                    confidence=0.93,
-                    match_reason="catalog:text",
-                    action_payload=payload,
-                    option_index=option_index,
-                )
-        return ResolvedImglUri(
-            uri=uri_for_imgl_click(
-                image=image,
-                file=file,
-                text=target_text,
-                lang=lang,
-            ),
-            confidence=0.8,
-            match_reason="click",
-            action_payload=payload,
-            option_index=option_index,
-        )
+        return _resolve_click_intent(click_match, catalog, image=image, file=file, lang=lang)
 
     type_match = _TYPE_RE.match(text) or _TYPE_EN_RE.match(text)
     if type_match:
-        value = type_match.group(1).strip()
-        field_hint = (type_match.group(2) or "").strip() or None
-        matched_input = _find_catalog_input(catalog, field_hint) if catalog and field_hint else None
-        payload = None
-        if matched_input:
-            payload = dict(matched_input.action_payload)
-            payload["action"] = "type"
-            payload["text"] = value
-        return ResolvedImglUri(
-            uri=uri_for_imgl_type(
-                image=image,
-                file=file,
-                value=value,
-                label=field_hint,
-                text=matched_input.label if matched_input else None,
-                element_id=matched_input.element_id if matched_input else None,
-                window=matched_input.window_id if matched_input else None,
-                lang=lang,
-            ),
-            confidence=0.95 if matched_input else (0.92 if field_hint else 0.75),
-            match_reason="type",
-            action_payload=payload,
-            option_index=matched_input.index if matched_input else None,
-        )
+        return _resolve_type_intent(type_match, catalog, image=image, file=file, lang=lang)
 
     if catalog:
         fuzzy = _find_catalog_by_text(catalog, text)
@@ -196,6 +147,66 @@ def prompt_to_imgl_uri(
         image=image,
         file=file,
         lang=lang,
+    )
+
+
+def _resolve_click_intent(
+    click_match,
+    catalog: list[InteractiveOption] | None,
+    *,
+    image: str,
+    file: str,
+    lang: str,
+) -> ResolvedImglUri:
+    target_text = click_match.group(2).strip().strip('"\'')
+    if catalog:
+        matched = _find_catalog_by_text(catalog, target_text)
+        if matched:
+            return ResolvedImglUri(
+                uri=matched.action_uri,
+                confidence=0.93,
+                match_reason="catalog:text",
+                action_payload=matched.action_payload,
+                option_index=matched.index,
+            )
+    return ResolvedImglUri(
+        uri=uri_for_imgl_click(image=image, file=file, text=target_text, lang=lang),
+        confidence=0.8,
+        match_reason="click",
+    )
+
+
+def _resolve_type_intent(
+    type_match,
+    catalog: list[InteractiveOption] | None,
+    *,
+    image: str,
+    file: str,
+    lang: str,
+) -> ResolvedImglUri:
+    value = type_match.group(1).strip()
+    field_hint = (type_match.group(2) or "").strip() or None
+    matched_input = _find_catalog_input(catalog, field_hint) if catalog and field_hint else None
+    payload = None
+    if matched_input:
+        payload = dict(matched_input.action_payload)
+        payload["action"] = "type"
+        payload["text"] = value
+    return ResolvedImglUri(
+        uri=uri_for_imgl_type(
+            image=image,
+            file=file,
+            value=value,
+            label=field_hint,
+            text=matched_input.label if matched_input else None,
+            element_id=matched_input.element_id if matched_input else None,
+            window=matched_input.window_id if matched_input else None,
+            lang=lang,
+        ),
+        confidence=0.95 if matched_input else (0.92 if field_hint else 0.75),
+        match_reason="type",
+        action_payload=payload,
+        option_index=matched_input.index if matched_input else None,
     )
 
 

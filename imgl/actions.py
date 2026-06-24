@@ -100,22 +100,32 @@ class SceneActions:
             targets.append(ActionTarget(element=element, window=win))
 
         if label is not None and element_type in {None, "input"}:
-            from imgl.catalog import _infer_input_label
-
-            for win, element in _iter_elements(self.scene, window=window):
-                if element.type != "input":
-                    continue
-                if any(target.element.id == element.id for target in targets):
-                    continue
-                matched_label = _find_label_for_input(self.scene, element, win)
-                if matched_label and _text_matches(matched_label.text, label, contains=contains):
-                    targets.append(ActionTarget(element=element, window=win))
-                    continue
-                inferred = _infer_input_label(element, win)
-                if _text_matches(inferred, label, contains=contains):
-                    targets.append(ActionTarget(element=element, window=win))
+            targets.extend(self._find_labeled_inputs(label, window, targets, contains))
 
         return targets
+
+    def _find_labeled_inputs(
+        self,
+        label: str,
+        window: str | None,
+        existing: list[ActionTarget],
+        contains: bool,
+    ) -> list[ActionTarget]:
+        from imgl.catalog import _infer_input_label
+
+        existing_ids = {t.element.id for t in existing}
+        extra: list[ActionTarget] = []
+        for win, element in _iter_elements(self.scene, window=window):
+            if element.type != "input" or element.id in existing_ids:
+                continue
+            matched_label = _find_label_for_input(self.scene, element, win)
+            if matched_label and _text_matches(matched_label.text, label, contains=contains):
+                extra.append(ActionTarget(element=element, window=win))
+                continue
+            inferred = _infer_input_label(element, win)
+            if _text_matches(inferred, label, contains=contains):
+                extra.append(ActionTarget(element=element, window=win))
+        return extra
 
     def find_one(
         self,

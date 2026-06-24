@@ -2,7 +2,7 @@
 
 app {
   name: imgl;
-  version: 0.7.8;
+  version: 0.7.11;
 }
 
 dependencies {
@@ -30,6 +30,11 @@ interface[type="cli"] {
 }
 interface[type="cli"] page[name="imgl"] {
   entry: imgl.cli:main;
+}
+
+interface[type="web"] {
+  type: spa;
+  framework: static;
 }
 
 workflow[name="venv"] {
