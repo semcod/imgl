@@ -103,36 +103,26 @@ def pick_agent_action(
     if status == "done":
         return {"ok": True, "status": "done", "reason": reason, "raw": parsed}
 
+    return _resolve_act_response(parsed, catalog, reason)
+
+
+def _resolve_act_response(
+    parsed: dict[str, Any],
+    catalog: list[InteractiveOption],
+    reason: str,
+) -> dict[str, Any]:
     index = parsed.get("index")
     try:
         index_int = int(index)
     except (TypeError, ValueError):
         return {"ok": False, "error": f"invalid index: {index}", "status": "done", "raw": parsed}
-
     valid = {opt.index for opt in catalog}
     if index_int not in valid:
-        return {
-            "ok": False,
-            "error": f"index {index_int} not in catalog",
-            "status": "done",
-            "raw": parsed,
-        }
-
+        return {"ok": False, "error": f"index {index_int} not in catalog", "status": "done", "raw": parsed}
     option = next(opt for opt in catalog if opt.index == index_int)
     type_text = str(parsed.get("type_text") or "").strip()
-    if option.category == "input" and type_text:
-        prompt = f"wpisz {type_text} w {option.label or option.text or 'pole'}"
-    else:
-        prompt = str(index_int)
-
-    return {
-        "ok": True,
-        "status": "act",
-        "index": index_int,
-        "prompt": prompt,
-        "reason": reason,
-        "raw": parsed,
-    }
+    prompt = f"wpisz {type_text} w {option.label or option.text or 'pole'}" if option.category == "input" and type_text else str(index_int)
+    return {"ok": True, "status": "act", "index": index_int, "prompt": prompt, "reason": reason, "raw": parsed}
 
 
 def _parse_agent_json(raw: str) -> dict[str, Any] | None:

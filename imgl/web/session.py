@@ -198,6 +198,41 @@ class WebSession:
     def resolve_index(self, index: int) -> tuple[ResolvedImglUri | None, dict[str, Any] | None]:
         return self.resolve_prompt(str(index))
 
+    def _fail_act(
+        self,
+        mode: str,
+        prompt: str | None,
+        index: int | None,
+        uri: str | None,
+        message: str,
+    ) -> StepRecord:
+        record = self._step_record(
+            mode=mode, prompt=prompt, action_index=index,
+            uri=uri, action=None, execute=None, ok=False, message=message,
+        )
+        self.history.append(record)
+        return record
+
+    def _execute_and_recapture(
+        self,
+        action_payload: dict[str, Any],
+        do_execute: bool,
+        should_recapture: bool,
+    ) -> tuple[ExecuteResult | None, str]:
+        if action_payload.get("action") not in {"click", "type"}:
+            return None, "dry-run"
+        exec_result = execute_action(action_payload, dry_run=not do_execute)
+        message = exec_result.message
+        if do_execute and exec_result.ok and should_recapture:
+            time.sleep(self.settings.post_action_delay_s)
+            try:
+                self.capture(interactive=False)
+                message = f"{exec_result.message}; odświeżono zrzut"
+            except Exception as exc:
+                message = f"{exec_result.message}; capture failed: {exc}"
+                self.last_error = str(exc)
+        return exec_result, message
+
     def act(
         self,
         *,
@@ -219,32 +254,16 @@ class WebSession:
         elif prompt:
             resolved, result = self.resolve_prompt(prompt)
         else:
-            record = self._step_record(
-                mode=mode,
-                prompt=prompt,
-                action_index=index,
-                uri=None,
-                action=None,
-                execute=None,
-                ok=False,
-                message="Brak index lub prompt",
-            )
-            self.history.append(record)
-            return record
+            return self._fail_act(mode, prompt, index, None, "Brak index lub prompt")
 
         if resolved is None or result is None:
-            record = self._step_record(
-                mode=mode,
-                prompt=prompt,
-                action_index=index,
-                uri=None,
-                action=None,
-                execute=None,
-                ok=False,
-                message=(result or {}).get("error", "Nie rozpoznano akcji"),
+            return self._fail_act(
+                mode, prompt, index, None,
+                (result or {}).get("error", "Nie rozpoznano akcji"),
             )
-            self.history.append(record)
-            return record
+
+        prompt_str = prompt or (str(index) if index is not None else None)
+        action_idx = index or resolved.option_index
 
         if result.get("action") in {"list", "annotate", "analyze", "quit"}:
             if result.get("action") == "list":
@@ -252,56 +271,25 @@ class WebSession:
             elif result.get("action") == "analyze":
                 self.analyze(refresh=True)
             record = self._step_record(
-                mode=mode,
-                prompt=prompt or (str(index) if index is not None else None),
-                action_index=index or resolved.option_index,
-                uri=resolved.uri,
-                action=result,
-                execute=None,
-                ok=bool(result.get("ok")),
-                message=str(result.get("action")),
+                mode=mode, prompt=prompt_str, action_index=action_idx,
+                uri=resolved.uri, action=result, execute=None,
+                ok=bool(result.get("ok")), message=str(result.get("action")),
             )
             self.history.append(record)
             return record
 
         if not result.get("ok"):
-            record = self._step_record(
-                mode=mode,
-                prompt=prompt or (str(index) if index is not None else None),
-                action_index=index or resolved.option_index,
-                uri=resolved.uri,
-                action=None,
-                execute=None,
-                ok=False,
-                message=str(result.get("error", "unknown")),
+            return self._fail_act(
+                mode, prompt_str, action_idx, resolved.uri,
+                str(result.get("error", "unknown")),
             )
-            self.history.append(record)
-            return record
 
         action_payload = {k: v for k, v in result.items() if k not in {"ok", "uri_action"}}
-        exec_result: ExecuteResult | None = None
-        message = "dry-run"
-        if action_payload.get("action") in {"click", "type"}:
-            exec_result = execute_action(action_payload, dry_run=not do_execute)
-            message = exec_result.message
-            if do_execute and exec_result.ok and should_recapture:
-                time.sleep(self.settings.post_action_delay_s)
-                try:
-                    self.capture(interactive=False)
-                    message = f"{exec_result.message}; odświeżono zrzut"
-                except Exception as exc:
-                    message = f"{exec_result.message}; capture failed: {exc}"
-                    self.last_error = str(exc)
-
+        exec_result, message = self._execute_and_recapture(action_payload, do_execute, should_recapture)
         record = self._step_record(
-            mode=mode,
-            prompt=prompt or (str(index) if index is not None else None),
-            action_index=index or resolved.option_index,
-            uri=resolved.uri,
-            action=action_payload,
-            execute=exec_result,
-            ok=exec_result.ok if exec_result else True,
-            message=message,
+            mode=mode, prompt=prompt_str, action_index=action_idx,
+            uri=resolved.uri, action=action_payload, execute=exec_result,
+            ok=exec_result.ok if exec_result else True, message=message,
         )
         self.history.append(record)
         return record

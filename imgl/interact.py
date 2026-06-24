@@ -143,6 +143,21 @@ def _attach_image_path(payload: dict[str, Any], session: InteractSession) -> dic
     return enriched
 
 
+def _click_by_element_id(element_id: str, session: InteractSession) -> dict[str, Any] | None:
+    for option in session.catalog:
+        if option.element_id != element_id:
+            continue
+        payload = dict(option.action_payload)
+        payload["action"] = "click"
+        if option.category == "input":
+            payload["hint"] = (
+                f"Pole input — fokus. Wpisz tekst: "
+                f"wpisz WARTOŚĆ w {option.label!r}"
+            )
+        return {"ok": True, "uri_action": "click", **_attach_image_path(payload, session)}
+    return None
+
+
 def _resolve_click(qs: dict[str, list[str]], finder, session: InteractSession) -> dict[str, Any]:
     element_id = (qs.get("element_id") or [""])[0] or None
     text = (qs.get("text") or [""])[0] or None
@@ -151,25 +166,11 @@ def _resolve_click(qs: dict[str, list[str]], finder, session: InteractSession) -
     element_type = (qs.get("element_type") or [""])[0] or None
 
     if element_id:
-        for option in session.catalog:
-            if option.element_id == element_id:
-                payload = dict(option.action_payload)
-                payload["action"] = "click"
-                if option.category == "input":
-                    payload["hint"] = (
-                        f"Pole input — fokus. Wpisz tekst: "
-                        f"wpisz WARTOŚĆ w {option.label!r}"
-                    )
-                return {"ok": True, "uri_action": "click", **_attach_image_path(payload, session)}
-        return {"ok": False, "error": f"element_id not found: {element_id}"}
+        result = _click_by_element_id(element_id, session)
+        return result if result is not None else {"ok": False, "error": f"element_id not found: {element_id}"}
 
     try:
-        payload = finder.click(
-            element_type or None,
-            text=text,
-            label=label,
-            window=window,
-        )
+        payload = finder.click(element_type or None, text=text, label=label, window=window)
         return {"ok": True, "uri_action": "click", **_attach_image_path(payload, session)}
     except ElementNotFoundError as exc:
         return {"ok": False, "error": str(exc)}
@@ -559,6 +560,35 @@ def run_interactive_shell(
         stderr=stderr,
     )
 
+    return _run_shell_loop(
+        session=session,
+        image=image,
+        vql_path=vql_path,
+        lang=lang,
+        cfg=cfg,
+        execute=execute,
+        use_llm=use_llm,
+        no_filter=no_filter,
+        stdin=stdin,
+        stdout=stdout,
+        stderr=stderr,
+    )
+
+
+def _run_shell_loop(
+    *,
+    session: InteractSession,
+    image: str,
+    vql_path: str,
+    lang: str,
+    cfg: ImglConfig,
+    execute: bool,
+    use_llm: bool,
+    no_filter: bool,
+    stdin: TextIO,
+    stdout: TextIO,
+    stderr: TextIO,
+) -> int:
     while True:
         prompt = _read_shell_prompt(stdin, stderr)
         if prompt is None:

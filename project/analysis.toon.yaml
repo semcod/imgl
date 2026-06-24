@@ -1,40 +1,30 @@
-# code2llm | 126f 142247L | python:88,json:14,yaml:7,toml:7,shell:7,proto:2 | 2026-06-24
+# code2llm | 126f 142316L | python:88,json:14,yaml:7,toml:7,shell:7,proto:2 | 2026-06-25
 # generated in 0.04s
-# CC̅=4.7 | critical:21/569 | dups:0 | cycles:0
+# CC̅=4.6 | critical:10/591 | dups:0 | cycles:0
 
-HEALTH[20]:
-  🟡 CC    to_dsl CC=15 (limit:15)
-  🟡 CC    smart_capture CC=25 (limit:15)
-  🟡 CC    capture_interactive CC=16 (limit:15)
-  🟡 CC    correlate_windows CC=18 (limit:15)
-  🟡 CC    build_window_control_report CC=19 (limit:15)
-  🟡 CC    normalize_actuation_element CC=15 (limit:15)
-  🟡 CC    resolve_editor_target CC=18 (limit:15)
-  🟡 CC    scene_to_vql CC=19 (limit:15)
-  🟡 CC    scene_to_actuation_layers CC=33 (limit:15)
-  🟡 CC    _detect_panels_simple CC=23 (limit:15)
-  🟡 CC    act CC=29 (limit:15)
-  🟡 CC    pick_agent_action CC=20 (limit:15)
-  🟡 CC    classify_scene_elements CC=27 (limit:15)
+HEALTH[10]:
   🟡 CC    apply_nl_with_diag CC=17 (limit:15)
-  🟡 CC    diagnose_capture CC=16 (limit:15)
-  🟡 CC    _derive_current_next CC=23 (limit:15)
+  🟡 CC    _derive_current_next CC=19 (limit:15)
   🟡 CC    prompt_to_imgl_uri CC=15 (limit:15)
-  🟡 CC    _resolve_click CC=17 (limit:15)
-  🟡 CC    run_interactive_shell CC=15 (limit:15)
-  🟡 CC    capture_screen CC=20 (limit:15)
+  🟡 CC    _resolve_click CC=15 (limit:15)
+  🟡 CC    scene_to_vql CC=16 (limit:15)
+  🟡 CC    scene_to_actuation_layers CC=15 (limit:15)
+  🟡 CC    act CC=18 (limit:15)
+  🟡 CC    _process_window_elements CC=17 (limit:15)
+  🟡 CC    capture_screen CC=16 (limit:15)
+  🟡 CC    smart_capture CC=17 (limit:15)
 
 REFACTOR[1]:
-  1. split 20 high-CC methods  (CC>15)
+  1. split 10 high-CC methods  (CC>15)
 
-PIPELINES[133]:
-  [1] Src [main]: main → create_app → apply_nl → to_dsl → ...(3 more)
+PIPELINES[135]:
+  [1] Src [main]: main → create_app → apply_nl → to_dsl → ...(1 more)
       PURITY: 100% pure
   [2] Src [main]: main → dispatch → _run_handler
       PURITY: 100% pure
   [3] Src [main]: main → uri_to_dsl → _dsl_click
       PURITY: 100% pure
-  [4] Src [main]: main → run_stdio → to_dsl → use_llm_enabled → ...(2 more)
+  [4] Src [main]: main → run_stdio → to_dsl → _dispatch_dsl_command
       PURITY: 100% pure
   [5] Src [execute_dsl]: execute_dsl → execute_dsl_line → dispatch → _run_handler
       PURITY: 100% pure
@@ -137,37 +127,37 @@ LAYERS:
   │ demo-github.sh              22L  0C    0m  CC=0.0    ←0
   │ img2nl-vql-flow.sh          10L  0C    0m  CC=0.0    ←0
   │
-  imgl/                           CC̄=5.0    ←in:70  →out:34  !! split
+  imgl/                           CC̄=4.8    ←in:69  →out:39  !! split
   │ !! cli                       1003L  0C   26m  CC=13     ←0
+  │ !! interact                   722L  1C   22m  CC=15     ←4
   │ !! window_scope               703L  1C   30m  CC=14     ←10
-  │ !! interact                   692L  1C   20m  CC=17     ←4
-  │ !! capture                    550L  2C   29m  CC=20     ←4
-  │ !! autodiag                   544L  0C   32m  CC=23     ←5
+  │ !! capture                    565L  2C   31m  CC=16     ←4
+  │ !! autodiag                   549L  0C   34m  CC=19     ←5
   │ !! llm_catalog                521L  0C   16m  CC=14     ←4
-  │ !! session                    452L  5C   18m  CC=29     ←0
-  │ !! local                      374L  1C   20m  CC=23     ←0
-  │ !! vql_adapter                362L  0C   13m  CC=19     ←4
-  │ !! control                    357L  0C   16m  CC=25     ←2
+  │ !! session                    440L  5C   20m  CC=18     ←0
+  │ local                      381L  1C   21m  CC=14     ←0
+  │ !! vql_adapter                366L  0C   14m  CC=16     ←4
+  │ !! control                    355L  0C   19m  CC=17     ←1
   │ annotate_export            299L  0C   14m  CC=8      ←3
   │ !! nlp2uri                    293L  1C    8m  CC=15     ←4
   │ app                        286L  6C    1m  CC=4      ←0
   │ actions                    281L  4C   17m  CC=14     ←3
   │ vision_ops                 277L  2C    9m  CC=11     ←0
-  │ !! targets                    262L  0C   13m  CC=18     ←0
-  │ !! gui_heuristics             261L  0C    9m  CC=27     ←1
+  │ targets                    271L  0C   15m  CC=13     ←0
+  │ vdisplay_bridge            267L  0C   14m  CC=12     ←3
+  │ !! gui_heuristics             266L  0C   10m  CC=17     ←1
   │ catalog_heuristic          256L  0C    6m  CC=13     ←2
-  │ !! vdisplay_bridge            253L  0C   12m  CC=19     ←3
   │ diagnose                   247L  1C   10m  CC=10     ←5
   │ terminal_md                213L  0C   11m  CC=11     ←2
   │ execute                    205L  1C    8m  CC=13     ←3
   │ types                      170L  5C   10m  CC=5      ←0
-  │ !! agent                      152L  0C    4m  CC=20     ←1
   │ freshness                  151L  0C    9m  CC=5      ←3
   │ html_export                149L  0C    7m  CC=8      ←1
+  │ agent                      142L  0C    5m  CC=11     ←1
   │ catalog_filter             139L  0C    7m  CC=10     ←2
   │ svg_export                 137L  0C    7m  CC=4      ←1
   │ installs                   125L  0C    9m  CC=5      ←4
-  │ !! actuation_layers           122L  0C    5m  CC=33     ←1
+  │ !! actuation_layers           122L  0C    7m  CC=15     ←1
   │ pipeline                   119L  0C    3m  CC=11     ←5
   │ uri                        118L  0C    7m  CC=5      ←4
   │ capture_provenance         114L  0C    5m  CC=10     ←3
@@ -202,10 +192,10 @@ LAYERS:
   │ runtime                    234L  0C    8m  CC=14     ←0
   │ grammar                    190L  0C   16m  CC=10     ←3
   │ events                     168L  2C    8m  CC=6      ←0
-  │ !! control                    150L  0C    6m  CC=17     ←3
+  │ !! control                    150L  0C    6m  CC=17     ←4
   │ app                        125L  2C    1m  CC=1      ←2
   │ bus                        110L  0C    5m  CC=10     ←6
-  │ !! to_dsl                      99L  0C    3m  CC=15     ←5
+  │ to_dsl                     103L  0C    4m  CC=11     ←5
   │ command.proto               83L  0C    0m  CC=0.0    ←0
   │ cli_commands                71L  0C    5m  CC=6      ←1
   │ codec                       57L  0C    7m  CC=2      ←1
@@ -269,9 +259,9 @@ LAYERS:
 
 COUPLING:
                                     imgl         imgl.export   packages.nlp2imgl   packages.dsl2imgl            imgl.web       imgl.classify  packages.rest2imgl         imgl.detect    examples.scripts   packages.cli2imgl   packages.mcp2imgl   packages.uri2imgl
-                imgl                  ──                  28                   2                 ←11                 ←14                   1                   1                   2                  ←5                                                              hub
+                imgl                  ──                  28                   7                 ←11                 ←14                   1                   1                   2                  ←5                                                              hub
          imgl.export                   7                  ──                                      ←1                  ←2                                                                                                                                              hub
-   packages.nlp2imgl                  18                                      ──                   3                                                          ←5                                                          ←2                  ←2                      hub
+   packages.nlp2imgl                  17                                      ──                   3                                                          ←5                                                          ←2                  ←2                      hub
    packages.dsl2imgl                  11                   1                  ←3                  ──                                                          ←4                                                          ←1                  ←1                  ←1  hub
             imgl.web                  14                   2                                                          ──                                                                                                                                              !! fan-out
        imgl.classify                   9                                                                                                  ──                                                                                                                          !! fan-out
@@ -282,16 +272,16 @@ COUPLING:
    packages.mcp2imgl                                                           2                   1                                                                                                                                          ──                    
    packages.uri2imgl                                                                               1                                                                                                                                                              ──
   CYCLES: none
-  HUB: imgl/ (fan-in=70)
-  HUB: packages.nlp2imgl/ (fan-in=11)
+  HUB: packages.nlp2imgl/ (fan-in=16)
   HUB: imgl.export/ (fan-in=31)
+  HUB: imgl/ (fan-in=69)
   HUB: packages.dsl2imgl/ (fan-in=10)
-  SMELL: imgl.classify/ fan-out=9 → split needed
-  SMELL: imgl/ fan-out=34 → split needed
-  SMELL: packages.nlp2imgl/ fan-out=21 → split needed
   SMELL: packages.rest2imgl/ fan-out=9 → split needed
-  SMELL: packages.dsl2imgl/ fan-out=12 → split needed
+  SMELL: packages.nlp2imgl/ fan-out=20 → split needed
   SMELL: imgl.web/ fan-out=16 → split needed
+  SMELL: imgl/ fan-out=39 → split needed
+  SMELL: packages.dsl2imgl/ fan-out=12 → split needed
+  SMELL: imgl.classify/ fan-out=9 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

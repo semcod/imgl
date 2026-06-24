@@ -124,6 +124,30 @@ def list_vision_windows(image: str | Path) -> list[dict[str, Any]]:
     return payload
 
 
+def _best_vision_match(
+    ox: int, oy: int, ow: int, oh: int,
+    vision_windows: list[dict[str, Any]],
+) -> tuple[dict[str, Any] | None, float]:
+    best: dict[str, Any] | None = None
+    best_iou = 0.0
+    for vis in vision_windows:
+        bbox = vis.get("bbox") or {}
+        vx = int(bbox.get("x") or 0)
+        vy = int(bbox.get("y") or 0)
+        vw = int(bbox.get("w") or bbox.get("width") or 0)
+        vh = int(bbox.get("h") or bbox.get("height") or 0)
+        ix0, iy0 = max(ox, vx), max(oy, vy)
+        ix1, iy1 = min(ox + ow, vx + vw), min(oy + oh, vy + vh)
+        if ix1 <= ix0 or iy1 <= iy0:
+            continue
+        inter = (ix1 - ix0) * (iy1 - iy0)
+        iou = inter / max(1, ow * oh + vw * vh - inter)
+        if iou > best_iou:
+            best_iou = iou
+            best = vis
+    return best, best_iou
+
+
 def correlate_windows(
     os_windows: list[dict[str, Any]],
     vision_windows: list[dict[str, Any]],
@@ -138,44 +162,44 @@ def correlate_windows(
         oy = int(os_win.get("y") or 0)
         ow = int(os_win.get("width") or 0)
         oh = int(os_win.get("height") or 0)
-        best: dict[str, Any] | None = None
-        best_iou = 0.0
-        for vis in vision_windows:
-            bbox = vis.get("bbox") or {}
-            vx = int(bbox.get("x") or 0)
-            vy = int(bbox.get("y") or 0)
-            vw = int(bbox.get("w") or bbox.get("width") or 0)
-            vh = int(bbox.get("h") or bbox.get("height") or 0)
-            ix0 = max(ox, vx)
-            iy0 = max(oy, vy)
-            ix1 = min(ox + ow, vx + vw)
-            iy1 = min(oy + oh, vy + vh)
-            if ix1 <= ix0 or iy1 <= iy0:
-                continue
-            inter = (ix1 - ix0) * (iy1 - iy0)
-            union = ow * oh + vw * vh - inter
-            iou = inter / max(1, union)
-            if iou > best_iou:
-                best_iou = iou
-                best = vis
-        rows.append(
-            {
-                "app_label": os_win.get("app_label") or os_win.get("title"),
-                "window_id": os_win.get("window_id"),
-                "os_bbox": {
-                    "x": ox,
-                    "y": oy,
-                    "width": ow,
-                    "height": oh,
-                },
-                "monitor_name": os_win.get("monitor_name"),
-                "nl": os_win.get("nl"),
-                "suggested_imgl_window": suggest_imgl_region(os_win, screen_height=screen_height),
-                "vision_match": best,
-                "vision_iou": round(best_iou, 3),
-            }
-        )
+        best, best_iou = _best_vision_match(ox, oy, ow, oh, vision_windows)
+        rows.append({
+            "app_label": os_win.get("app_label") or os_win.get("title"),
+            "window_id": os_win.get("window_id"),
+            "os_bbox": {"x": ox, "y": oy, "width": ow, "height": oh},
+            "monitor_name": os_win.get("monitor_name"),
+            "nl": os_win.get("nl"),
+            "suggested_imgl_window": suggest_imgl_region(os_win, screen_height=screen_height),
+            "vision_match": best,
+            "vision_iou": round(best_iou, 3),
+        })
     return rows
+
+
+def _build_report_recommendations(
+    *,
+    capture: dict[str, Any],
+    window: str | None,
+    target_os: dict[str, Any] | None,
+    target_vision: dict[str, Any] | None,
+    llm_ready: bool,
+    height: int,
+) -> list[str]:
+    recs: list[str] = []
+    if not llm_ready:
+        recs.append("Ustaw OPENROUTER_API_KEY dla katalogu LLM (OpenRouter).")
+    if not vdisplay_available():
+        recs.append(vdisplay_missing_message())
+    if capture.get("verdict") == "stale_capture":
+        recs.append("Zrób świeży zrzut: imgl capture --interactive -o screen.png --verify")
+    if target_os and not target_vision:
+        recs.append(
+            f"Okno OS '{target_os.get('app_label')}' — użyj IMGL_WINDOW="
+            f"{suggest_imgl_region(target_os, screen_height=height or 1600)} lub --llm."
+        )
+    if window and not target_os and not target_vision:
+        recs.append(f"Nie znaleziono okna '{window}' — sprawdź: make windows")
+    return recs
 
 
 def build_window_control_report(
@@ -207,20 +231,10 @@ def build_window_control_report(
     target_vision = next((item for item in vision_windows if item.get("id") == window), None)
 
     llm_ready = bool(os.environ.get("OPENROUTER_API_KEY", "").strip())
-    recommendations: list[str] = []
-    if not llm_ready:
-        recommendations.append("Ustaw OPENROUTER_API_KEY dla katalogu LLM (OpenRouter).")
-    if not vdisplay_available():
-        recommendations.append(vdisplay_missing_message())
-    if capture.get("verdict") == "stale_capture":
-        recommendations.append("Zrób świeży zrzut: imgl capture --interactive -o screen.png --verify")
-    if target_os and not target_vision:
-        recommendations.append(
-            f"Okno OS '{target_os.get('app_label')}' — użyj IMGL_WINDOW="
-            f"{suggest_imgl_region(target_os, screen_height=height or 1600)} lub --llm."
-        )
-    if window and not target_os and not target_vision:
-        recommendations.append(f"Nie znaleziono okna '{window}' — sprawdź: make windows")
+    recommendations = _build_report_recommendations(
+        capture=capture, window=window, target_os=target_os,
+        target_vision=target_vision, llm_ready=llm_ready, height=height,
+    )
 
     return {
         "verdict": capture.get("verdict"),

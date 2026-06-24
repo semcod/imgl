@@ -51,48 +51,48 @@ def layer_from_bbox(
     return layer
 
 
-def scene_to_actuation_layers(scene: dict[str, Any], *, limit: int = 128) -> list[dict[str, Any]]:
-    """Flatten IMGL scene JSON to click-ready layers for autonomy (vdisplay VQL sidecar)."""
-    layers: list[dict[str, Any]] = []
-    if not isinstance(scene, dict):
-        return layers
+def _element_layer_from_dict(element: dict[str, Any]) -> dict[str, Any] | None:
+    return layer_from_bbox(
+        kind=str(element.get("type") or element.get("role") or "element"),
+        layer_id=str(element.get("id") or ""),
+        text=element.get("text"),
+        bbox=element.get("bbox"),
+        confidence=float(element.get("confidence") or 0.0) or None,
+    )
 
-    for window in scene.get("windows") or []:
+
+def _window_layers(windows: list) -> list[dict[str, Any]]:
+    layers: list[dict[str, Any]] = []
+    for window in windows:
         if not isinstance(window, dict):
             continue
-        window_layer = layer_from_bbox(
+        wl = layer_from_bbox(
             kind="window",
             layer_id=str(window.get("id") or ""),
             text=window.get("title"),
             bbox=window.get("bbox"),
         )
-        if window_layer:
-            layers.append(window_layer)
+        if wl:
+            layers.append(wl)
         for element in window.get("elements") or []:
-            if not isinstance(element, dict):
-                continue
-            item = layer_from_bbox(
-                kind=str(element.get("type") or element.get("role") or "element"),
-                layer_id=str(element.get("id") or ""),
-                text=element.get("text"),
-                bbox=element.get("bbox"),
-                confidence=float(element.get("confidence") or 0.0) or None,
-            )
-            if item:
-                layers.append(item)
+            if isinstance(element, dict):
+                item = _element_layer_from_dict(element)
+                if item:
+                    layers.append(item)
+    return layers
+
+
+def scene_to_actuation_layers(scene: dict[str, Any], *, limit: int = 128) -> list[dict[str, Any]]:
+    """Flatten IMGL scene JSON to click-ready layers for autonomy (vdisplay VQL sidecar)."""
+    if not isinstance(scene, dict):
+        return []
+    layers = _window_layers(scene.get("windows") or [])
 
     for element in scene.get("elements") or []:
-        if not isinstance(element, dict):
-            continue
-        item = layer_from_bbox(
-            kind=str(element.get("role") or element.get("type") or "element"),
-            layer_id=str(element.get("id") or ""),
-            text=element.get("text"),
-            bbox=element.get("bbox"),
-            confidence=float(element.get("confidence") or 0.0) or None,
-        )
-        if item:
-            layers.append(item)
+        if isinstance(element, dict):
+            item = _element_layer_from_dict(element)
+            if item:
+                layers.append(item)
 
     for ocr in scene.get("ocr_boxes") or []:
         if not isinstance(ocr, dict):

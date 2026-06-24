@@ -28,10 +28,9 @@ def _bbox_center_y(bounds: dict[str, Any] | None) -> float:
     return y + (h / 2.0)
 
 
-def normalize_actuation_element(layer: dict[str, Any]) -> dict[str, Any] | None:
-    """Normalize vdisplay sidecar layer or koru ui_element to a common actuation shape."""
-    if not isinstance(layer, dict):
-        return None
+def _parse_layer_fields(
+    layer: dict[str, Any],
+) -> tuple[dict[str, Any], str, dict[str, Any]] | None:
     bounds = layer.get("bounds") or layer.get("bbox") or {}
     if not isinstance(bounds, dict):
         bounds = {}
@@ -41,6 +40,17 @@ def normalize_actuation_element(layer: dict[str, Any]) -> dict[str, Any] | None:
         cc = bbox_center(bounds)
     if not cc:
         return None
+    return bounds, role, cc
+
+
+def normalize_actuation_element(layer: dict[str, Any]) -> dict[str, Any] | None:
+    """Normalize vdisplay sidecar layer or koru ui_element to a common actuation shape."""
+    if not isinstance(layer, dict):
+        return None
+    fields = _parse_layer_fields(layer)
+    if fields is None:
+        return None
+    bounds, role, cc = fields
     return {
         "id": layer.get("id"),
         "role": role,
@@ -195,6 +205,28 @@ def resolve_chat_target(
     }
 
 
+def _find_editor_candidate(els: list[dict[str, Any]]) -> dict[str, Any] | None:
+    cands: list[tuple[dict[str, Any], float]] = []
+    for t in els:
+        if t.get("role") not in ("window", "panel", "canvas"):
+            continue
+        area = bbox_area(t.get("bounds"))
+        loc = str((t.get("metadata") or {}).get("location") or t.get("location") or "").lower()
+        tid = str(t.get("id", "")).lower()
+        if not (t.get("click_center") and area > 50000):
+            continue
+        score = area / 100000.0
+        if "center" in loc:
+            score += 100
+        if "window" in tid or "dp1" in tid or "editor" in tid:
+            score += 200
+        cands.append((t, score))
+    if not cands:
+        return None
+    cands.sort(key=lambda p: -p[1])
+    return cands[0][0]
+
+
 def resolve_editor_target(
     layers: list[dict[str, Any]],
     *,
@@ -205,36 +237,13 @@ def resolve_editor_target(
     els = normalize_actuation_elements(layers)
 
     for t in els:
-        if str(t.get("id", "")) == "window_0" and t.get("role") == "window":
-            cc = t.get("click_center")
-            if cc:
-                return _target_result(
-                    t,
-                    note=f"main editor window from photo VQL ({source})",
-                    source=source,
-                )
+        if str(t.get("id", "")) == "window_0" and t.get("role") == "window" and t.get("click_center"):
+            return _target_result(t, note=f"main editor window from photo VQL ({source})", source=source)
 
-    editor_cands: list[tuple[dict[str, Any], float]] = []
-    for t in els:
-        role = t.get("role")
-        if role not in ("window", "panel", "canvas"):
-            continue
-        area = bbox_area(t.get("bounds"))
-        loc = str((t.get("metadata") or {}).get("location") or t.get("location") or "").lower()
-        cc = t.get("click_center")
-        tid = str(t.get("id", "")).lower()
-        if cc and area > 50000:
-            score = area / 100000.0
-            if "center" in loc:
-                score += 100
-            if "window" in tid or "dp1" in tid or "editor" in tid:
-                score += 200
-            editor_cands.append((t, score))
-    if editor_cands:
-        editor_cands.sort(key=lambda p: -p[1])
-        t, _ = editor_cands[0]
+    candidate = _find_editor_candidate(els)
+    if candidate is not None:
         return _target_result(
-            t,
+            candidate,
             note=f"main editor area from photo VQL (largest/center window or panel; {source})",
             source=source,
         )

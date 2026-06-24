@@ -1,20 +1,20 @@
-# imgl | 569 func | 74f | 142247L | python | 2026-06-24
+# imgl | 591 func | 74f | 142316L | python | 2026-06-25
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.7  critical=78 (limit:10)  dup=0  cycles=0
+  CC̄=4.6  critical=81 (limit:10)  dup=0  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     create_app = 45 (limit:10)
-  !!! cc_exceeded      scene_to_actuation_layers = 33 (limit:15)
-  !!! cc_exceeded      WebSession.act = 29 (limit:15)
-  !!! high_fan_out     smart_capture = 28 (limit:10)
-  !!! cc_exceeded      classify_scene_elements = 27 (limit:15)
-  !!! cc_exceeded      smart_capture = 25 (limit:15)
   !!! high_fan_out     build_parser = 25 (limit:10)
-  !!! high_fan_out     build_window_control_report = 24 (limit:10)
   !!! high_fan_out     create_app = 22 (limit:10)
   !!! high_fan_out     render_match_overlay_png = 21 (limit:10)
+  !!! high_fan_out     analyze = 20 (limit:10)
+  !!! high_fan_out     build_window_control_report = 20 (limit:10)
+  !!! high_fan_out     scene_to_annotated_image = 20 (limit:10)
+  !!  high_fan_out     prompt_to_imgl_uri = 19 (limit:10)
+  !!  high_fan_out     write_window_preview_images = 19 (limit:10)
+  !!  high_fan_out     run_execute = 19 (limit:10)
 
 MODULES[126] (top by size):
   M[layout.vql.json] 63208L C:0 F:0 CC↑0 D:0 (json)
@@ -22,31 +22,31 @@ MODULES[126] (top by size):
   M[screen.vql.imgl.json] 11260L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
   M[imgl/cli.py] 1003L C:0 F:26 CC↑13 D:0 (python)
+  M[imgl/interact.py] 722L C:1 F:22 CC↑15 D:4 (python)
   M[imgl/window_scope.py] 703L C:1 F:30 CC↑14 D:10 (python)
-  M[imgl/interact.py] 692L C:1 F:20 CC↑17 D:4 (python)
-  M[imgl/capture.py] 550L C:2 F:29 CC↑20 D:4 (python)
-  M[imgl/autodiag.py] 544L C:0 F:32 CC↑23 D:5 (python)
+  M[imgl/capture.py] 565L C:2 F:31 CC↑16 D:4 (python)
+  M[imgl/autodiag.py] 549L C:0 F:34 CC↑19 D:5 (python)
   M[goal.yaml] 527L C:0 F:0 CC↑0 D:0 (yaml)
   M[imgl/llm_catalog.py] 521L C:0 F:16 CC↑14 D:4 (python)
-  M[imgl/web/session.py] 452L C:5 F:18 CC↑29 D:0 (python)
-  M[imgl/detect/local.py] 374L C:1 F:20 CC↑23 D:0 (python)
-  M[imgl/export/vql_adapter.py] 362L C:0 F:13 CC↑19 D:4 (python)
-  M[imgl/control.py] 357L C:0 F:16 CC↑25 D:2 (python)
+  M[imgl/web/session.py] 440L C:5 F:20 CC↑18 D:0 (python)
+  M[imgl/detect/local.py] 381L C:1 F:21 CC↑14 D:0 (python)
+  M[imgl/export/vql_adapter.py] 366L C:0 F:14 CC↑16 D:4 (python)
+  M[imgl/control.py] 355L C:0 F:19 CC↑17 D:1 (python)
   LANGS: python:88/json:14/shell:7/yaml:7/toml:7/proto:2/other:1
 
 HOTSPOTS[10]:
   ★ create_app fan=45  // Orchestrates 45 calls
-  ★ smart_capture fan=28  // Capture with cache invalidation and optional vdisplay X11 fallback.
   ★ build_parser fan=25  // Orchestrates 25 calls
-  ★ build_window_control_report fan=24  // Combined diagnosis: capture autodiag + vdisplay + vision windows.
   ★ create_app fan=22  // Orchestrates 22 calls
+  ★ render_match_overlay_png fan=21  // Draw numbered bounding boxes and confidence labels on a screenshot.
+  ★ analyze fan=20  // Analysis pipeline, 20 stages
 
 REFACTOR[15]:
-  [1] H/L Split smart_capture (CC=25)
-  [2] H/L Split scene_to_actuation_layers (CC=33)
-  [3] H/L Split WebSession.act (CC=29)
-  [4] H/L Split classify_scene_elements (CC=27)
-  [5] H/H Split god module imgl/autodiag.py (544L, 0 classes)
+  [1] H/H Split god module imgl/autodiag.py (549L, 0 classes)
+  [2] H/H Split god module imgl/capture.py (565L, 2 classes)
+  [3] H/H Split god module imgl/interact.py (722L, 1 classes)
+  [4] H/H Split god module imgl/llm_catalog.py (521L, 0 classes)
+  [5] H/H Split god module imgl/window_scope.py (703L, 1 classes)
 
 EVOLUTION:
-  2026-06-24 CC̄=4.7 crit=78 142247L // Automated analysis
+  2026-06-25 CC̄=4.6 crit=81 142316L // Automated analysis

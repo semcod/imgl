@@ -27,6 +27,16 @@ _ROLE_STYLES: dict[str, dict[str, Any]] = {
 }
 
 
+def _scene_element_objects(scene: Scene) -> list[dict[str, Any]]:
+    objects: list[dict[str, Any]] = []
+    for window in scene.windows:
+        for element in window.elements:
+            objects.append(_element_to_object(element, scene.width, scene.height))
+    for element in scene.orphan_elements:
+        objects.append(_element_to_object(element, scene.width, scene.height))
+    return objects
+
+
 def scene_to_vql(
     scene: Scene,
     *,
@@ -49,13 +59,7 @@ def scene_to_vql(
     if window_objects:
         layers.append({"id": "windows", "objects": window_objects, "visible": True})
 
-    ui_objects: list[dict[str, Any]] = []
-    for window in scene.windows:
-        for element in window.elements:
-            ui_objects.append(_element_to_object(element, scene.width, scene.height))
-    for element in scene.orphan_elements:
-        ui_objects.append(_element_to_object(element, scene.width, scene.height))
-
+    ui_objects = _scene_element_objects(scene)
     if ui_objects:
         layers.append({"id": "ui_elements", "objects": ui_objects, "visible": True})
 

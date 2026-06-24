@@ -30,6 +30,27 @@ def img2nl_available() -> bool:
     return bool(_avail())
 
 
+_REAL_UI_CLASSES = {"ui_with_text", "ui_blocks", "dense_ui_or_code", "general"}
+
+
+def _classify_verdict(
+    diag: dict[str, Any],
+    is_fresh: bool,
+    scene_class: str,
+    is_blank: bool,
+    worth: bool,
+) -> str:
+    if not is_fresh:
+        return "stale_capture"
+    if not diag.get("ok"):
+        return "error"
+    if is_blank or scene_class in _BLANK_CLASSES:
+        return "blank_capture" if scene_class != "flat_monochrome" else "flat_monochrome"
+    if scene_class in _REAL_UI_CLASSES or worth:
+        return "real_ui"
+    return "uncertain"
+
+
 def diagnose_capture(image_path: str | Path, *, locale: str = "pl") -> dict[str, Any]:
     """Classify screenshot: blank/monochrome vs real UI (via img2nl)."""
     path = Path(image_path).expanduser()
@@ -70,17 +91,7 @@ def diagnose_capture(image_path: str | Path, *, locale: str = "pl") -> dict[str,
     scene_class = str(diag.get("scene_class") or _scene_class(diag))
     worth = worth_analyzing(diag) if diag.get("ok") else False
     is_blank = bool(diag.get("is_blank")) or not worth
-
-    if not fresh.get("is_fresh"):
-        verdict = "stale_capture"
-    elif not diag.get("ok"):
-        verdict = "error"
-    elif is_blank or scene_class in _BLANK_CLASSES:
-        verdict = "blank_capture" if scene_class != "flat_monochrome" else "flat_monochrome"
-    elif scene_class in {"ui_with_text", "ui_blocks", "dense_ui_or_code", "general"} or worth:
-        verdict = "real_ui"
-    else:
-        verdict = "uncertain"
+    verdict = _classify_verdict(diag, bool(fresh.get("is_fresh")), scene_class, is_blank, worth)
 
     summary = content_summary(diag, locale=locale)
     if verdict == "stale_capture":
@@ -314,6 +325,18 @@ def _derive_op_failed(
     )
 
 
+def _capture_verdict_current_next(
+    capture_verdict: str, image: str, capture: dict[str, Any]
+) -> tuple[str, str] | None:
+    if capture_verdict == "blank_capture":
+        return ("Zrzut pusty lub bez treści UI. Zrób interaktywny capture (portal GNOME).", _capture_next_cmd(image))
+    if capture_verdict == "flat_monochrome":
+        return ("Zrzut jednokolorowy — brak widocznego UI. Powtórz capture z widocznym pulpitem.", _capture_next_cmd(image))
+    if capture_verdict == "error" or not capture.get("exists", True):
+        return (f"Brak poprawnego zrzutu ({capture.get('error') or 'plik nie istnieje'}).", _capture_next_cmd(image))
+    return None
+
+
 def _derive_current_next(report: dict[str, Any]) -> tuple[str | None, str | None]:
     """Human status (current) and the single best shell command to run next."""
     capture = report.get("capture") or {}
@@ -325,30 +348,12 @@ def _derive_current_next(report: dict[str, Any]) -> tuple[str | None, str | None
     capture_verdict = str(capture.get("verdict") or "")
     dry_run = bool(report.get("dry_run") or operation.get("dry_run"))
 
-    if (
-        overall == "stale_capture_error"
-        or capture_verdict == "stale_capture"
-        or not capture.get("is_fresh", True)
-    ):
+    if overall == "stale_capture_error" or capture_verdict == "stale_capture" or not capture.get("is_fresh", True):
         return _derive_stale(capture, image)
 
-    if capture_verdict == "blank_capture":
-        return (
-            "Zrzut pusty lub bez treści UI. Zrób interaktywny capture (portal GNOME).",
-            _capture_next_cmd(image),
-        )
-
-    if capture_verdict == "flat_monochrome":
-        return (
-            "Zrzut jednokolorowy — brak widocznego UI. Powtórz capture z widocznym pulpitem.",
-            _capture_next_cmd(image),
-        )
-
-    if capture_verdict == "error" or not capture.get("exists", True):
-        return (
-            f"Brak poprawnego zrzutu ({capture.get('error') or 'plik nie istnieje'}).",
-            _capture_next_cmd(image),
-        )
+    cv_result = _capture_verdict_current_next(capture_verdict, image, capture)
+    if cv_result is not None:
+        return cv_result
 
     if overall == "operation_failed":
         return _derive_op_failed(operation, prompt=prompt, window=window, image=image)

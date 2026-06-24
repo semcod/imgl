@@ -1,12 +1,12 @@
-# redup/duplication | 11 groups | 88f 13438L | 2026-06-24
+# redup/duplication | 11 groups | 88f 13507L | 2026-06-24
 
 SUMMARY:
   files_scanned: 88
-  total_lines:   13438
+  total_lines:   13507
   dup_groups:    11
   dup_fragments: 23
   saved_lines:   86
-  scan_ms:       2900
+  scan_ms:       2568
 
 HOTSPOTS[7] (files with most duplication):
   imgl/installs.py  dup=34L  groups=3  frags=4  (0.3%)
@@ -47,8 +47,8 @@ DUPLICATES[11] (ranked by impact):
       packages/dsl2imgl/src/dsl2imgl/pb_codec.py:76-80  (_set_key_body)
       packages/dsl2imgl/src/dsl2imgl/pb_codec.py:83-87  (_set_execute_body)
   [86c2b27187305f83]   STRU  install_img2nl  L=4 N=2 saved=4 sim=1.00
-      imgl/control.py:332-335  (install_img2nl)
-      imgl/control.py:338-341  (install_vdisplay)
+      imgl/control.py:330-333  (install_img2nl)
+      imgl/control.py:336-339  (install_vdisplay)
   [2d7b9210c1b65241]   STRU  _prefer_mirror  L=3 N=2 saved=3 sim=1.00
       imgl/capture.py:50-52  (_prefer_mirror)
       imgl/installs.py:30-32  (_auto_install_vdisplay_enabled)

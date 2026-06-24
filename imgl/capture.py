@@ -88,6 +88,26 @@ def _is_wayland() -> bool:
     return session == "wayland" or bool(os.environ.get("WAYLAND_DISPLAY"))
 
 
+def _try_mss_fallback(
+    path: Path,
+    *,
+    monitor: int,
+    allow_blank: bool,
+    errors: list[str],
+) -> bool:
+    if _is_wayland():
+        return False
+    try:
+        if _capture_with_mss(path, monitor=monitor):
+            if allow_blank or not _is_blank_image(path):
+                _finalize_capture(path, {"method": "mss"})
+                return True
+            errors.append("mss: captured but image is blank")
+    except Exception as exc:
+        errors.append(f"mss: {exc}")
+    return False
+
+
 def capture_screen(
     out: str | Path | None = None,
     *,
@@ -147,15 +167,8 @@ def capture_screen(
     if _try_backend_list(path, _non_portal_backends(), allow_blank=allow_blank, errors=errors):
         return path
 
-    if not _is_wayland():
-        try:
-            if _capture_with_mss(path, monitor=monitor):
-                if allow_blank or not _is_blank_image(path):
-                    _finalize_capture(path, {"method": "mss"})
-                    return path
-                errors.append("mss: captured but image is blank")
-        except Exception as exc:
-            errors.append(f"mss: {exc}")
+    if _try_mss_fallback(path, monitor=monitor, allow_blank=allow_blank, errors=errors):
+        return path
 
     if _vql_capture_enabled():
         if _try_vql_capture(path, monitor=monitor, interactive=False, allow_blank=allow_blank):
@@ -468,6 +481,19 @@ def _portal_script() -> Path | None:
     return None
 
 
+def _parse_portal_output(proc: subprocess.CompletedProcess, path: Path) -> tuple[bool, str]:
+    try:
+        payload = json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError:
+        detail = (proc.stderr or proc.stdout or "invalid portal json").strip()
+        return False, detail or "portal subprocess failed"
+    if not payload.get("ok"):
+        return False, str(payload.get("error") or payload.get("hint") or "portal failed")
+    if not path.is_file() or path.stat().st_size < 64:
+        return False, "portal succeeded but output file missing"
+    return True, ""
+
+
 def _capture_with_portal(path: Path, *, interactive: bool) -> tuple[bool, str]:
     """xdg-desktop-portal screenshot via system python3 + portal_capture.py."""
     py = _portal_python()
@@ -493,18 +519,7 @@ def _capture_with_portal(path: Path, *, interactive: bool) -> tuple[bool, str]:
     except Exception as exc:
         return False, str(exc)
 
-    try:
-        payload = json.loads(proc.stdout or "{}")
-    except json.JSONDecodeError:
-        detail = (proc.stderr or proc.stdout or "invalid portal json").strip()
-        return False, detail or "portal subprocess failed"
-
-    if not payload.get("ok"):
-        detail = str(payload.get("error") or payload.get("hint") or "portal failed")
-        return False, detail
-    if not path.is_file() or path.stat().st_size < 64:
-        return False, "portal succeeded but output file missing"
-    return True, ""
+    return _parse_portal_output(proc, path)
 
 
 def _capture_with_mss(path: Path, *, monitor: int) -> bool:

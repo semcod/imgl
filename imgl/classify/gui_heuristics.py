@@ -12,6 +12,78 @@ LABEL_MAX_CHARS = 40
 BUTTON_MAX_WORDS = 4
 
 
+def _process_window_elements(
+    window: Window,
+    window_ocr: list[tuple[int, OcrBox]],
+    geometry_buttons: list[DetectedUI],
+    input_frames: list[BBox],
+    toolbars: list[DetectedUI],
+    used_ocr: set[int],
+    label_proximity_px: float,
+) -> list[Element]:
+    window_buttons = [btn for btn in geometry_buttons if center_in(btn.bbox, window.bbox)]
+    window_inputs = [frame for frame in input_frames if center_in(frame, window.bbox)]
+    window_toolbars = [bar for bar in toolbars if center_in(bar.bbox, window.bbox)]
+
+    elements: list[Element] = []
+    element_id = 0
+
+    for bar in window_toolbars:
+        elements.append(Element(
+            id=f"{window.id}-toolbar-{element_id}",
+            type="toolbar",
+            text=bar.label or None,
+            bbox=bar.bbox,
+            confidence=bar.confidence,
+            metadata={"source": bar.metadata.get("source", "detect")},
+        ))
+        element_id += 1
+
+    for button in window_buttons:
+        matched = _match_ocr_to_bbox(button.bbox, window_ocr, used_ocr)
+        text = " ".join(box.text for _, box in matched) if matched else None
+        for index, _ in matched:
+            used_ocr.add(index)
+        elements.append(Element(
+            id=f"{window.id}-button-{element_id}",
+            type="button" if button.role == "button" else "icon_button",
+            text=text,
+            bbox=button.bbox,
+            confidence=button.confidence if text else button.confidence * 0.8,
+            metadata={"source": button.metadata.get("source", "detect"), "detected_label": button.label},
+        ))
+        element_id += 1
+
+    label_candidates = _label_candidates(window_ocr, used_ocr)
+    input_elements = _build_inputs(
+        window_id=window.id,
+        input_frames=window_inputs,
+        labels=label_candidates,
+        ocr_boxes=window_ocr,
+        used_ocr=used_ocr,
+        label_proximity_px=label_proximity_px,
+        start_id=element_id,
+    )
+    elements.extend(input_elements)
+    element_id += len(input_elements)
+
+    for index, box in window_ocr:
+        if index in used_ocr:
+            continue
+        used_ocr.add(index)
+        elements.append(Element(
+            id=f"{window.id}-text-{element_id}",
+            type=_text_or_label(box),
+            text=box.text,
+            bbox=box.bbox,
+            confidence=_normalize_confidence(box.confidence),
+            metadata={"ocr_level": box.level, "source": "ocr"},
+        ))
+        element_id += 1
+
+    return elements
+
+
 def classify_scene_elements(
     windows: list[Window],
     ocr_boxes: list[OcrBox],
@@ -37,76 +109,9 @@ def classify_scene_elements(
             for index, box in enumerate(ocr_boxes)
             if index not in used_ocr and center_in(box.bbox, window.bbox)
         ]
-        window_buttons = [btn for btn in geometry_buttons if center_in(btn.bbox, window.bbox)]
-        window_inputs = [frame for frame in input_frames if center_in(frame, window.bbox)]
-        window_toolbars = [bar for bar in toolbars if center_in(bar.bbox, window.bbox)]
-
-        elements: list[Element] = []
-        element_id = 0
-
-        for bar in window_toolbars:
-            elements.append(
-                Element(
-                    id=f"{window.id}-toolbar-{element_id}",
-                    type="toolbar",
-                    text=bar.label or None,
-                    bbox=bar.bbox,
-                    confidence=bar.confidence,
-                    metadata={"source": bar.metadata.get("source", "detect")},
-                )
-            )
-            element_id += 1
-
-        for button in window_buttons:
-            matched = _match_ocr_to_bbox(button.bbox, window_ocr, used_ocr)
-            text = " ".join(box.text for _, box in matched) if matched else None
-            for index, _ in matched:
-                used_ocr.add(index)
-            elements.append(
-                Element(
-                    id=f"{window.id}-button-{element_id}",
-                    type="button" if button.role == "button" else "icon_button",
-                    text=text,
-                    bbox=button.bbox,
-                    confidence=button.confidence if text else button.confidence * 0.8,
-                    metadata={
-                        "source": button.metadata.get("source", "detect"),
-                        "detected_label": button.label,
-                    },
-                )
-            )
-            element_id += 1
-
-        label_candidates = _label_candidates(window_ocr, used_ocr)
-        input_elements = _build_inputs(
-            window_id=window.id,
-            input_frames=window_inputs,
-            labels=label_candidates,
-            ocr_boxes=window_ocr,
-            used_ocr=used_ocr,
-            label_proximity_px=label_proximity_px,
-            start_id=element_id,
+        window.elements = _process_window_elements(
+            window, window_ocr, geometry_buttons, input_frames, toolbars, used_ocr, label_proximity_px
         )
-        elements.extend(input_elements)
-        element_id += len(input_elements)
-
-        for index, box in window_ocr:
-            if index in used_ocr:
-                continue
-            used_ocr.add(index)
-            elements.append(
-                Element(
-                    id=f"{window.id}-text-{element_id}",
-                    type=_text_or_label(box),
-                    text=box.text,
-                    bbox=box.bbox,
-                    confidence=_normalize_confidence(box.confidence),
-                    metadata={"ocr_level": box.level, "source": "ocr"},
-                )
-            )
-            element_id += 1
-
-        window.elements = elements
 
     for index, box in enumerate(ocr_boxes):
         if index in used_ocr:

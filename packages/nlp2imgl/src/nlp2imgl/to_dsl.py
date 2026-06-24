@@ -43,20 +43,7 @@ def use_llm_enabled(explicit: bool | None = None) -> bool:
     return bool(os.environ.get("OPENROUTER_API_KEY", "").strip())
 
 
-def to_dsl(
-    prompt: str,
-    *,
-    image: str = "screen.png",
-    window: str | None = None,
-    execute: bool = True,
-    use_llm: bool | None = None,
-) -> str:
-    text = prompt.strip()
-    llm_flag = " LLM" if use_llm_enabled(use_llm) or "llm" in text.lower() else ""
-    flags = f' IMAGE {image}' + (f" WINDOW {window}" if window else "") + llm_flag + (
-        " EXECUTE 0" if not execute else " EXECUTE 1"
-    )
-
+def _dispatch_dsl_command(text: str, image: str, flags: str, llm_flag: str) -> str:
     if _CAPTURE_RE.search(text):
         return "CAPTURE INTERACTIVE" if "interak" in text.lower() else "CAPTURE"
     if _ACTIONS_RE.search(text):
@@ -71,12 +58,29 @@ def to_dsl(
     m = _CLICK_RE.search(text)
     if m:
         target = m.group(2).strip()
-        if target.isdigit():
-            return f"CLICK {target}{flags}"
-        return f'EXECUTE "kliknij {target}"{flags}'
+        return f"CLICK {target}{flags}" if target.isdigit() else f'EXECUTE "kliknij {target}"{flags}'
     if text.isdigit():
         return f"CLICK {text}{flags}"
     return f'RESOLVE "{text}"{flags}'
+
+
+def to_dsl(
+    prompt: str,
+    *,
+    image: str = "screen.png",
+    window: str | None = None,
+    execute: bool = True,
+    use_llm: bool | None = None,
+) -> str:
+    text = prompt.strip()
+    llm_flag = " LLM" if use_llm_enabled(use_llm) or "llm" in text.lower() else ""
+    flags = (
+        f" IMAGE {image}"
+        + (f" WINDOW {window}" if window else "")
+        + llm_flag
+        + (" EXECUTE 0" if not execute else " EXECUTE 1")
+    )
+    return _dispatch_dsl_command(text, image, flags, llm_flag)
 
 
 def apply_nl(

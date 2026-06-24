@@ -266,6 +266,40 @@ def _detect_buttons(im: Image.Image, w: int, h: int, *, scan_w: int = 320) -> li
     return _rank_button_detections(elements)
 
 
+def _flood_fill_bbox(
+    cells: list[tuple[int, int, int, int, tuple[int, int, int]]],
+    start_idx: int,
+    used: list[bool],
+    cell_w: int,
+    cell_h: int,
+) -> tuple[int, int, int, int]:
+    x0, y0, x1, y1, _ = cells[start_idx]
+    stack = [start_idx]
+    used[start_idx] = True
+    min_x, min_y, max_x, max_y = x0, y0, x1, y1
+    while stack:
+        current = stack.pop()
+        cx0, cy0, cx1, cy1, crgb = cells[current]
+        min_x, min_y = min(min_x, cx0), min(min_y, cy0)
+        max_x, max_y = max(max_x, cx1), max(max_y, cy1)
+        for other, (ox0, oy0, ox1, oy1, orgb) in enumerate(cells):
+            if used[other]:
+                continue
+            if sum(abs(a - b) for a, b in zip(crgb, orgb, strict=True)) > 24:
+                continue
+            touches = not (ox1 < min_x or ox0 > max_x or oy1 < min_y or oy0 > max_y)
+            adjacent = (
+                abs(ox0 - max_x) <= cell_w
+                or abs(ox1 - min_x) <= cell_w
+                or abs(oy0 - max_y) <= cell_h
+                or abs(oy1 - min_y) <= cell_h
+            )
+            if touches or adjacent:
+                used[other] = True
+                stack.append(other)
+    return min_x, min_y, max_x, max_y
+
+
 def _detect_panels_simple(im: Image.Image, w: int, h: int, *, grid: int = 12) -> list[DetectedUI]:
     """Coarse grid color clustering for large window-like regions."""
     cell_w = max(1, w // grid)
@@ -284,51 +318,24 @@ def _detect_panels_simple(im: Image.Image, w: int, h: int, *, grid: int = 12) ->
     if not cells:
         return []
 
-    # Group adjacent cells with similar color
     used = [False] * len(cells)
     regions: list[DetectedUI] = []
-    for index, (x0, y0, x1, y1, rgb) in enumerate(cells):
+    for index in range(len(cells)):
         if used[index]:
             continue
-        stack = [index]
-        used[index] = True
-        min_x, min_y, max_x, max_y = x0, y0, x1, y1
-        while stack:
-            current = stack.pop()
-            cx0, cy0, cx1, cy1, crgb = cells[current]
-            min_x, min_y = min(min_x, cx0), min(min_y, cy0)
-            max_x, max_y = max(max_x, cx1), max(max_y, cy1)
-            for other, (ox0, oy0, ox1, oy1, orgb) in enumerate(cells):
-                if used[other]:
-                    continue
-                color_diff = sum(abs(a - b) for a, b in zip(crgb, orgb, strict=True))
-                if color_diff > 24:
-                    continue
-                touches = not (ox1 < min_x or ox0 > max_x or oy1 < min_y or oy0 > max_y)
-                adjacent = (
-                    abs(ox0 - max_x) <= cell_w
-                    or abs(ox1 - min_x) <= cell_w
-                    or abs(oy0 - max_y) <= cell_h
-                    or abs(oy1 - min_y) <= cell_h
-                )
-                if touches or adjacent:
-                    used[other] = True
-                    stack.append(other)
-
+        min_x, min_y, max_x, max_y = _flood_fill_bbox(cells, index, used, cell_w, cell_h)
         area_ratio = ((max_x - min_x) * (max_y - min_y)) / max(1, w * h)
         if area_ratio < 0.12:
             continue
         role = "window" if area_ratio >= 0.25 else "panel"
-        regions.append(
-            DetectedUI(
-                id=f"{role}_{len(regions)}",
-                role=role,
-                bbox=bbox_from_xyxy(min_x, min_y, max_x, max_y),
-                confidence=min(0.9, 0.5 + area_ratio),
-                label=f"{role} region",
-                metadata={"source": "color_grid", "area_ratio": round(area_ratio, 3)},
-            )
-        )
+        regions.append(DetectedUI(
+            id=f"{role}_{len(regions)}",
+            role=role,
+            bbox=bbox_from_xyxy(min_x, min_y, max_x, max_y),
+            confidence=min(0.9, 0.5 + area_ratio),
+            label=f"{role} region",
+            metadata={"source": "color_grid", "area_ratio": round(area_ratio, 3)},
+        ))
 
     return regions
 

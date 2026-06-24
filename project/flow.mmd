@@ -26,6 +26,7 @@ flowchart TD
     subgraph Core
         packages__rest2imgl__src__rest2imgl__cli__main["main"]
         packages__uri2imgl__src__uri2imgl__cli__main["main"]
+        packages__uri2imgl__src__uri2imgl__decode___dsl_click["_dsl_click"]
         packages__mcp2imgl__src__mcp2imgl__cli__main["main"]
         packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl["execute_dsl"]
         packages__dsl2imgl__src__dsl2imgl__bus__dispatch_json["dispatch_json"]
@@ -38,15 +39,14 @@ flowchart TD
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay_pb["replay_pb"]
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay["replay"]
         packages__dsl2imgl__src__dsl2imgl__pb_codec___set_capture_body["_set_capture_body"]
-        packages__dsl2imgl__src__dsl2imgl__pb_codec___set_analyze_body["_set_analyze_body"]
-        ...["+149 more"]
+        ...["+143 more"]
     end
 
     subgraph Exporters
-        imgl__export__vql_adapter__scene_to_vql{{scene_to_vql CC=19}}
+        imgl__export__vql_adapter__scene_to_vql{{scene_to_vql CC=16}}
         imgl__export__annotate_export__write_annotated_images_per_window["write_annotated_images_per_win"]
-        imgl__export__actuation_layers__scene_to_actuation_layers{{scene_to_actuation_layers CC=33}}
+        imgl__export__actuation_layers__scene_to_actuation_layers{{scene_to_actuation_layers CC=15}}
         imgl__export__actuation_layers__imgl_result_to_actuation_layers["imgl_result_to_actuation_layer"]
     end
 
-    class packages__rest2imgl__src__rest2imgl__cli__main,packages__cli2imgl__src__cli2imgl__cli__main,packages__uri2imgl__src__uri2imgl__cli__main,packages__mcp2imgl__src__mcp2imgl__cli__main,packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl,packages__dsl2imgl__src__dsl2imgl__bus__dispatch_json,packages__dsl2imgl__src__dsl2imgl__cli__main,packages__dsl2imgl__src__dsl2imgl__events__StoredEvent__to_dict,packages__dsl2imgl__src__dsl2imgl__events__EventStore__for_default,packages__dsl2imgl__src__dsl2imgl__events__EventStore__append_command entry
+    class packages__rest2imgl__src__rest2imgl__cli__main,packages__cli2imgl__src__cli2imgl__cli__main,packages__uri2imgl__src__uri2imgl__cli__main,packages__uri2imgl__src__uri2imgl__decode___dsl_click,packages__mcp2imgl__src__mcp2imgl__cli__main,packages__dsl2imgl__src__dsl2imgl__bus__execute_dsl,packages__dsl2imgl__src__dsl2imgl__bus__dispatch_json,packages__dsl2imgl__src__dsl2imgl__cli__main,packages__dsl2imgl__src__dsl2imgl__events__StoredEvent__to_dict,packages__dsl2imgl__src__dsl2imgl__events__EventStore__for_default entry

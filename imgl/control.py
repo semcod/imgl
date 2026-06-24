@@ -45,6 +45,37 @@ def screen_usable(image: Path, *, locale: str = "pl") -> bool:
     return worth_analyzing(diagnose_content(image, locale=locale))
 
 
+def _try_vdisplay_fallback(path: Path, locale: str) -> bool:
+    try:
+        from vdisplay.capture.linux_xwd import capture_display_png
+        from vdisplay.discovery import resolve_host_display
+    except ImportError:
+        return False
+    display = resolve_host_display()
+    data = capture_display_png(display)
+    if len(data) >= 64 and data[:8] == b"\x89PNG\r\n\x1a\n":
+        path.write_bytes(data)
+        mark_capture_fresh(path)
+        if screen_usable(path, locale=locale):
+            return True
+    return False
+
+
+def _try_fallback_screen_png(path: Path, locale: str) -> bool:
+    fallback = Path.cwd() / "screen.png"
+    if fallback.resolve() == path.resolve():
+        return False
+    if not (is_valid_png(fallback) and screen_usable(fallback, locale=locale)):
+        return False
+    clear_ocr_cache(path)
+    path.write_bytes(fallback.read_bytes())
+    fb_cache = fallback.with_suffix(".vql.imgl.json")
+    if fb_cache.is_file():
+        path.with_suffix(".vql.imgl.json").write_bytes(fb_cache.read_bytes())
+    mark_capture_fresh(path)
+    return True
+
+
 def smart_capture(
     image: str | Path | None = None,
     *,
@@ -60,9 +91,6 @@ def smart_capture(
     if screen_usable(path, locale=locale) and any(cache.is_file() for cache in caches):
         return path
 
-    if screen_usable(path, locale=locale):
-        clear_ocr_cache(path)
-
     clear_ocr_cache(path)
     try:
         capture_screen(path, interactive=interactive, prefer_mirror=True)
@@ -74,40 +102,22 @@ def smart_capture(
         mark_capture_fresh(path)
         return path
 
-    if not interactive:
-        try:
-            from vdisplay.capture.linux_xwd import capture_display_png
-            from vdisplay.discovery import resolve_host_display
-        except ImportError:
-            resolve_host_display = None  # type: ignore[assignment]
+    if not interactive and _try_vdisplay_fallback(path, locale):
+        return path
 
-        if resolve_host_display is not None:
-            display = resolve_host_display()
-            data = capture_display_png(display)
-            if len(data) >= 64 and data[:8] == b"\x89PNG\r\n\x1a\n":
-                path.write_bytes(data)
-                mark_capture_fresh(path)
-                if screen_usable(path, locale=locale):
-                    return path
-
-    fallback = Path.cwd() / "screen.png"
-    if fallback.resolve() != path.resolve() and is_valid_png(fallback) and screen_usable(fallback, locale=locale):
-        clear_ocr_cache(path)
-        path.write_bytes(fallback.read_bytes())
-        fb_cache = fallback.with_suffix(".vql.imgl.json")
-        if fb_cache.is_file():
-            path.with_suffix(".vql.imgl.json").write_bytes(fb_cache.read_bytes())
-        mark_capture_fresh(path)
+    if _try_fallback_screen_png(path, locale):
         return path
 
     if interactive:
-        raise CaptureError(
-            "Capture failed — wybierz obszar w portalu GNOME (nie anuluj)."
-        )
-    raise CaptureError(
-        "Capture failed. Na GNOME/Wayland: imgl capture --interactive -o "
-        f"{path}"
-    )
+        raise CaptureError("Capture failed — wybierz obszar w portalu GNOME (nie anuluj).")
+    raise CaptureError(f"Capture failed. Na GNOME/Wayland: imgl capture --interactive -o {path}")
+
+
+def _assert_capture_updated(captured: Path, before_mtime: float, before_size: int) -> None:
+    if before_mtime and captured.is_file() and captured.stat().st_mtime <= before_mtime and captured.stat().st_size == before_size:
+        raise CaptureError(f"Capture did not update {captured} — retry or use: imgl capture --portal")
+    if not is_valid_png(captured):
+        raise CaptureError(f"Capture produced invalid PNG ({captured.stat().st_size} bytes): {captured}")
 
 
 def capture_interactive(
@@ -123,12 +133,12 @@ def capture_interactive(
     ensure_vdisplay(quiet=True)
     path = Path(image).expanduser() if image else default_image_path()
     before_mtime = path.stat().st_mtime if path.is_file() else 0.0
+    before_size = path.stat().st_size if path.is_file() else 0
     clear_ocr_cache(path)
     sidecar = path.with_suffix(".captured_at")
     if sidecar.is_file():
         sidecar.unlink()
 
-    before_size = path.stat().st_size if path.is_file() else 0
     from imgl.capture import _is_wayland, _portal_fallback_enabled
 
     use_portal = portal or (_portal_fallback_enabled() and _is_wayland())
@@ -139,7 +149,6 @@ def capture_interactive(
             raise
         if _portal_fallback_enabled():
             import sys
-
             print(
                 "Mirror/driver capture unavailable — fallback: GNOME portal "
                 "(wybierz obszar; jednorazowa zgoda Screen Recording).",
@@ -148,19 +157,8 @@ def capture_interactive(
             captured = capture_screen(path, interactive=True, prefer_mirror=False)
         else:
             raise
-    if (
-        before_mtime
-        and captured.is_file()
-        and captured.stat().st_mtime <= before_mtime
-        and captured.stat().st_size == before_size
-    ):
-        raise CaptureError(
-            f"Capture did not update {captured} — retry or use: imgl capture --portal"
-        )
-    if not is_valid_png(captured):
-        raise CaptureError(
-            f"Capture produced invalid PNG ({captured.stat().st_size} bytes): {captured}"
-        )
+
+    _assert_capture_updated(captured, before_mtime, before_size)
     mark_capture_fresh(captured)
     clear_ocr_cache(captured)
     if verify:
