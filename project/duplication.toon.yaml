@@ -1,12 +1,12 @@
-# redup/duplication | 11 groups | 88f 13322L | 2026-06-24
+# redup/duplication | 11 groups | 88f 13381L | 2026-06-24
 
 SUMMARY:
   files_scanned: 88
-  total_lines:   13322
+  total_lines:   13381
   dup_groups:    11
   dup_fragments: 23
   saved_lines:   86
-  scan_ms:       4009
+  scan_ms:       2497
 
 HOTSPOTS[7] (files with most duplication):
   imgl/installs.py  dup=34L  groups=3  frags=4  (0.3%)

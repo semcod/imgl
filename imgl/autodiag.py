@@ -271,6 +271,43 @@ def _capture_next_cmd(image: str) -> str:
     return f"imgl capture --interactive -o {_shell_quote(image)} --verify"
 
 
+def _derive_stale(capture: dict[str, Any], image: str) -> tuple[str, str]:
+    age = capture.get("age_seconds")
+    max_age = capture.get("max_age_seconds", 60)
+    age_bit = f" ({age}s > {max_age}s)" if age is not None else ""
+    return (
+        f"Zrzut ekranu jest przestarzały{age_bit}. Zrób świeży capture przed planowaniem akcji.",
+        _capture_next_cmd(image),
+    )
+
+
+def _derive_op_failed(
+    operation: dict[str, Any],
+    *,
+    prompt: str,
+    window: str | None,
+    image: str,
+) -> tuple[str, str]:
+    op_error = str(operation.get("error") or operation.get("message") or "")
+    if "element not found" in op_error.lower() or "nie znaleziono" in op_error.lower():
+        llm_flag = " --llm" if "llm" not in prompt.lower() else ""
+        win_flag = f" --window {_shell_quote(str(window))}" if window else ""
+        return (
+            "Element UI nie znaleziony na zrzucie. Upewnij się, że pole jest widoczne; "
+            "spróbuj ponownie z --llm lub świeżym capture.",
+            (
+                f"imgl execute {_shell_quote(prompt)}{win_flag} --image "
+                f"{_shell_quote(image)}{llm_flag} --dry-run"
+                if prompt
+                else f"imgl analyze {_shell_quote(image)}"
+            ),
+        )
+    return (
+        f"Akcja nie powiodła się: {op_error or 'nieznany błąd'}.",
+        f"imgl doctor --image {_shell_quote(image)} --yaml",
+    )
+
+
 def _derive_current_next(report: dict[str, Any]) -> tuple[str | None, str | None]:
     """Human status (current) and the single best shell command to run next."""
     capture = report.get("capture") or {}
@@ -281,58 +318,34 @@ def _derive_current_next(report: dict[str, Any]) -> tuple[str | None, str | None
     overall = str(report.get("verdict") or "")
     capture_verdict = str(capture.get("verdict") or "")
     dry_run = bool(report.get("dry_run") or operation.get("dry_run"))
-    capture_cmd = _capture_next_cmd(image)
 
     if (
         overall == "stale_capture_error"
         or capture_verdict == "stale_capture"
         or not capture.get("is_fresh", True)
     ):
-        age = capture.get("age_seconds")
-        max_age = capture.get("max_age_seconds", 60)
-        age_bit = f" ({age}s > {max_age}s)" if age is not None else ""
-        return (
-            f"Zrzut ekranu jest przestarzały{age_bit}. Zrób świeży capture przed planowaniem akcji.",
-            capture_cmd,
-        )
+        return _derive_stale(capture, image)
 
     if capture_verdict == "blank_capture":
         return (
             "Zrzut pusty lub bez treści UI. Zrób interaktywny capture (portal GNOME).",
-            capture_cmd,
+            _capture_next_cmd(image),
         )
 
     if capture_verdict == "flat_monochrome":
         return (
             "Zrzut jednokolorowy — brak widocznego UI. Powtórz capture z widocznym pulpitem.",
-            capture_cmd,
+            _capture_next_cmd(image),
         )
 
     if capture_verdict == "error" or not capture.get("exists", True):
         return (
             f"Brak poprawnego zrzutu ({capture.get('error') or 'plik nie istnieje'}).",
-            capture_cmd,
+            _capture_next_cmd(image),
         )
 
-    op_error = str(operation.get("error") or operation.get("message") or "")
     if overall == "operation_failed":
-        if "element not found" in op_error.lower() or "nie znaleziono" in op_error.lower():
-            llm_flag = " --llm" if "llm" not in prompt.lower() else ""
-            win_flag = f" --window {_shell_quote(str(window))}" if window else ""
-            return (
-                "Element UI nie znaleziony na zrzucie. Upewnij się, że pole jest widoczne; "
-                "spróbuj ponownie z --llm lub świeżym capture.",
-                (
-                    f"imgl execute {_shell_quote(prompt)}{win_flag} --image "
-                    f"{_shell_quote(image)}{llm_flag} --dry-run"
-                    if prompt
-                    else f"imgl analyze {_shell_quote(image)}"
-                ),
-            )
-        return (
-            f"Akcja nie powiodła się: {op_error or 'nieznany błąd'}.",
-            f"imgl doctor --image {_shell_quote(image)} --yaml",
-        )
+        return _derive_op_failed(operation, prompt=prompt, window=window, image=image)
 
     if dry_run and overall == "planned_ok" and operation.get("ok"):
         win_flag = f" --window {_shell_quote(str(window))}" if window else ""

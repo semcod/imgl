@@ -7,10 +7,10 @@
 - **Primary Language**: python
 - **Languages**: python: 88, json: 14, yaml: 7, shell: 7, toml: 7
 - **Analysis Mode**: static
-- **Total Functions**: 529
+- **Total Functions**: 552
 - **Total Classes**: 40
 - **Modules**: 126
-- **Entry Points**: 128
+- **Entry Points**: 145
 
 ## Architecture by Module
 
@@ -23,14 +23,18 @@
 - **Classes**: 1
 - **File**: `window_scope.py`
 
+### imgl.autodiag
+- **Functions**: 29
+- **File**: `autodiag.py`
+
 ### imgl.capture
 - **Functions**: 28
 - **Classes**: 2
 - **File**: `capture.py`
 
-### imgl.autodiag
-- **Functions**: 27
-- **File**: `autodiag.py`
+### imgl.cli
+- **Functions**: 26
+- **File**: `cli.py`
 
 ### imgl.detect.local
 - **Functions**: 20
@@ -72,6 +76,10 @@
 - **Functions**: 13
 - **File**: `vql_adapter.py`
 
+### imgl.targets
+- **Functions**: 13
+- **File**: `targets.py`
+
 ### imgl.vdisplay_bridge
 - **Functions**: 12
 - **File**: `vdisplay_bridge.py`
@@ -86,28 +94,18 @@
 - **Classes**: 1
 - **File**: `diagnose.py`
 
-### imgl.cli
+### imgl.vision_ops
 - **Functions**: 9
-- **File**: `cli.py`
+- **Classes**: 2
+- **File**: `vision_ops.py`
 
 ### imgl.freshness
 - **Functions**: 9
 - **File**: `freshness.py`
 
-### imgl.terminal_md
-- **Functions**: 9
-- **File**: `terminal_md.py`
-
-### imgl.installs
-- **Functions**: 9
-- **File**: `installs.py`
-
 ## Key Entry Points
 
 Main execution flows into the system:
-
-### imgl.cli.main
-- **Calls**: imgl.cli.build_parser, parser.parse_args, ImglConfig, packages.nlp2imgl.src.nlp2imgl.cli_commands.run_doctor, imgl.terminal_md.print_report, imgl.control.run_map, imgl.terminal_md.print_report, imgl.terminal_md.print_report
 
 ### imgl.web.app.create_app
 - **Calls**: None.resolve, SessionManager.create, FastAPI, static_dir.is_dir, app.get, app.get, app.get, app.get
@@ -138,8 +136,14 @@ Main execution flows into the system:
 > Draw numbered bounding boxes and confidence labels on a screenshot.
 - **Calls**: None.convert, Image.new, ImageDraw.Draw, list, Image.alpha_composite, io.BytesIO, None.save, out.getvalue
 
+### imgl.cli._handle_windows
+- **Calls**: imgl.cli._check_blank_before_analyze, imgl.scene_cache.load_or_analyze, imgl.window_scope.apply_discovered_windows, imgl.window_scope.summarize_windows, print, print, imgl.paths.resolve_image_path, imgl.window_scope.format_window_picker
+
 ### packages.dsl2imgl.src.dsl2imgl.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, exec_p.add_argument, sub.add_parser, argparse.ArgumentParser, legacy.add_argument, legacy.add_argument
+
+### imgl.cli._handle_capture
+- **Calls**: imgl.capture.last_capture_meta, meta.get, print, print, print, imgl.pipeline.analyze, imgl.export.vql_adapter.write_vql_program, imgl.scene_cache.save_scene_cache
 
 ### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_capture
 - **Calls**: bool, bool, cmd.get, cmd.get, cmd.get, cmd.get, imgl.capture.capture_screen, DslResult
@@ -150,6 +154,9 @@ Main execution flows into the system:
 Returns ``{"ok": bool, "scene": dict|None, "metadata": dict, "error": str|None}``.
 - **Calls**: str, None.expanduser, imgl.vdisplay_context._metadata_from_context, imgl_analyze, scene.metadata.update, path.is_file, payload.get, isinstance
 
+### imgl.cli._handle_serve
+- **Calls**: WebSettings, packages.rest2imgl.src.rest2imgl.app.create_app, print, uvicorn.run, local_screen.is_file, print, Path.cwd, session.capture
+
 ### imgl.actions.SceneActions.find
 > Find elements matching type, text, label, or window.
 - **Calls**: imgl.actions._iter_elements, targets.append, imgl.actions._iter_elements, ActionTarget, any, imgl.actions._find_label_for_input, _infer_input_label, imgl.actions._text_matches
@@ -159,6 +166,9 @@ Returns ``{"ok": bool, "scene": dict|None, "metadata": dict, "error": str|None}`
 
 ### imgl.web.session.SessionManager.create
 - **Calls**: None.resolve, work.mkdir, WebSession, None.is_file, cls, None.resolve, img.is_file, session.analyze
+
+### imgl.cli._handle_diagnose
+- **Calls**: imgl.diagnose.diagnose_content, imgl.cli._write_output, imgl.paths.resolve_image_path, diag.get, str, diag.get, diag.get, diag.get
 
 ### packages.uri2imgl.src.uri2imgl.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, dec.add_argument, sub.add_parser, run.add_argument, run.add_argument, parser.parse_args
@@ -172,16 +182,19 @@ Returns ``{"ok": bool, "scene": dict|None, "metadata": dict, "error": str|None}`
 ### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_resolve
 - **Calls**: cmd.get, DslResult, packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session, packages.dsl2imgl.src.dsl2imgl.handlers.runtime._run_prompt_act, DslResult, outcome.get, DslResult, outcome.get
 
+### imgl.cli._handle_annotate
+- **Calls**: Path, imgl.scene_cache.load_or_analyze, imgl.export.vql_adapter.write_vql_program, imgl.scene_cache.save_scene_cache, imgl.catalog.build_interactive_catalog, imgl.export.annotate_export.write_annotated_image, print, print
+
 ### packages.dsl2imgl.src.dsl2imgl.events.EventStore.replay_pb
 - **Calls**: pb_path.read_bytes, self.path.with_suffix, pb_path.is_file, len, int.from_bytes, result_pb2.DslEvent, pb.ParseFromString, events.append
-
-### imgl.window_scope.scope_image_to_focus_window
-> Analyze screenshot, pick focus window, export crop PNG.
-- **Calls**: ImglConfig, imgl.pipeline.analyze, imgl.window_scope.apply_discovered_windows, imgl.window_scope.scope_to_focus_window, str, str, len, str
 
 ### imgl.vision_ops.diff_png_bytes
 > Compare two PNG payloads and report whether they differ meaningfully.
 - **Calls**: None.convert, None.convert, before_image.get_flattened_data, after_image.get_flattened_data, zip, imgl.vision_ops._crop_png_region, imgl.vision_ops._crop_png_region, after_image.resize
+
+### imgl.window_scope.scope_image_to_focus_window
+> Analyze screenshot, pick focus window, export crop PNG.
+- **Calls**: ImglConfig, imgl.pipeline.analyze, imgl.window_scope.apply_discovered_windows, imgl.window_scope.scope_to_focus_window, str, str, len, str
 
 ### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_actions
 - **Calls**: cmd.get, packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session, DslResult, opt.to_dict, DslResult, cmd.get, bool, json.dumps
@@ -193,43 +206,16 @@ Returns ``{"ok": bool, "scene": dict|None, "metadata": dict, "error": str|None}`
 ### imgl.control.run_doctor
 - **Calls**: imgl.autodiag.render_report, str, str, imgl.control.default_window, imgl.vdisplay_bridge.build_window_control_report, imgl.autodiag.diagnose_capture, capture.get, imgl.control.default_image_path
 
-### packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_analyze
-- **Calls**: cmd.get, packages.dsl2imgl.src.dsl2imgl.handlers.runtime._build_interact_session, DslResult, DslResult, cmd.get, bool, cmd.get, len
-
-### imgl.actions.SceneActions.list_actions
-> List available click/type actions for interactive elements.
-- **Calls**: imgl.actions._iter_elements, actions.append, None.to_click_action, actions.append, None.to_dict, ActionTarget, TypeAction, ActionTarget
-
-### packages.rest2imgl.src.rest2imgl.cli.main
-- **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, parser.parse_args, uvicorn.run, packages.rest2imgl.src.rest2imgl.app.create_app
-
-### packages.dsl2imgl.src.dsl2imgl.grammar._parse_interaction_verb
-- **Calls**: None.upper, packages.dsl2imgl.src.dsl2imgl.grammar._apply_image_window_flags, packages.dsl2imgl.src.dsl2imgl.grammar._parse_click, packages.dsl2imgl.src.dsl2imgl.grammar.pick_flag, str, packages.dsl2imgl.src.dsl2imgl.grammar._parse_type, packages.dsl2imgl.src.dsl2imgl.grammar._parse_key, packages.dsl2imgl.src.dsl2imgl.grammar._parse_execute
-
 ## Process Flows
 
 Key execution flows identified:
 
-### Flow 1: main
-```
-main [imgl.cli]
-  └─> build_parser
-      └─> _add_common_args
-  └─ →> run_doctor
-      └─> output_format
-          └─ →> resolve_cli_output_format
-      └─ →> build_window_control_report
-  └─ →> print_report
-      └─> colorize_markdown
-          └─> stdout_color_enabled
-```
-
-### Flow 2: create_app
+### Flow 1: create_app
 ```
 create_app [imgl.web.app]
 ```
 
-### Flow 3: handle_execute
+### Flow 2: handle_execute
 ```
 handle_execute [packages.dsl2imgl.src.dsl2imgl.handlers.runtime]
   └─> _build_interact_session
@@ -242,31 +228,48 @@ handle_execute [packages.dsl2imgl.src.dsl2imgl.handlers.runtime]
           └─ →> actions
 ```
 
-### Flow 4: act
+### Flow 3: act
 ```
 act [imgl.web.session.WebSession]
 ```
 
-### Flow 5: match_template_png
+### Flow 4: match_template_png
 ```
 match_template_png [imgl.vision_ops]
   └─> template_available
   └─> _png_to_gray_array
 ```
 
-### Flow 6: from_dict
+### Flow 5: from_dict
 ```
 from_dict [imgl.types.Scene]
 ```
 
-### Flow 7: _append_pb
+### Flow 6: _append_pb
 ```
 _append_pb [packages.dsl2imgl.src.dsl2imgl.events.EventStore]
 ```
 
-### Flow 8: _append_jsonl
+### Flow 7: _append_jsonl
 ```
 _append_jsonl [packages.dsl2imgl.src.dsl2imgl.events.EventStore]
+```
+
+### Flow 8: main
+```
+main [examples.scripts.demo-nlp2uri]
+  └─ →> analyze
+      └─ →> preprocess
+          └─> load_image
+      └─ →> get_ocr_backend
+  └─ →> apply_discovered_windows
+      └─> discover_windows
+          └─> is_monolithic_scene
+          └─> _split_monolithic_window
+  └─ →> build_interactive_catalog
+      └─ →> build_heuristic_catalog
+          └─> _iter_interactive_elements
+          └─> _find_window
 ```
 
 ### Flow 9: render_match_overlay_png
@@ -274,9 +277,21 @@ _append_jsonl [packages.dsl2imgl.src.dsl2imgl.events.EventStore]
 render_match_overlay_png [imgl.vision_ops]
 ```
 
-### Flow 10: handle_capture
+### Flow 10: _handle_windows
 ```
-handle_capture [packages.dsl2imgl.src.dsl2imgl.handlers.runtime]
+_handle_windows [imgl.cli]
+  └─> _check_blank_before_analyze
+      └─ →> diagnose_content
+          └─> img2nl_available
+          └─> _diagnose_fallback
+  └─ →> load_or_analyze
+      └─> save_scene_cache
+          └─> scene_cache_path
+          └─ →> scene_to_json
+  └─ →> apply_discovered_windows
+      └─> discover_windows
+          └─> is_monolithic_scene
+          └─> _split_monolithic_window
 ```
 
 ## Key Classes
@@ -330,6 +345,10 @@ handle_capture [packages.dsl2imgl.src.dsl2imgl.handlers.runtime]
 - **Methods**: 1
 - **Key Methods**: packages.dsl2imgl.src.dsl2imgl.events.StoredEvent.to_dict
 
+### imgl.vision_ops.TemplateMatchResult
+- **Methods**: 1
+- **Key Methods**: imgl.vision_ops.TemplateMatchResult.to_dict
+
 ### imgl.nlp2uri.ResolvedImglUri
 - **Methods**: 1
 - **Key Methods**: imgl.nlp2uri.ResolvedImglUri.to_dict
@@ -364,10 +383,6 @@ handle_capture [packages.dsl2imgl.src.dsl2imgl.handlers.runtime]
 > Extract word-level bounding boxes using pytesseract.
 - **Methods**: 1
 - **Key Methods**: imgl.ocr.tesseract.TesseractOcr.run
-
-### imgl.web.session.StepRecord
-- **Methods**: 1
-- **Key Methods**: imgl.web.session.StepRecord.to_dict
 
 ## Data Transformation Functions
 
@@ -436,26 +451,26 @@ Key functions that process and transform data:
 ### packages.nlp2imgl.src.nlp2imgl.cli_commands.output_format
 - **Output to**: imgl.autodiag.resolve_cli_output_format
 
-### imgl.autodiag.resolve_cli_output_format
-> CLI default is markdown; --json / --yaml select structured output.
-- **Output to**: ValueError
+### imgl.actions._format_query
+- **Output to**: parts.append, parts.append, parts.append, parts.append, None.join
 
-### imgl.autodiag.pick_output_format
+### imgl.catalog.format_catalog_table
+> Human-readable numbered list for the interactive shell.
+- **Output to**: lines.append, lines.append, lines.append, None.join, lines.append
 
-### imgl.autodiag._parse_coords
-- **Output to**: _COORD_RE.search, int, int, match.group, match.group
+### imgl.preprocess.preprocess
+> Load and optionally downscale an image for analysis.
+- **Output to**: imgl.preprocess.load_image, max, PreprocessedImage, max, max
 
-### imgl.autodiag._parse_typed_text
-- **Output to**: _TYPED_RE.search, match.group
+### imgl.llm_catalog._parse_json_payload
+- **Output to**: json.loads, re.search, json.loads, match.group
 
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
-- `imgl.cli.main` - 131 calls
 - `imgl.cli.build_parser` - 116 calls
 - `imgl.web.app.create_app` - 107 calls
-- `imgl.targets.resolve_chat_target` - 51 calls
 - `imgl.export.actuation_layers.scene_to_actuation_layers` - 45 calls
 - `imgl.control.smart_capture` - 42 calls
 - `imgl.autodiag.diagnose_capture` - 41 calls
@@ -464,14 +479,14 @@ Functions exposed as public API (no underscore prefix):
 - `packages.rest2imgl.src.rest2imgl.app.create_app` - 36 calls
 - `packages.dsl2imgl.src.dsl2imgl.handlers.runtime.handle_execute` - 35 calls
 - `imgl.web.session.WebSession.act` - 34 calls
-- `imgl.autodiag.build_operation_step` - 33 calls
 - `imgl.capture.capture_screen` - 33 calls
 - `imgl.export.vql_adapter.scene_to_vql` - 33 calls
+- `imgl.autodiag.build_operation_step` - 33 calls
 - `imgl.vdisplay_bridge.correlate_windows` - 32 calls
 - `imgl.vdisplay_bridge.build_window_control_report` - 32 calls
+- `imgl.vision_ops.match_template_png` - 29 calls
 - `imgl.coords.scale_scene_to_screen` - 29 calls
 - `imgl.classify.gui_heuristics.classify_scene_elements` - 29 calls
-- `imgl.vision_ops.match_template_png` - 29 calls
 - `imgl.types.Scene.from_dict` - 28 calls
 - `imgl.control.capture_interactive` - 28 calls
 - `imgl.execute.execute_action` - 27 calls
@@ -489,9 +504,11 @@ Functions exposed as public API (no underscore prefix):
 - `imgl.freshness.image_freshness` - 21 calls
 - `imgl.targets.resolve_editor_target` - 21 calls
 - `packages.dsl2imgl.src.dsl2imgl.grammar.to_text` - 20 calls
-- `imgl.export.annotate_export.write_window_preview_images` - 20 calls
 - `imgl.vdisplay_context.from_vdisplay_context` - 20 calls
+- `imgl.export.annotate_export.write_window_preview_images` - 20 calls
 - `packages.nlp2imgl.src.nlp2imgl.to_dsl.to_dsl` - 19 calls
+- `imgl.interact.resolve_imgl_uri` - 19 calls
+- `imgl.actions.SceneActions.find` - 18 calls
 
 ## System Interactions
 
@@ -499,11 +516,6 @@ How components interact:
 
 ```mermaid
 graph TD
-    main --> build_parser
-    main --> parse_args
-    main --> ImglConfig
-    main --> run_doctor
-    main --> print_report
     create_app --> resolve
     create_app --> create
     create_app --> FastAPI
@@ -529,6 +541,11 @@ graph TD
     _append_pb --> DslEvent
     _append_pb --> CopyFrom
     _append_pb --> DslResult
+    _append_pb --> SerializeToString
+    _append_jsonl --> to_dict
+    _append_jsonl --> DslEvent
+    _append_jsonl --> CopyFrom
+    _append_jsonl --> DslResult
 ```
 
 ## Reverse Engineering Guidelines

@@ -1,25 +1,8 @@
 source: code2llm
-# generated in 0.22s
+# generated in 0.19s
 schema: code2llm.planfile_tickets.v1
 project_root: /home/tom/github/semcod/imgl
 tickets:
-- signal: code2llm_cc
-  title: 'Reduce cyclomatic complexity: imgl.autodiag._derive_current_next (CC=32)'
-  description: 'code2llm reports `imgl.autodiag._derive_current_next` at `imgl/autodiag.py:274`
-    with cyclomatic complexity 32 (limit 15).
-
-
-    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
-    code2llm after the change and keep tests green.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - complexity
-  - refactor
-  files:
-  - imgl/autodiag.py
-  dedupe_key: code2llm:cc:imgl/autodiag.py:imgl.autodiag._derive_current_next
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.capture.capture_screen (CC=26)'
   description: 'code2llm reports `imgl.capture.capture_screen` at `imgl/capture.py:91`
@@ -55,23 +38,6 @@ tickets:
   files:
   - imgl/classify/gui_heuristics.py
   dedupe_key: code2llm:cc:imgl/classify/gui_heuristics.py:imgl.classify.gui_heuristics.classify_scene_elements
-- signal: code2llm_cc
-  title: 'Reduce cyclomatic complexity: imgl.cli.main (CC=64)'
-  description: 'code2llm reports `imgl.cli.main` at `imgl/cli.py:478` with cyclomatic
-    complexity 64 (limit 15).
-
-
-    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
-    code2llm after the change and keep tests green.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - complexity
-  - refactor
-  files:
-  - imgl/cli.py
-  dedupe_key: code2llm:cc:imgl/cli.py:imgl.cli.main
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.control.smart_capture (CC=25)'
   description: 'code2llm reports `imgl.control.smart_capture` at `imgl/control.py:48`
@@ -141,23 +107,6 @@ tickets:
   files:
   - imgl/nlp2uri.py
   dedupe_key: code2llm:cc:imgl/nlp2uri.py:imgl.nlp2uri.prompt_to_imgl_uri
-- signal: code2llm_cc
-  title: 'Reduce cyclomatic complexity: imgl.targets.resolve_chat_target (CC=47)'
-  description: 'code2llm reports `imgl.targets.resolve_chat_target` at `imgl/targets.py:82`
-    with cyclomatic complexity 47 (limit 15).
-
-
-    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
-    code2llm after the change and keep tests green.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - complexity
-  - refactor
-  files:
-  - imgl/targets.py
-  dedupe_key: code2llm:cc:imgl/targets.py:imgl.targets.resolve_chat_target
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.web.session.WebSession.act (CC=29)'
   description: 'code2llm reports `imgl.web.session.WebSession.act` at `imgl/web/session.py:201`
@@ -398,10 +347,10 @@ tickets:
     scene_to_annotated_image'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: _'
-  description: 'code2llm reports `Shotgun Surgery: _` in `imgl/window_scope.py:602`.
+  description: 'code2llm reports `Shotgun Surgery: _` in `imgl/window_scope.py:410`.
 
 
-    Mutation of variable ''_'' spans 6 functions. Changing this logic requires work
+    Mutation of variable ''_'' spans 5 functions. Changing this logic requires work
     in many places.
 
 
@@ -414,14 +363,14 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:602:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:410:Shotgun Surgery:
     _'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: area'
   description: 'code2llm reports `Shotgun Surgery: area` in `imgl/window_scope.py:152`.
 
 
-    Mutation of variable ''area'' spans 6 functions. Changing this logic requires
+    Mutation of variable ''area'' spans 7 functions. Changing this logic requires
     work in many places.
 
 
@@ -438,7 +387,7 @@ tickets:
     area'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: args'
-  description: 'code2llm reports `Shotgun Surgery: args` in `packages/rest2imgl/src/rest2imgl/cli.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: args` in `packages/nlp2imgl/src/nlp2imgl/cli.py:15`.
 
 
     Mutation of variable ''args'' spans 6 functions. Changing this logic requires
@@ -453,12 +402,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/rest2imgl/src/rest2imgl/cli.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/rest2imgl/src/rest2imgl/cli.py:8:Shotgun
+  - packages/nlp2imgl/src/nlp2imgl/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/nlp2imgl/src/nlp2imgl/cli.py:15:Shotgun
     Surgery: args'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: b'
+  description: 'code2llm reports `Shotgun Surgery: b` in `imgl/detect/local.py:29`.
+
+
+    Mutation of variable ''b'' spans 5 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - imgl/detect/local.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:29:Shotgun Surgery:
+    b'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: bbox'
-  description: 'code2llm reports `Shotgun Surgery: bbox` in `imgl/catalog_filter.py:79`.
+  description: 'code2llm reports `Shotgun Surgery: bbox` in `imgl/export/svg_export.py:88`.
 
 
     Mutation of variable ''bbox'' spans 13 functions. Changing this logic requires
@@ -473,12 +442,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/catalog_filter.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/catalog_filter.py:79:Shotgun Surgery:
-    bbox'
+  - imgl/export/svg_export.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/export/svg_export.py:88:Shotgun
+    Surgery: bbox'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: candidates'
-  description: 'code2llm reports `Shotgun Surgery: candidates` in `imgl/paths.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: candidates` in `imgl/capture.py:437`.
 
 
     Mutation of variable ''candidates'' spans 5 functions. Changing this logic requires
@@ -493,11 +462,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/paths.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/paths.py:8:Shotgun Surgery: candidates'
+  - imgl/capture.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/capture.py:437:Shotgun Surgery:
+    candidates'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: capture'
-  description: 'code2llm reports `Shotgun Surgery: capture` in `packages/nlp2imgl/src/nlp2imgl/control.py:54`.
+  description: 'code2llm reports `Shotgun Surgery: capture` in `imgl/execute.py:75`.
 
 
     Mutation of variable ''capture'' spans 12 functions. Changing this logic requires
@@ -512,12 +482,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/nlp2imgl/src/nlp2imgl/control.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/nlp2imgl/src/nlp2imgl/control.py:54:Shotgun
-    Surgery: capture'
+  - imgl/execute.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/execute.py:75:Shotgun Surgery:
+    capture'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: cfg'
+  description: 'code2llm reports `Shotgun Surgery: cfg` in `imgl/interact.py:477`.
+
+
+    Mutation of variable ''cfg'' spans 6 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/interact.py:477:Shotgun Surgery:
+    cfg'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: cmd'
-  description: 'code2llm reports `Shotgun Surgery: cmd` in `packages/dsl2imgl/src/dsl2imgl/grammar.py:109`.
+  description: 'code2llm reports `Shotgun Surgery: cmd` in `packages/dsl2imgl/src/dsl2imgl/grammar.py:88`.
 
 
     Mutation of variable ''cmd'' spans 24 functions. Changing this logic requires
@@ -533,14 +523,14 @@ tickets:
   - shotgun-surgery
   files:
   - packages/dsl2imgl/src/dsl2imgl/grammar.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/grammar.py:109:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/grammar.py:88:Shotgun
     Surgery: cmd'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: cx'
-  description: 'code2llm reports `Shotgun Surgery: cx` in `imgl/vision_ops.py:42`.
+  description: 'code2llm reports `Shotgun Surgery: cx` in `imgl/vision_ops.py:231`.
 
 
-    Mutation of variable ''cx'' spans 8 functions. Changing this logic requires work
+    Mutation of variable ''cx'' spans 9 functions. Changing this logic requires work
     in many places.
 
 
@@ -553,14 +543,14 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/vision_ops.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:42:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:231:Shotgun Surgery:
     cx'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: cy'
-  description: 'code2llm reports `Shotgun Surgery: cy` in `imgl/vision_ops.py:42`.
+  description: 'code2llm reports `Shotgun Surgery: cy` in `imgl/vision_ops.py:231`.
 
 
-    Mutation of variable ''cy'' spans 8 functions. Changing this logic requires work
+    Mutation of variable ''cy'' spans 9 functions. Changing this logic requires work
     in many places.
 
 
@@ -573,11 +563,31 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/vision_ops.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:42:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:231:Shotgun Surgery:
     cy'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: data'
+  description: 'code2llm reports `Shotgun Surgery: data` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:97`.
+
+
+    Mutation of variable ''data'' spans 14 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:97:Shotgun
+    Surgery: data'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: detail'
-  description: 'code2llm reports `Shotgun Surgery: detail` in `imgl/capture.py:334`.
+  description: 'code2llm reports `Shotgun Surgery: detail` in `imgl/capture.py:403`.
 
 
     Mutation of variable ''detail'' spans 6 functions. Changing this logic requires
@@ -593,11 +603,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/capture.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/capture.py:334:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/capture.py:403:Shotgun Surgery:
     detail'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: element_id'
-  description: 'code2llm reports `Shotgun Surgery: element_id` in `packages/uri2imgl/src/uri2imgl/decode.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: element_id` in `imgl/interact.py:178`.
 
 
     Mutation of variable ''element_id'' spans 6 functions. Changing this logic requires
@@ -612,12 +622,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/uri2imgl/src/uri2imgl/decode.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2imgl/src/uri2imgl/decode.py:8:Shotgun
-    Surgery: element_id'
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/interact.py:178:Shotgun Surgery:
+    element_id'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: elements'
-  description: 'code2llm reports `Shotgun Surgery: elements` in `imgl/window_scope.py:362`.
+  description: 'code2llm reports `Shotgun Surgery: elements` in `imgl/detect/local.py:336`.
 
 
     Mutation of variable ''elements'' spans 9 functions. Changing this logic requires
@@ -632,12 +642,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:362:Shotgun Surgery:
+  - imgl/detect/local.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:336:Shotgun Surgery:
     elements'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: extra'
-  description: 'code2llm reports `Shotgun Surgery: extra` in `imgl/uri.py:42`.
+  description: 'code2llm reports `Shotgun Surgery: extra` in `imgl/uri.py:86`.
 
 
     Mutation of variable ''extra'' spans 5 functions. Changing this logic requires
@@ -653,10 +663,10 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/uri.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/uri.py:42:Shotgun Surgery: extra'
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/uri.py:86:Shotgun Surgery: extra'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: h'
-  description: 'code2llm reports `Shotgun Surgery: h` in `imgl/diagnose.py:174`.
+  description: 'code2llm reports `Shotgun Surgery: h` in `imgl/llm_catalog.py:274`.
 
 
     Mutation of variable ''h'' spans 9 functions. Changing this logic requires work
@@ -671,12 +681,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/diagnose.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/diagnose.py:174:Shotgun Surgery:
+  - imgl/llm_catalog.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/llm_catalog.py:274:Shotgun Surgery:
     h'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: handler'
+  description: 'code2llm reports `Shotgun Surgery: handler` in `packages/nlp2imgl/src/nlp2imgl/cli.py:15`.
+
+
+    Mutation of variable ''handler'' spans 6 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - packages/nlp2imgl/src/nlp2imgl/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/nlp2imgl/src/nlp2imgl/cli.py:15:Shotgun
+    Surgery: handler'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: height'
-  description: 'code2llm reports `Shotgun Surgery: height` in `imgl/vdisplay_bridge.py:181`.
+  description: 'code2llm reports `Shotgun Surgery: height` in `imgl/vision_ops.py:190`.
 
 
     Mutation of variable ''height'' spans 11 functions. Changing this logic requires
@@ -691,12 +721,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/vdisplay_bridge.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vdisplay_bridge.py:181:Shotgun
-    Surgery: height'
+  - imgl/vision_ops.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:190:Shotgun Surgery:
+    height'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: hint'
-  description: 'code2llm reports `Shotgun Surgery: hint` in `imgl/paths.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: hint` in `imgl/diagnose.py:225`.
 
 
     Mutation of variable ''hint'' spans 5 functions. Changing this logic requires
@@ -711,14 +741,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/paths.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/paths.py:8:Shotgun Surgery: hint'
+  - imgl/diagnose.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/diagnose.py:225:Shotgun Surgery:
+    hint'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: image'
-  description: 'code2llm reports `Shotgun Surgery: image` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:123`.
+  description: 'code2llm reports `Shotgun Surgery: image` in `imgl/llm_catalog.py:274`.
 
 
-    Mutation of variable ''image'' spans 24 functions. Changing this logic requires
+    Mutation of variable ''image'' spans 26 functions. Changing this logic requires
     work in many places.
 
 
@@ -730,15 +761,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:123:Shotgun
-    Surgery: image'
+  - imgl/llm_catalog.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/llm_catalog.py:274:Shotgun Surgery:
+    image'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: image_path'
-  description: 'code2llm reports `Shotgun Surgery: image_path` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:12`.
+  description: 'code2llm reports `Shotgun Surgery: image_path` in `imgl/cli.py:664`.
 
 
-    Mutation of variable ''image_path'' spans 7 functions. Changing this logic requires
+    Mutation of variable ''image_path'' spans 11 functions. Changing this logic requires
     work in many places.
 
 
@@ -750,12 +781,11 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:12:Shotgun
-    Surgery: image_path'
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/cli.py:664:Shotgun Surgery: image_path'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: img'
-  description: 'code2llm reports `Shotgun Surgery: img` in `packages/nlp2imgl/src/nlp2imgl/control.py:54`.
+  description: 'code2llm reports `Shotgun Surgery: img` in `imgl/control.py:205`.
 
 
     Mutation of variable ''img'' spans 6 functions. Changing this logic requires work
@@ -770,12 +800,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/nlp2imgl/src/nlp2imgl/control.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/nlp2imgl/src/nlp2imgl/control.py:54:Shotgun
-    Surgery: img'
+  - imgl/control.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/control.py:205:Shotgun Surgery:
+    img'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: index'
-  description: 'code2llm reports `Shotgun Surgery: index` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:184`.
+  description: 'code2llm reports `Shotgun Surgery: index` in `imgl/detect/local.py:269`.
 
 
     Mutation of variable ''index'' spans 5 functions. Changing this logic requires
@@ -790,12 +820,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:184:Shotgun
-    Surgery: index'
+  - imgl/detect/local.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:269:Shotgun Surgery:
+    index'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: key'
-  description: 'code2llm reports `Shotgun Surgery: key` in `imgl/uri.py:11`.
+  description: 'code2llm reports `Shotgun Surgery: key` in `packages/dsl2imgl/src/dsl2imgl/pb_codec.py:119`.
 
 
     Mutation of variable ''key'' spans 5 functions. Changing this logic requires work
@@ -810,11 +840,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/uri.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/uri.py:11:Shotgun Surgery: key'
+  - packages/dsl2imgl/src/dsl2imgl/pb_codec.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/pb_codec.py:119:Shotgun
+    Surgery: key'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: label'
-  description: 'code2llm reports `Shotgun Surgery: label` in `packages/uri2imgl/src/uri2imgl/decode.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: label` in `imgl/export/annotate_export.py:31`.
 
 
     Mutation of variable ''label'' spans 10 functions. Changing this logic requires
@@ -829,12 +860,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/uri2imgl/src/uri2imgl/decode.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2imgl/src/uri2imgl/decode.py:8:Shotgun
+  - imgl/export/annotate_export.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/export/annotate_export.py:31:Shotgun
     Surgery: label'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: left'
-  description: 'code2llm reports `Shotgun Surgery: left` in `imgl/window_scope.py:602`.
+  description: 'code2llm reports `Shotgun Surgery: left` in `imgl/window_scope.py:410`.
 
 
     Mutation of variable ''left'' spans 5 functions. Changing this logic requires
@@ -850,11 +881,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:602:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:410:Shotgun Surgery:
     left'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: line'
-  description: 'code2llm reports `Shotgun Surgery: line` in `packages/dsl2imgl/src/dsl2imgl/grammar.py:9`.
+  description: 'code2llm reports `Shotgun Surgery: line` in `packages/uri2imgl/src/uri2imgl/cli.py:12`.
 
 
     Mutation of variable ''line'' spans 6 functions. Changing this logic requires
@@ -869,12 +900,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2imgl/src/dsl2imgl/grammar.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/grammar.py:9:Shotgun
+  - packages/uri2imgl/src/uri2imgl/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2imgl/src/uri2imgl/cli.py:12:Shotgun
     Surgery: line'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: lines'
-  description: 'code2llm reports `Shotgun Surgery: lines` in `imgl/window_scope.py:237`.
+  description: 'code2llm reports `Shotgun Surgery: lines` in `imgl/web/agent.py:30`.
 
 
     Mutation of variable ''lines'' spans 5 functions. Changing this logic requires
@@ -889,12 +920,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:237:Shotgun Surgery:
+  - imgl/web/agent.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/web/agent.py:30:Shotgun Surgery:
     lines'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: match'
-  description: 'code2llm reports `Shotgun Surgery: match` in `imgl/autodiag.py:496`.
+  description: 'code2llm reports `Shotgun Surgery: match` in `imgl/autodiag.py:525`.
 
 
     Mutation of variable ''match'' spans 7 functions. Changing this logic requires
@@ -910,11 +941,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/autodiag.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/autodiag.py:496:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/autodiag.py:525:Shotgun Surgery:
     match'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: matches'
-  description: 'code2llm reports `Shotgun Surgery: matches` in `imgl/vision_ops.py:61`.
+  description: 'code2llm reports `Shotgun Surgery: matches` in `imgl/cli.py:933`.
 
 
     Mutation of variable ''matches'' spans 5 functions. Changing this logic requires
@@ -929,12 +960,11 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/vision_ops.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:61:Shotgun Surgery:
-    matches'
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/cli.py:933:Shotgun Surgery: matches'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: metadata'
-  description: 'code2llm reports `Shotgun Surgery: metadata` in `imgl/coords.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: metadata` in `imgl/export/vql_adapter.py:30`.
 
 
     Mutation of variable ''metadata'' spans 5 functions. Changing this logic requires
@@ -949,11 +979,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/coords.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/coords.py:8:Shotgun Surgery: metadata'
+  - imgl/export/vql_adapter.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/export/vql_adapter.py:30:Shotgun
+    Surgery: metadata'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: msg'
-  description: 'code2llm reports `Shotgun Surgery: msg` in `packages/dsl2imgl/src/dsl2imgl/pb_codec.py:59`.
+  description: 'code2llm reports `Shotgun Surgery: msg` in `packages/dsl2imgl/src/dsl2imgl/pb_codec.py:47`.
 
 
     Mutation of variable ''msg'' spans 10 functions. Changing this logic requires
@@ -969,11 +1000,11 @@ tickets:
   - shotgun-surgery
   files:
   - packages/dsl2imgl/src/dsl2imgl/pb_codec.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/pb_codec.py:59:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/pb_codec.py:47:Shotgun
     Surgery: msg'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: ok'
-  description: 'code2llm reports `Shotgun Surgery: ok` in `imgl/capture.py:334`.
+  description: 'code2llm reports `Shotgun Surgery: ok` in `imgl/control.py:180`.
 
 
     Mutation of variable ''ok'' spans 5 functions. Changing this logic requires work
@@ -988,12 +1019,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/capture.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/capture.py:334:Shotgun Surgery:
+  - imgl/control.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/control.py:180:Shotgun Surgery:
     ok'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: out'
-  description: 'code2llm reports `Shotgun Surgery: out` in `imgl/window_scope.py:341`.
+  description: 'code2llm reports `Shotgun Surgery: out` in `imgl/interact.py:229`.
 
 
     Mutation of variable ''out'' spans 21 functions. Changing this logic requires
@@ -1008,12 +1039,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:341:Shotgun Surgery:
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/interact.py:229:Shotgun Surgery:
     out'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: parser'
-  description: 'code2llm reports `Shotgun Surgery: parser` in `packages/nlp2imgl/src/nlp2imgl/cli_parser.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: parser` in `packages/uri2imgl/src/uri2imgl/cli.py:12`.
 
 
     Mutation of variable ''parser'' spans 10 functions. Changing this logic requires
@@ -1028,15 +1059,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/nlp2imgl/src/nlp2imgl/cli_parser.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/nlp2imgl/src/nlp2imgl/cli_parser.py:8:Shotgun
+  - packages/uri2imgl/src/uri2imgl/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2imgl/src/uri2imgl/cli.py:12:Shotgun
     Surgery: parser'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: path'
-  description: 'code2llm reports `Shotgun Surgery: path` in `imgl/control.py:48`.
+  description: 'code2llm reports `Shotgun Surgery: path` in `imgl/interact.py:229`.
 
 
-    Mutation of variable ''path'' spans 27 functions. Changing this logic requires
+    Mutation of variable ''path'' spans 29 functions. Changing this logic requires
     work in many places.
 
 
@@ -1048,12 +1079,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/control.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/control.py:48:Shotgun Surgery:
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/interact.py:229:Shotgun Surgery:
     path'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: payload'
+  description: 'code2llm reports `Shotgun Surgery: payload` in `packages/dsl2imgl/src/dsl2imgl/codec.py:24`.
+
+
+    Mutation of variable ''payload'' spans 31 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - packages/dsl2imgl/src/dsl2imgl/codec.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/codec.py:24:Shotgun
+    Surgery: payload'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: pixels'
-  description: 'code2llm reports `Shotgun Surgery: pixels` in `imgl/diagnose.py:174`.
+  description: 'code2llm reports `Shotgun Surgery: pixels` in `imgl/detect/local.py:29`.
 
 
     Mutation of variable ''pixels'' spans 5 functions. Changing this logic requires
@@ -1068,12 +1119,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/diagnose.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/diagnose.py:174:Shotgun Surgery:
+  - imgl/detect/local.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:29:Shotgun Surgery:
     pixels'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: proc'
-  description: 'code2llm reports `Shotgun Surgery: proc` in `imgl/capture.py:437`.
+  description: 'code2llm reports `Shotgun Surgery: proc` in `imgl/capture.py:403`.
 
 
     Mutation of variable ''proc'' spans 5 functions. Changing this logic requires
@@ -1089,11 +1140,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/capture.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/capture.py:437:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/capture.py:403:Shotgun Surgery:
     proc'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: prompt'
-  description: 'code2llm reports `Shotgun Surgery: prompt` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:184`.
+  description: 'code2llm reports `Shotgun Surgery: prompt` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:164`.
 
 
     Mutation of variable ''prompt'' spans 7 functions. Changing this logic requires
@@ -1109,7 +1160,7 @@ tickets:
   - shotgun-surgery
   files:
   - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:184:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:164:Shotgun
     Surgery: prompt'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: raw'
@@ -1133,7 +1184,7 @@ tickets:
     raw'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: report'
-  description: 'code2llm reports `Shotgun Surgery: report` in `packages/nlp2imgl/src/nlp2imgl/control.py:54`.
+  description: 'code2llm reports `Shotgun Surgery: report` in `imgl/control.py:205`.
 
 
     Mutation of variable ''report'' spans 6 functions. Changing this logic requires
@@ -1148,12 +1199,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/nlp2imgl/src/nlp2imgl/control.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/nlp2imgl/src/nlp2imgl/control.py:54:Shotgun
-    Surgery: report'
+  - imgl/control.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/control.py:205:Shotgun Surgery:
+    report'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: resolved'
-  description: 'code2llm reports `Shotgun Surgery: resolved` in `imgl/actions.py:226`.
+  description: 'code2llm reports `Shotgun Surgery: resolved` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:164`.
 
 
     Mutation of variable ''resolved'' spans 9 functions. Changing this logic requires
@@ -1168,12 +1219,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/actions.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/actions.py:226:Shotgun Surgery:
-    resolved'
+  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:164:Shotgun
+    Surgery: resolved'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: result'
-  description: 'code2llm reports `Shotgun Surgery: result` in `packages/dsl2imgl/src/dsl2imgl/bus.py:36`.
+  description: 'code2llm reports `Shotgun Surgery: result` in `packages/dsl2imgl/src/dsl2imgl/bus.py:48`.
 
 
     Mutation of variable ''result'' spans 20 functions. Changing this logic requires
@@ -1189,11 +1240,11 @@ tickets:
   - shotgun-surgery
   files:
   - packages/dsl2imgl/src/dsl2imgl/bus.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/bus.py:36:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/bus.py:48:Shotgun
     Surgery: result'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: role'
-  description: 'code2llm reports `Shotgun Surgery: role` in `imgl/detect/local.py:202`.
+  description: 'code2llm reports `Shotgun Surgery: role` in `imgl/detect/local.py:269`.
 
 
     Mutation of variable ''role'' spans 5 functions. Changing this logic requires
@@ -1209,31 +1260,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/detect/local.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:202:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:269:Shotgun Surgery:
     role'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: root'
-  description: 'code2llm reports `Shotgun Surgery: root` in `imgl/installs.py:58`.
-
-
-    Mutation of variable ''root'' spans 5 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - imgl/installs.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/installs.py:58:Shotgun Surgery:
-    root'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: scale'
-  description: 'code2llm reports `Shotgun Surgery: scale` in `imgl/web/thumbs.py:32`.
+  description: 'code2llm reports `Shotgun Surgery: scale` in `imgl/preprocess.py:39`.
 
 
     Mutation of variable ''scale'' spans 6 functions. Changing this logic requires
@@ -1248,15 +1279,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/web/thumbs.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/web/thumbs.py:32:Shotgun Surgery:
+  - imgl/preprocess.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/preprocess.py:39:Shotgun Surgery:
     scale'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: scene'
-  description: 'code2llm reports `Shotgun Surgery: scene` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:12`.
+  description: 'code2llm reports `Shotgun Surgery: scene` in `imgl/export/actuation_layers.py:115`.
 
 
-    Mutation of variable ''scene'' spans 16 functions. Changing this logic requires
+    Mutation of variable ''scene'' spans 22 functions. Changing this logic requires
     work in many places.
 
 
@@ -1268,12 +1299,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:12:Shotgun
+  - imgl/export/actuation_layers.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/export/actuation_layers.py:115:Shotgun
     Surgery: scene'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: score'
+  description: 'code2llm reports `Shotgun Surgery: score` in `imgl/targets.py:108`.
+
+
+    Mutation of variable ''score'' spans 5 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - imgl/targets.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/targets.py:108:Shotgun Surgery:
+    score'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: session'
-  description: 'code2llm reports `Shotgun Surgery: session` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:12`.
+  description: 'code2llm reports `Shotgun Surgery: session` in `imgl/interact.py:229`.
 
 
     Mutation of variable ''session'' spans 17 functions. Changing this logic requires
@@ -1288,12 +1339,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:12:Shotgun
-    Surgery: session'
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/interact.py:229:Shotgun Surgery:
+    session'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: sub'
-  description: 'code2llm reports `Shotgun Surgery: sub` in `packages/nlp2imgl/src/nlp2imgl/cli_parser.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: sub` in `packages/uri2imgl/src/uri2imgl/cli.py:12`.
 
 
     Mutation of variable ''sub'' spans 5 functions. Changing this logic requires work
@@ -1308,35 +1359,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/nlp2imgl/src/nlp2imgl/cli_parser.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/nlp2imgl/src/nlp2imgl/cli_parser.py:8:Shotgun
+  - packages/uri2imgl/src/uri2imgl/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2imgl/src/uri2imgl/cli.py:12:Shotgun
     Surgery: sub'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: target'
-  description: 'code2llm reports `Shotgun Surgery: target` in `imgl/window_scope.py:362`.
-
-
-    Mutation of variable ''target'' spans 7 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:362:Shotgun Surgery:
-    target'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: text'
-  description: 'code2llm reports `Shotgun Surgery: text` in `imgl/catalog_filter.py:79`.
+  description: 'code2llm reports `Shotgun Surgery: text` in `imgl/export/actuation_layers.py:54`.
 
 
-    Mutation of variable ''text'' spans 24 functions. Changing this logic requires
+    Mutation of variable ''text'' spans 27 functions. Changing this logic requires
     work in many places.
 
 
@@ -1348,12 +1379,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/catalog_filter.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/catalog_filter.py:79:Shotgun Surgery:
-    text'
+  - imgl/export/actuation_layers.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/export/actuation_layers.py:54:Shotgun
+    Surgery: text'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: title'
-  description: 'code2llm reports `Shotgun Surgery: title` in `imgl/window_scope.py:237`.
+  description: 'code2llm reports `Shotgun Surgery: title` in `imgl/window_scope.py:279`.
 
 
     Mutation of variable ''title'' spans 7 functions. Changing this logic requires
@@ -1369,31 +1400,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:237:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:279:Shotgun Surgery:
     title'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: value'
-  description: 'code2llm reports `Shotgun Surgery: value` in `packages/uri2imgl/src/uri2imgl/decode.py:8`.
-
-
-    Mutation of variable ''value'' spans 8 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - packages/uri2imgl/src/uri2imgl/decode.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2imgl/src/uri2imgl/decode.py:8:Shotgun
-    Surgery: value'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: verb'
-  description: 'code2llm reports `Shotgun Surgery: verb` in `packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:184`.
+  description: 'code2llm reports `Shotgun Surgery: verb` in `packages/dsl2imgl/src/dsl2imgl/grammar.py:149`.
 
 
     Mutation of variable ''verb'' spans 11 functions. Changing this logic requires
@@ -1408,12 +1419,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/handlers/runtime.py:184:Shotgun
+  - packages/dsl2imgl/src/dsl2imgl/grammar.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2imgl/src/dsl2imgl/grammar.py:149:Shotgun
     Surgery: verb'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: verdict'
-  description: 'code2llm reports `Shotgun Surgery: verdict` in `imgl/terminal_md.py:145`.
+  description: 'code2llm reports `Shotgun Surgery: verdict` in `imgl/autodiag.py:33`.
 
 
     Mutation of variable ''verdict'' spans 5 functions. Changing this logic requires
@@ -1428,12 +1439,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/terminal_md.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/terminal_md.py:145:Shotgun Surgery:
+  - imgl/autodiag.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/autodiag.py:33:Shotgun Surgery:
     verdict'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: w'
-  description: 'code2llm reports `Shotgun Surgery: w` in `imgl/diagnose.py:174`.
+  description: 'code2llm reports `Shotgun Surgery: w` in `imgl/llm_catalog.py:274`.
 
 
     Mutation of variable ''w'' spans 8 functions. Changing this logic requires work
@@ -1448,12 +1459,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/diagnose.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/diagnose.py:174:Shotgun Surgery:
+  - imgl/llm_catalog.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/llm_catalog.py:274:Shotgun Surgery:
     w'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: width'
-  description: 'code2llm reports `Shotgun Surgery: width` in `imgl/vdisplay_bridge.py:181`.
+  description: 'code2llm reports `Shotgun Surgery: width` in `imgl/vision_ops.py:190`.
 
 
     Mutation of variable ''width'' spans 14 functions. Changing this logic requires
@@ -1468,12 +1479,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/vdisplay_bridge.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vdisplay_bridge.py:181:Shotgun
-    Surgery: width'
+  - imgl/vision_ops.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:190:Shotgun Surgery:
+    width'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: window'
-  description: 'code2llm reports `Shotgun Surgery: window` in `packages/uri2imgl/src/uri2imgl/decode.py:8`.
+  description: 'code2llm reports `Shotgun Surgery: window` in `imgl/interact.py:229`.
 
 
     Mutation of variable ''window'' spans 16 functions. Changing this logic requires
@@ -1488,12 +1499,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/uri2imgl/src/uri2imgl/decode.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2imgl/src/uri2imgl/decode.py:8:Shotgun
-    Surgery: window'
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/interact.py:229:Shotgun Surgery:
+    window'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: windows'
-  description: 'code2llm reports `Shotgun Surgery: windows` in `imgl/interact.py:287`.
+  description: 'code2llm reports `Shotgun Surgery: windows` in `imgl/window_scope.py:152`.
 
 
     Mutation of variable ''windows'' spans 11 functions. Changing this logic requires
@@ -1508,12 +1519,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/interact.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/interact.py:287:Shotgun Surgery:
+  - imgl/window_scope.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:152:Shotgun Surgery:
     windows'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: x'
-  description: 'code2llm reports `Shotgun Surgery: x` in `imgl/vision_ops.py:61`.
+  description: 'code2llm reports `Shotgun Surgery: x` in `imgl/vision_ops.py:190`.
 
 
     Mutation of variable ''x'' spans 11 functions. Changing this logic requires work
@@ -1529,11 +1540,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/vision_ops.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:61:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:190:Shotgun Surgery:
     x'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: x0'
-  description: 'code2llm reports `Shotgun Surgery: x0` in `imgl/window_scope.py:504`.
+  description: 'code2llm reports `Shotgun Surgery: x0` in `imgl/window_scope.py:410`.
 
 
     Mutation of variable ''x0'' spans 18 functions. Changing this logic requires work
@@ -1549,11 +1560,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:504:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:410:Shotgun Surgery:
     x0'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: x1'
-  description: 'code2llm reports `Shotgun Surgery: x1` in `imgl/export/vql_adapter.py:215`.
+  description: 'code2llm reports `Shotgun Surgery: x1` in `imgl/window_scope.py:410`.
 
 
     Mutation of variable ''x1'' spans 20 functions. Changing this logic requires work
@@ -1568,12 +1579,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/export/vql_adapter.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/export/vql_adapter.py:215:Shotgun
-    Surgery: x1'
+  - imgl/window_scope.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:410:Shotgun Surgery:
+    x1'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: y'
-  description: 'code2llm reports `Shotgun Surgery: y` in `imgl/vision_ops.py:61`.
+  description: 'code2llm reports `Shotgun Surgery: y` in `imgl/vision_ops.py:190`.
 
 
     Mutation of variable ''y'' spans 12 functions. Changing this logic requires work
@@ -1589,11 +1600,11 @@ tickets:
   - shotgun-surgery
   files:
   - imgl/vision_ops.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:61:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/vision_ops.py:190:Shotgun Surgery:
     y'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: y0'
-  description: 'code2llm reports `Shotgun Surgery: y0` in `imgl/window_scope.py:504`.
+  description: 'code2llm reports `Shotgun Surgery: y0` in `imgl/detect/local.py:269`.
 
 
     Mutation of variable ''y0'' spans 16 functions. Changing this logic requires work
@@ -1608,12 +1619,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:504:Shotgun Surgery:
+  - imgl/detect/local.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:269:Shotgun Surgery:
     y0'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: y1'
-  description: 'code2llm reports `Shotgun Surgery: y1` in `imgl/window_scope.py:504`.
+  description: 'code2llm reports `Shotgun Surgery: y1` in `imgl/detect/local.py:269`.
 
 
     Mutation of variable ''y1'' spans 18 functions. Changing this logic requires work
@@ -1628,8 +1639,8 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - imgl/window_scope.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/window_scope.py:504:Shotgun Surgery:
+  - imgl/detect/local.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:imgl/detect/local.py:269:Shotgun Surgery:
     y1'
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.actions.SceneActions.find (CC=21)'
@@ -1650,7 +1661,7 @@ tickets:
   dedupe_key: code2llm:cc:imgl/actions.py:imgl.actions.SceneActions.find
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.autodiag._actionable_hints (CC=19)'
-  description: 'code2llm reports `imgl.autodiag._actionable_hints` at `imgl/autodiag.py:439`
+  description: 'code2llm reports `imgl.autodiag._actionable_hints` at `imgl/autodiag.py:452`
     with cyclomatic complexity 19 (limit 15).
 
 
@@ -1666,8 +1677,25 @@ tickets:
   - imgl/autodiag.py
   dedupe_key: code2llm:cc:imgl/autodiag.py:imgl.autodiag._actionable_hints
 - signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: imgl.autodiag._derive_current_next (CC=23)'
+  description: 'code2llm reports `imgl.autodiag._derive_current_next` at `imgl/autodiag.py:311`
+    with cyclomatic complexity 23 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - imgl/autodiag.py
+  dedupe_key: code2llm:cc:imgl/autodiag.py:imgl.autodiag._derive_current_next
+- signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.autodiag._markdown_payload (CC=18)'
-  description: 'code2llm reports `imgl.autodiag._markdown_payload` at `imgl/autodiag.py:350`
+  description: 'code2llm reports `imgl.autodiag._markdown_payload` at `imgl/autodiag.py:363`
     with cyclomatic complexity 18 (limit 15).
 
 
@@ -1750,23 +1778,6 @@ tickets:
   files:
   - imgl/catalog_filter.py
   dedupe_key: code2llm:cc:imgl/catalog_filter.py:imgl.catalog_filter._keep_element
-- signal: code2llm_cc
-  title: 'Reduce cyclomatic complexity: imgl.cli._run_image_command (CC=19)'
-  description: 'code2llm reports `imgl.cli._run_image_command` at `imgl/cli.py:840`
-    with cyclomatic complexity 19 (limit 15).
-
-
-    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
-    code2llm after the change and keep tests green.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - complexity
-  - refactor
-  files:
-  - imgl/cli.py
-  dedupe_key: code2llm:cc:imgl/cli.py:imgl.cli._run_image_command
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.control.capture_interactive (CC=16)'
   description: 'code2llm reports `imgl.control.capture_interactive` at `imgl/control.py:113`
@@ -1871,7 +1882,7 @@ tickets:
   dedupe_key: code2llm:cc:imgl/targets.py:imgl.targets.normalize_actuation_element
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: imgl.targets.resolve_editor_target (CC=18)'
-  description: 'code2llm reports `imgl.targets.resolve_editor_target` at `imgl/targets.py:197`
+  description: 'code2llm reports `imgl.targets.resolve_editor_target` at `imgl/targets.py:198`
     with cyclomatic complexity 18 (limit 15).
 
 
@@ -2031,11 +2042,11 @@ tickets:
   - packages/uri2imgl/src/uri2imgl/decode.py
   dedupe_key: code2llm:cc:packages/uri2imgl/src/uri2imgl/decode.py:packages.uri2imgl.src.uri2imgl.decode.uri_to_dsl
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: bw, bh, aspect'
-  description: 'code2llm reports `Data Clump: bw, bh, aspect` in `imgl/detect/local.py:183`.
+  title: 'Address code smell: Data Clump: bw, aspect, bh'
+  description: 'code2llm reports `Data Clump: bw, aspect, bh` in `imgl/detect/local.py:183`.
 
 
-    Arguments (bw, bh, aspect) are used together in multiple functions: imgl.detect.local._button_confidence,
+    Arguments (bw, aspect, bh) are used together in multiple functions: imgl.detect.local._button_confidence,
     imgl.detect.local._button_role.
 
 
@@ -2049,13 +2060,13 @@ tickets:
   files:
   - imgl/detect/local.py
   dedupe_key: 'code2llm:smell:data_clump:imgl/detect/local.py:183:Data Clump: bw,
-    bh, aspect'
+    aspect, bh'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: bw, bh, aspect'
-  description: 'code2llm reports `Data Clump: bw, bh, aspect` in `imgl/detect/local.py:196`.
+  title: 'Address code smell: Data Clump: bw, aspect, bh'
+  description: 'code2llm reports `Data Clump: bw, aspect, bh` in `imgl/detect/local.py:196`.
 
 
-    Arguments (bw, bh, aspect) are used together in multiple functions: imgl.detect.local._button_confidence,
+    Arguments (bw, aspect, bh) are used together in multiple functions: imgl.detect.local._button_confidence,
     imgl.detect.local._button_role.
 
 
@@ -2069,53 +2080,13 @@ tickets:
   files:
   - imgl/detect/local.py
   dedupe_key: 'code2llm:smell:data_clump:imgl/detect/local.py:196:Data Clump: bw,
-    bh, aspect'
+    aspect, bh'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: finder, session, qs'
-  description: 'code2llm reports `Data Clump: finder, session, qs` in `imgl/interact.py:146`.
+  title: 'Address code smell: Data Clump: im, w, h'
+  description: 'code2llm reports `Data Clump: im, w, h` in `imgl/detect/local.py:54`.
 
 
-    Arguments (finder, session, qs) are used together in multiple functions: imgl.interact._resolve_click,
-    imgl.interact._resolve_type.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - imgl/interact.py
-  dedupe_key: 'code2llm:smell:data_clump:imgl/interact.py:146:Data Clump: finder,
-    session, qs'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: finder, session, qs'
-  description: 'code2llm reports `Data Clump: finder, session, qs` in `imgl/interact.py:178`.
-
-
-    Arguments (finder, session, qs) are used together in multiple functions: imgl.interact._resolve_click,
-    imgl.interact._resolve_type.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - imgl/interact.py
-  dedupe_key: 'code2llm:smell:data_clump:imgl/interact.py:178:Data Clump: finder,
-    session, qs'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: im, h, w'
-  description: 'code2llm reports `Data Clump: im, h, w` in `imgl/detect/local.py:54`.
-
-
-    Arguments (im, h, w) are used together in multiple functions: imgl.detect.local._detect_titlebar,
+    Arguments (im, w, h) are used together in multiple functions: imgl.detect.local._detect_titlebar,
     imgl.detect.local._prepare_button_scan, imgl.detect.local._detect_buttons, imgl.detect.local._detect_panels_simple.
 
 
@@ -2128,14 +2099,14 @@ tickets:
   - data-clump
   files:
   - imgl/detect/local.py
-  dedupe_key: 'code2llm:smell:data_clump:imgl/detect/local.py:54:Data Clump: im, h,
-    w'
+  dedupe_key: 'code2llm:smell:data_clump:imgl/detect/local.py:54:Data Clump: im, w,
+    h'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: im, h, w'
-  description: 'code2llm reports `Data Clump: im, h, w` in `imgl/detect/local.py:107`.
+  title: 'Address code smell: Data Clump: im, w, h'
+  description: 'code2llm reports `Data Clump: im, w, h` in `imgl/detect/local.py:107`.
 
 
-    Arguments (im, h, w) are used together in multiple functions: imgl.detect.local._detect_titlebar,
+    Arguments (im, w, h) are used together in multiple functions: imgl.detect.local._detect_titlebar,
     imgl.detect.local._prepare_button_scan, imgl.detect.local._detect_buttons, imgl.detect.local._detect_panels_simple.
 
 
@@ -2149,13 +2120,13 @@ tickets:
   files:
   - imgl/detect/local.py
   dedupe_key: 'code2llm:smell:data_clump:imgl/detect/local.py:107:Data Clump: im,
-    h, w'
+    w, h'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: im, h, w'
-  description: 'code2llm reports `Data Clump: im, h, w` in `imgl/detect/local.py:241`.
+  title: 'Address code smell: Data Clump: im, w, h'
+  description: 'code2llm reports `Data Clump: im, w, h` in `imgl/detect/local.py:241`.
 
 
-    Arguments (im, h, w) are used together in multiple functions: imgl.detect.local._detect_titlebar,
+    Arguments (im, w, h) are used together in multiple functions: imgl.detect.local._detect_titlebar,
     imgl.detect.local._prepare_button_scan, imgl.detect.local._detect_buttons, imgl.detect.local._detect_panels_simple.
 
 
@@ -2169,13 +2140,13 @@ tickets:
   files:
   - imgl/detect/local.py
   dedupe_key: 'code2llm:smell:data_clump:imgl/detect/local.py:241:Data Clump: im,
-    h, w'
+    w, h'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: im, h, w'
-  description: 'code2llm reports `Data Clump: im, h, w` in `imgl/detect/local.py:269`.
+  title: 'Address code smell: Data Clump: im, w, h'
+  description: 'code2llm reports `Data Clump: im, w, h` in `imgl/detect/local.py:269`.
 
 
-    Arguments (im, h, w) are used together in multiple functions: imgl.detect.local._detect_titlebar,
+    Arguments (im, w, h) are used together in multiple functions: imgl.detect.local._detect_titlebar,
     imgl.detect.local._prepare_button_scan, imgl.detect.local._detect_buttons, imgl.detect.local._detect_panels_simple.
 
 
@@ -2189,13 +2160,160 @@ tickets:
   files:
   - imgl/detect/local.py
   dedupe_key: 'code2llm:smell:data_clump:imgl/detect/local.py:269:Data Clump: im,
-    h, w'
+    w, h'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: text, kind, y, x'
-  description: 'code2llm reports `Data Clump: text, kind, y, x` in `imgl/execute.py:105`.
+  title: 'Address code smell: Data Clump: image_path, config, args'
+  description: 'code2llm reports `Data Clump: image_path, config, args` in `imgl/cli.py:866`.
 
 
-    Arguments (text, kind, y, x) are used together in multiple functions: imgl.execute._execute_xdotool,
+    Arguments (image_path, config, args) are used together in multiple functions:
+    imgl.cli._handle_analyze, imgl.cli._handle_html, imgl.cli._handle_svg, imgl.cli._handle_vql,
+    imgl.cli._handle_annotate, imgl.cli._handle_find, imgl.cli._run_image_command.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/cli.py:866:Data Clump: image_path, config,
+    args'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: image_path, config, args'
+  description: 'code2llm reports `Data Clump: image_path, config, args` in `imgl/cli.py:872`.
+
+
+    Arguments (image_path, config, args) are used together in multiple functions:
+    imgl.cli._handle_analyze, imgl.cli._handle_html, imgl.cli._handle_svg, imgl.cli._handle_vql,
+    imgl.cli._handle_annotate, imgl.cli._handle_find, imgl.cli._run_image_command.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/cli.py:872:Data Clump: image_path, config,
+    args'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: image_path, config, args'
+  description: 'code2llm reports `Data Clump: image_path, config, args` in `imgl/cli.py:879`.
+
+
+    Arguments (image_path, config, args) are used together in multiple functions:
+    imgl.cli._handle_analyze, imgl.cli._handle_html, imgl.cli._handle_svg, imgl.cli._handle_vql,
+    imgl.cli._handle_annotate, imgl.cli._handle_find, imgl.cli._run_image_command.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/cli.py:879:Data Clump: image_path, config,
+    args'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: image_path, config, args'
+  description: 'code2llm reports `Data Clump: image_path, config, args` in `imgl/cli.py:889`.
+
+
+    Arguments (image_path, config, args) are used together in multiple functions:
+    imgl.cli._handle_analyze, imgl.cli._handle_html, imgl.cli._handle_svg, imgl.cli._handle_vql,
+    imgl.cli._handle_annotate, imgl.cli._handle_find, imgl.cli._run_image_command.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/cli.py:889:Data Clump: image_path, config,
+    args'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: image_path, config, args'
+  description: 'code2llm reports `Data Clump: image_path, config, args` in `imgl/cli.py:907`.
+
+
+    Arguments (image_path, config, args) are used together in multiple functions:
+    imgl.cli._handle_analyze, imgl.cli._handle_html, imgl.cli._handle_svg, imgl.cli._handle_vql,
+    imgl.cli._handle_annotate, imgl.cli._handle_find, imgl.cli._run_image_command.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/cli.py:907:Data Clump: image_path, config,
+    args'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: image_path, config, args'
+  description: 'code2llm reports `Data Clump: image_path, config, args` in `imgl/cli.py:933`.
+
+
+    Arguments (image_path, config, args) are used together in multiple functions:
+    imgl.cli._handle_analyze, imgl.cli._handle_html, imgl.cli._handle_svg, imgl.cli._handle_vql,
+    imgl.cli._handle_annotate, imgl.cli._handle_find, imgl.cli._run_image_command.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/cli.py:933:Data Clump: image_path, config,
+    args'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: image_path, config, args'
+  description: 'code2llm reports `Data Clump: image_path, config, args` in `imgl/cli.py:986`.
+
+
+    Arguments (image_path, config, args) are used together in multiple functions:
+    imgl.cli._handle_analyze, imgl.cli._handle_html, imgl.cli._handle_svg, imgl.cli._handle_vql,
+    imgl.cli._handle_annotate, imgl.cli._handle_find, imgl.cli._run_image_command.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/cli.py:986:Data Clump: image_path, config,
+    args'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: kind, y, text, x'
+  description: 'code2llm reports `Data Clump: kind, y, text, x` in `imgl/execute.py:105`.
+
+
+    Arguments (kind, y, text, x) are used together in multiple functions: imgl.execute._execute_xdotool,
     imgl.execute._execute_ydotool.
 
 
@@ -2208,14 +2326,14 @@ tickets:
   - data-clump
   files:
   - imgl/execute.py
-  dedupe_key: 'code2llm:smell:data_clump:imgl/execute.py:105:Data Clump: text, kind,
-    y, x'
+  dedupe_key: 'code2llm:smell:data_clump:imgl/execute.py:105:Data Clump: kind, y,
+    text, x'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: text, kind, y, x'
-  description: 'code2llm reports `Data Clump: text, kind, y, x` in `imgl/execute.py:135`.
+  title: 'Address code smell: Data Clump: kind, y, text, x'
+  description: 'code2llm reports `Data Clump: kind, y, text, x` in `imgl/execute.py:135`.
 
 
-    Arguments (text, kind, y, x) are used together in multiple functions: imgl.execute._execute_xdotool,
+    Arguments (kind, y, text, x) are used together in multiple functions: imgl.execute._execute_xdotool,
     imgl.execute._execute_ydotool.
 
 
@@ -2228,8 +2346,48 @@ tickets:
   - data-clump
   files:
   - imgl/execute.py
-  dedupe_key: 'code2llm:smell:data_clump:imgl/execute.py:135:Data Clump: text, kind,
-    y, x'
+  dedupe_key: 'code2llm:smell:data_clump:imgl/execute.py:135:Data Clump: kind, y,
+    text, x'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: qs, finder, session'
+  description: 'code2llm reports `Data Clump: qs, finder, session` in `imgl/interact.py:146`.
+
+
+    Arguments (qs, finder, session) are used together in multiple functions: imgl.interact._resolve_click,
+    imgl.interact._resolve_type.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/interact.py:146:Data Clump: qs, finder,
+    session'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: qs, finder, session'
+  description: 'code2llm reports `Data Clump: qs, finder, session` in `imgl/interact.py:178`.
+
+
+    Arguments (qs, finder, session) are used together in multiple functions: imgl.interact._resolve_click,
+    imgl.interact._resolve_type.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - imgl/interact.py
+  dedupe_key: 'code2llm:smell:data_clump:imgl/interact.py:178:Data Clump: qs, finder,
+    session'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _annotate_catalog'
   description: 'code2llm reports `God Function: _annotate_catalog` in `imgl/interact.py:229`.
@@ -2625,6 +2783,60 @@ tickets:
   dedupe_key: 'code2llm:smell:god_function:imgl/detect/img2vql_bridge.py:27:God Function:
     _from_img2vql_dict'
 - signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _handle_capture'
+  description: 'code2llm reports `God Function: _handle_capture` in `imgl/cli.py:753`.
+
+
+    Function ''_handle_capture'' is oversized: CC=13, fan-out=14, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:god_function:imgl/cli.py:753:God Function: _handle_capture'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _handle_find'
+  description: 'code2llm reports `God Function: _handle_find` in `imgl/cli.py:933`.
+
+
+    Function ''_handle_find'' is oversized: CC=6, fan-out=11, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:god_function:imgl/cli.py:933:God Function: _handle_find'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _handle_serve'
+  description: 'code2llm reports `God Function: _handle_serve` in `imgl/cli.py:586`.
+
+
+    Function ''_handle_serve'' is oversized: CC=10, fan-out=11, mutations=7.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:god_function:imgl/cli.py:586:God Function: _handle_serve'
+- signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _handle_window_phase_prompt'
   description: 'code2llm reports `God Function: _handle_window_phase_prompt` in `imgl/interact.py:621`.
 
@@ -2642,6 +2854,24 @@ tickets:
   files:
   - imgl/interact.py
   dedupe_key: 'code2llm:smell:god_function:imgl/interact.py:621:God Function: _handle_window_phase_prompt'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _handle_windows'
+  description: 'code2llm reports `God Function: _handle_windows` in `imgl/cli.py:693`.
+
+
+    Function ''_handle_windows'' is oversized: CC=11, fan-out=18, mutations=11.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - imgl/cli.py
+  dedupe_key: 'code2llm:smell:god_function:imgl/cli.py:693:God Function: _handle_windows'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _highlight_bash_line'
   description: 'code2llm reports `God Function: _highlight_bash_line` in `imgl/terminal_md.py:111`.
@@ -2955,7 +3185,7 @@ tickets:
     _render_element_svg'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _render_markdown'
-  description: 'code2llm reports `God Function: _render_markdown` in `imgl/autodiag.py:405`.
+  description: 'code2llm reports `God Function: _render_markdown` in `imgl/autodiag.py:418`.
 
 
     Function ''_render_markdown'' is oversized: CC=6, fan-out=8, mutations=11.
@@ -2970,7 +3200,7 @@ tickets:
   - god-function
   files:
   - imgl/autodiag.py
-  dedupe_key: 'code2llm:smell:god_function:imgl/autodiag.py:405:God Function: _render_markdown'
+  dedupe_key: 'code2llm:smell:god_function:imgl/autodiag.py:418:God Function: _render_markdown'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _scale_blob_rect'
   description: 'code2llm reports `God Function: _scale_blob_rect` in `imgl/detect/local.py:166`.
@@ -3659,6 +3889,24 @@ tickets:
   - packages/dsl2imgl/src/dsl2imgl/events.py
   dedupe_key: 'code2llm:smell:god_function:packages/dsl2imgl/src/dsl2imgl/events.py:119:God
     Function: replay_pb'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: resolve_chat_target'
+  description: 'code2llm reports `God Function: resolve_chat_target` in `imgl/targets.py:147`.
+
+
+    Function ''resolve_chat_target'' is oversized: CC=13, fan-out=8, mutations=11.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - imgl/targets.py
+  dedupe_key: 'code2llm:smell:god_function:imgl/targets.py:147:God Function: resolve_chat_target'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: resolve_imgl_uri'
   description: 'code2llm reports `God Function: resolve_imgl_uri` in `imgl/interact.py:80`.

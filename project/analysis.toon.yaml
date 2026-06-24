@@ -1,18 +1,11 @@
-# code2llm | 126f 142115L | python:88,json:14,yaml:7,shell:7,toml:7,proto:2 | 2026-06-24
-# generated in 0.13s
-# CC̅=5.0 | critical:33/529 | dups:0 | cycles:0
+# code2llm | 126f 142190L | python:88,json:14,yaml:7,shell:7,toml:7,proto:2 | 2026-06-24
+# generated in 0.04s
+# CC̅=4.8 | critical:30/552 | dups:0 | cycles:0
 
 HEALTH[20]:
   🟡 CC    uri_to_dsl CC=18 (limit:15)
   🟡 CC    to_dsl CC=15 (limit:15)
   🟡 CC    apply_nl_with_diag CC=17 (limit:15)
-  🟡 CC    diagnose_capture CC=16 (limit:15)
-  🟡 CC    build_operation_step CC=19 (limit:15)
-  🟡 CC    _derive_current_next CC=32 (limit:15)
-  🟡 CC    _markdown_payload CC=18 (limit:15)
-  🟡 CC    _actionable_hints CC=19 (limit:15)
-  🟡 CC    main CC=64 (limit:15)
-  🟡 CC    _run_image_command CC=19 (limit:15)
   🟡 CC    prompt_to_imgl_uri CC=28 (limit:15)
   🟡 CC    _resolve_click CC=17 (limit:15)
   🟡 CC    _resolve_type CC=30 (limit:15)
@@ -23,11 +16,18 @@ HEALTH[20]:
   🟡 CC    colorize_markdown CC=18 (limit:15)
   🟡 CC    _regions_from_balanced_gutters CC=18 (limit:15)
   🟡 CC    _keep_element CC=17 (limit:15)
+  🟡 CC    smart_capture CC=25 (limit:15)
+  🟡 CC    capture_interactive CC=16 (limit:15)
+  🟡 CC    correlate_windows CC=18 (limit:15)
+  🟡 CC    build_window_control_report CC=19 (limit:15)
+  🟡 CC    scene_to_vql CC=19 (limit:15)
+  🟡 CC    scene_to_actuation_layers CC=33 (limit:15)
+  🟡 CC    _detect_panels_simple CC=23 (limit:15)
 
 REFACTOR[1]:
   1. split 20 high-CC methods  (CC>15)
 
-PIPELINES[115]:
+PIPELINES[132]:
   [1] Src [main]: main → create_app → apply_nl → to_dsl → ...(3 more)
       PURITY: 100% pure
   [2] Src [main]: main → dispatch → _run_handler
@@ -137,12 +137,12 @@ LAYERS:
   │ demo-github.sh              22L  0C    0m  CC=0.0    ←0
   │ img2nl-vql-flow.sh          10L  0C    0m  CC=0.0    ←0
   │
-  imgl/                           CC̄=5.4    ←in:70  →out:39  !! split
-  │ !! cli                        958L  0C    9m  CC=64     ←0
+  imgl/                           CC̄=5.2    ←in:70  →out:39  !! split
+  │ !! cli                       1003L  0C   26m  CC=13     ←0
   │ !! window_scope               698L  1C   29m  CC=18     ←10
   │ !! interact                   665L  1C   17m  CC=30     ←4
   │ !! capture                    559L  2C   28m  CC=26     ←4
-  │ !! autodiag                   530L  0C   27m  CC=32     ←5
+  │ !! autodiag                   543L  0C   29m  CC=23     ←5
   │ !! llm_catalog                521L  0C   16m  CC=14     ←4
   │ !! session                    452L  5C   18m  CC=29     ←0
   │ !! local                      374L  1C   20m  CC=23     ←0
@@ -153,8 +153,8 @@ LAYERS:
   │ !! nlp2uri                    282L  1C    6m  CC=28     ←4
   │ vision_ops                 277L  2C    9m  CC=11     ←0
   │ !! actions                    271L  4C   16m  CC=21     ←3
+  │ !! targets                    262L  0C   13m  CC=18     ←0
   │ !! gui_heuristics             261L  0C    9m  CC=27     ←1
-  │ !! targets                    261L  0C    9m  CC=47     ←0
   │ catalog_heuristic          256L  0C    6m  CC=13     ←2
   │ !! vdisplay_bridge            253L  0C   12m  CC=19     ←3
   │ diagnose                   247L  1C   10m  CC=10     ←5
@@ -252,7 +252,7 @@ LAYERS:
   │ !! screen.vql.json          51347L  0C    0m  CC=0.0    ←0
   │ !! screen.vql.imgl.json     11260L  0C    0m  CC=0.0    ←0
   │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
-  │ !! goal.yaml                  511L  0C    0m  CC=0.0    ←0
+  │ !! goal.yaml                  527L  0C    0m  CC=0.0    ←0
   │ Makefile                   148L  0C    0m  CC=0.0    ←0
   │ koru.yaml                  141L  0C    0m  CC=0.0    ←0
   │ pyproject.toml             103L  0C    0m  CC=0.0    ←0
@@ -282,16 +282,16 @@ COUPLING:
    packages.mcp2imgl                                                           2                   1                                                                                                                                          ──                    
    packages.uri2imgl                                                                               1                                                                                                                                                              ──
   CYCLES: none
+  HUB: packages.nlp2imgl/ (fan-in=16)
+  HUB: imgl.export/ (fan-in=31)
   HUB: imgl/ (fan-in=70)
   HUB: packages.dsl2imgl/ (fan-in=10)
-  HUB: imgl.export/ (fan-in=31)
-  HUB: packages.nlp2imgl/ (fan-in=16)
+  SMELL: packages.nlp2imgl/ fan-out=21 → split needed
   SMELL: imgl/ fan-out=39 → split needed
-  SMELL: imgl.classify/ fan-out=9 → split needed
   SMELL: imgl.web/ fan-out=16 → split needed
+  SMELL: imgl.classify/ fan-out=9 → split needed
   SMELL: packages.rest2imgl/ fan-out=9 → split needed
   SMELL: packages.dsl2imgl/ fan-out=12 → split needed
-  SMELL: packages.nlp2imgl/ fan-out=21 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

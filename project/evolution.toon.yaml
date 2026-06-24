@@ -1,46 +1,46 @@
-# code2llm/evolution | 528 func | 73f | 2026-06-24
+# code2llm/evolution | 551 func | 73f | 2026-06-24
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT-FUNC      main  CC=64  fan=61
-      WHY: CC=64 exceeds 15
-      EFFORT: ~1h  IMPACT: 3904
-
-  [2] !! SPLIT-FUNC      resolve_chat_target  CC=47  fan=19
-      WHY: CC=47 exceeds 15
-      EFFORT: ~1h  IMPACT: 893
-
-  [3] !! SPLIT-FUNC      smart_capture  CC=25  fan=28
+  [1] !! SPLIT-FUNC      smart_capture  CC=25  fan=28
       WHY: CC=25 exceeds 15
       EFFORT: ~1h  IMPACT: 700
 
-  [4] !! SPLIT-FUNC      prompt_to_imgl_uri  CC=28  fan=24
+  [2] !! SPLIT-FUNC      prompt_to_imgl_uri  CC=28  fan=24
       WHY: CC=28 exceeds 15
       EFFORT: ~1h  IMPACT: 672
 
-  [5] !! SPLIT-FUNC      capture_screen  CC=26  fan=21
+  [3] !! SPLIT-FUNC      capture_screen  CC=26  fan=21
       WHY: CC=26 exceeds 15
       EFFORT: ~1h  IMPACT: 546
 
-  [6] !  SPLIT-FUNC      _run_image_command  CC=19  fan=28
-      WHY: CC=19 exceeds 15
-      EFFORT: ~1h  IMPACT: 532
-
-  [7] !! SPLIT-FUNC      classify_scene_elements  CC=27  fan=17
+  [4] !! SPLIT-FUNC      classify_scene_elements  CC=27  fan=17
       WHY: CC=27 exceeds 15
       EFFORT: ~1h  IMPACT: 459
 
-  [8] !  SPLIT-FUNC      build_window_control_report  CC=19  fan=24
+  [5] !  SPLIT-FUNC      build_window_control_report  CC=19  fan=24
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 456
 
-  [9] !! SPLIT-FUNC      WebSession.act  CC=29  fan=15
+  [6] !! SPLIT-FUNC      WebSession.act  CC=29  fan=15
       WHY: CC=29 exceeds 15
       EFFORT: ~1h  IMPACT: 435
 
-  [10] !  SPLIT-FUNC      _detect_panels_simple  CC=23  fan=16
+  [7] !  SPLIT-FUNC      _detect_panels_simple  CC=23  fan=16
       WHY: CC=23 exceeds 15
       EFFORT: ~1h  IMPACT: 368
+
+  [8] !  SPLIT-FUNC      colorize_markdown  CC=18  fan=20
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 360
+
+  [9] !  SPLIT-FUNC      scene_to_vql  CC=19  fan=18
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 342
+
+  [10] !! SPLIT-FUNC      scene_to_actuation_layers  CC=33  fan=10
+      WHY: CC=33 exceeds 15
+      EFFORT: ~1h  IMPACT: 330
 
 
 RISKS[3]:
@@ -49,10 +49,10 @@ RISKS[3]:
   ⚠ Splitting screen.vql.imgl.json may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          5.0 → ≤3.5
-  max-CC:      64 → ≤20
+  CC̄:          4.8 → ≤3.4
+  max-CC:      33 → ≤16
   god-modules: 11 → 0
-  high-CC(≥15): 33 → ≤16
+  high-CC(≥15): 30 → ≤15
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.8 → now CC̄=5.0
+  prev CC̄=5.0 → now CC̄=4.8

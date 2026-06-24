@@ -1,5 +1,5 @@
 flowchart TD
-%% generated in 0.05s
+%% generated in 0.03s
 
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
@@ -11,10 +11,16 @@ flowchart TD
         imgl__cli___add_common_args["_add_common_args"]
         imgl__cli__build_parser["build_parser"]
         imgl__cli___write_output["_write_output"]
-        imgl__cli__main["main"]
-        imgl__cli___check_blank_before_analyze["_check_blank_before_analyze"]
-        imgl__cli___apply_config_overrides["_apply_config_overrides"]
-        imgl__cli___run_image_command["_run_image_command"]
+        imgl__cli___handle_doctor["_handle_doctor"]
+        imgl__cli___handle_map["_handle_map"]
+        imgl__cli___handle_execute["_handle_execute"]
+        imgl__cli___handle_shot["_handle_shot"]
+        imgl__cli___handle_verify["_handle_verify"]
+        imgl__cli___handle_install["_handle_install"]
+        imgl__cli___handle_serve["_handle_serve"]
+        imgl__cli___handle_diagnose["_handle_diagnose"]
+        imgl__cli___handle_interact["_handle_interact"]
+        ...["+12 more"]
     end
 
     subgraph Core
@@ -33,7 +39,7 @@ flowchart TD
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay_pb["replay_pb"]
         packages__dsl2imgl__src__dsl2imgl__events__EventStore__replay["replay"]
         packages__dsl2imgl__src__dsl2imgl__pb_codec___set_capture_body["_set_capture_body"]
-        ...["+155 more"]
+        ...["+154 more"]
     end
 
     subgraph Exporters

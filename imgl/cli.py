@@ -475,326 +475,352 @@ def _write_output(content: str, output: Path | None) -> None:
         print(content)
 
 
+def _handle_doctor(args, config) -> int:
+    from imgl.control import default_image_path, run_doctor
+    from imgl.terminal_md import print_report
+
+    image = args.image or default_image_path()
+    text, code = run_doctor(
+        image,
+        window=args.window,
+        full=args.full,
+        locale=args.locale,
+        output_format=_output_format(args),
+    )
+    print_report(text, _output_format(args))
+    return code
+
+
+def _handle_map(args, config) -> int:
+    from imgl.control import default_image_path, run_map
+    from imgl.terminal_md import print_report
+
+    image = args.image or default_image_path()
+    text, code = run_map(
+        image,
+        window=args.window,
+        locale=args.locale,
+        output_format=_output_format(args),
+    )
+    print_report(text, _output_format(args))
+    return code
+
+
+def _handle_execute(args, config) -> int:
+    from imgl.control import default_image_path, run_execute
+    from imgl.terminal_md import print_report
+
+    try:
+        text, code = run_execute(
+            args.prompt,
+            image=args.image or default_image_path(),
+            window=args.window,
+            dry_run=args.dry_run,
+            use_llm=args.llm or None,
+            with_diagnostics=not args.no_diagnose,
+            locale=args.locale,
+            output_format=_output_format(args),
+        )
+    except (FileNotFoundError, RuntimeError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print_report(text, _output_format(args))
+    return code
+
+
+def _handle_shot(args, config) -> int:
+    from imgl.control import default_image_path, run_shot
+    from imgl.terminal_md import print_report
+
+    try:
+        text, code = run_shot(
+            args.prompt,
+            image=args.image or default_image_path(),
+            window=args.window,
+            dry_run=args.dry_run,
+            use_llm=args.llm,
+            locale=args.locale,
+            output_format=_output_format(args),
+        )
+    except (CaptureError, BlankCaptureError, FileNotFoundError, RuntimeError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    print_report(text, _output_format(args))
+    return code
+
+
+def _handle_verify(args, config) -> int:
+    from imgl.control import default_image_path, verify_capture
+
+    image = args.image or default_image_path()
+    try:
+        path = verify_capture(image, before_mtime=args.before)
+    except (FileNotFoundError, RuntimeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    print(f"OK: {path}")
+    return 0
+
+
+def _handle_install(args, config) -> int:
+    from imgl.installs import install_control, install_img2nl, install_vdisplay, install_vql
+
+    try:
+        if args.install_target == "img2nl":
+            install_img2nl()
+        elif args.install_target == "vdisplay":
+            install_vdisplay()
+        elif args.install_target == "vql":
+            install_vql()
+        elif args.install_target == "control":
+            install_control()
+        else:
+            print(f"Unknown install target: {args.install_target}", file=sys.stderr)
+            return 1
+    except Exception as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    return 0
+
+
+def _handle_serve(args, config) -> int:
+    try:
+        import uvicorn
+    except ImportError:
+        print(
+            "Web server requires: pip install -e '.[web]'",
+            file=sys.stderr,
+        )
+        return 1
+    from imgl.web.app import create_app
+    from imgl.web.session import WebSettings
+
+    work_dir = args.work_dir or (Path.home() / ".imgl" / "web")
+    image_path = args.image
+    if image_path is None:
+        local_screen = Path.cwd() / "screen.png"
+        if local_screen.is_file():
+            image_path = local_screen
+
+    settings = WebSettings(
+        use_llm=args.llm,
+        execute=args.execute,
+        selected_window_id=args.window,
+    )
+    app = create_app(
+        work_dir=work_dir,
+        image_path=image_path,
+        settings=settings,
+        auto_select_window=not args.window,
+    )
+    session = app.state.manager.session
+    if args.capture_on_start:
+        try:
+            session.capture(interactive=True)
+            print(f"Captured: {session.image_path}", file=sys.stderr)
+        except (BlankCaptureError, CaptureError) as exc:
+            print(f"Capture skipped: {exc}", file=sys.stderr)
+            if Path(session.image_path).is_file():
+                print(f"Using existing screenshot: {session.image_path}", file=sys.stderr)
+                session.analyze(refresh=False)
+            else:
+                print(
+                    "No screenshot yet — use 📷 Zrzut ekranu in UI or:\n"
+                    "  imgl capture --interactive -o screen.png\n"
+                    "  imgl serve --image screen.png",
+                    file=sys.stderr,
+                )
+    elif image_path and Path(session.image_path).is_file():
+        print(f"Loaded screenshot: {session.image_path}", file=sys.stderr)
+
+    print(f"imgl web: http://{args.host}:{args.port}", file=sys.stderr)
+    uvicorn.run(app, host=args.host, port=args.port)
+    return 0
+
+
+def _handle_diagnose(args, config) -> int:
+    try:
+        image_path = resolve_image_path(args.image)
+    except FileNotFoundError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    diag = diagnose_content(image_path, locale=args.locale)
+    payload = {
+        "ok": diag.get("ok", False),
+        "path": str(image_path),
+        "worth_analyzing": worth_analyzing(diag) if diag.get("ok") else False,
+        "is_blank": diag.get("is_blank", False),
+        "scene_class": diag.get("scene_class", ""),
+        "recommendation": diag.get("recommendation", ""),
+        "summary": diag.get("text", ""),
+        "source": diag.get("source", ""),
+        "llm_hint": diag.get("llm_hint", {}),
+        "error": diag.get("error"),
+    }
+    _write_output(json.dumps(payload, indent=2, ensure_ascii=False), args.output)
+    return 0 if payload["ok"] else 1
+
+
+def _handle_interact(args, config) -> int:
+    try:
+        image_path = resolve_image_path(args.image)
+    except FileNotFoundError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    blank_exit = _check_blank_before_analyze(
+        image_path,
+        allow_blank=args.allow_blank,
+        locale=config.diagnose_locale,
+    )
+    if blank_exit is not None:
+        return blank_exit
+    config = _apply_config_overrides(config, args)
+    return run_interactive_shell(
+        image_path,
+        vql_file=args.output,
+        lang=args.lang,
+        config=config,
+        execute=args.execute,
+        use_llm=args.llm,
+        no_filter=args.no_filter,
+        annotate=args.annotate,
+        open_annotated=args.open,
+        annotated_output=args.annotated_output,
+        window=args.window,
+    )
+
+
+def _handle_windows(args, config) -> int:
+    try:
+        image_path = resolve_image_path(args.image)
+    except FileNotFoundError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
+    blank_exit = _check_blank_before_analyze(
+        image_path,
+        allow_blank=args.allow_blank,
+        locale=config.diagnose_locale,
+    )
+    if blank_exit is not None:
+        return blank_exit
+    scene = load_or_analyze(
+        image_path,
+        vql_file=Path("layout.vql.json"),
+        lang=args.lang,
+        config=config,
+    )
+    scene = apply_discovered_windows(scene)
+    summaries = summarize_windows(scene, image_path=str(image_path))
+    print(format_window_picker(summaries, scene=scene))
+    out_dir = args.output_dir or image_path.parent
+    paths: list[Path] = []
+    if args.export_crops:
+        for item in summaries:
+            path = export_window_crop(image_path, item.window, output_dir=out_dir)
+            paths.append(path)
+            print(f"crop: {path}", file=sys.stderr)
+    if args.annotate:
+        preview_paths = write_window_preview_images(
+            scene,
+            discover_windows(scene),
+            out_dir,
+            source_image=image_path,
+        )
+        paths.extend(preview_paths)
+        for path in preview_paths:
+            print(f"preview: {path}", file=sys.stderr)
+    if args.open:
+        for path in paths:
+            open_image(path)
+    payload = {
+        "window_count": len(summaries),
+        "windows": [
+            {
+                "index": item.index,
+                "id": item.window.id,
+                "title": item.label,
+                "bbox": item.bbox.to_dict(),
+                "interactive_count": item.interactive_count,
+                "element_count": item.element_count,
+            }
+            for item in summaries
+        ],
+    }
+    print(json.dumps(payload, indent=2, ensure_ascii=False))
+    return 0
+
+
+def _handle_capture(args, config) -> int:
+    from imgl.capture import last_capture_meta
+    from imgl.control import capture_interactive, smart_capture
+
+    out = args.output
+    before_mtime = out.stat().st_mtime if out and out.is_file() else 0.0  # noqa: F841
+    use_portal = args.portal or args.interactive
+    if args.interactive and not args.portal:
+        print(
+            "Note: --interactive opens GNOME portal; default is vdisplay mirror (no dialog). "
+            "Use: imgl capture -o screen.png --verify",
+            file=sys.stderr,
+        )
+    try:
+        if args.smart:
+            path = smart_capture(out, interactive=use_portal)
+        elif args.verify or not use_portal:
+            path = capture_interactive(out, verify=args.verify, portal=use_portal)
+        else:
+            path = capture_screen(
+                args.output,
+                monitor=args.monitor,
+                interactive=use_portal,
+                allow_blank=args.allow_blank,
+                prefer_mirror=True,
+            )
+    except BlankCaptureError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+    except CaptureError as exc:
+        print(f"Capture failed: {exc}", file=sys.stderr)
+        return 1
+    meta = last_capture_meta()
+    method = meta.get("method", "unknown")
+    print(f"Captured {path} (method={method})", file=sys.stderr)
+    if args.analyze:
+        from imgl.pipeline import analyze
+        from imgl.scene_cache import save_scene_cache
+
+        vql_out = args.vql_out or path.with_suffix(".vql.json")
+        scene = analyze(str(path.resolve()), lang=args.lang)
+        write_vql_program(scene, vql_out)
+        save_scene_cache(scene, vql_out)
+        print(f"Analyzed → {vql_out}", file=sys.stderr)
+    print(str(path.resolve()))
+    return 0
+
+
+_COMMAND_HANDLERS = {
+    "doctor": _handle_doctor,
+    "map": _handle_map,
+    "execute": _handle_execute,
+    "shot": _handle_shot,
+    "verify": _handle_verify,
+    "install": _handle_install,
+    "serve": _handle_serve,
+    "diagnose": _handle_diagnose,
+    "interact": _handle_interact,
+    "windows": _handle_windows,
+    "capture": _handle_capture,
+}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     config = ImglConfig()
 
-    if args.command == "doctor":
-        from imgl.control import default_image_path, run_doctor
-
-        image = args.image or default_image_path()
-        text, code = run_doctor(
-            image,
-            window=args.window,
-            full=args.full,
-            locale=args.locale,
-            output_format=_output_format(args),
-        )
-        from imgl.terminal_md import print_report
-
-        print_report(text, _output_format(args))
-        return code
-
-    if args.command == "map":
-        from imgl.control import default_image_path, run_map
-
-        image = args.image or default_image_path()
-        text, code = run_map(
-            image,
-            window=args.window,
-            locale=args.locale,
-            output_format=_output_format(args),
-        )
-        from imgl.terminal_md import print_report
-
-        print_report(text, _output_format(args))
-        return code
-
-    if args.command == "execute":
-        from imgl.control import default_image_path, run_execute
-
-        try:
-            text, code = run_execute(
-                args.prompt,
-                image=args.image or default_image_path(),
-                window=args.window,
-                dry_run=args.dry_run,
-                use_llm=args.llm or None,
-                with_diagnostics=not args.no_diagnose,
-                locale=args.locale,
-                output_format=_output_format(args),
-            )
-        except (FileNotFoundError, RuntimeError) as exc:
-            print(str(exc), file=sys.stderr)
-            return 1
-        from imgl.terminal_md import print_report
-
-        print_report(text, _output_format(args))
-        return code
-
-    if args.command == "shot":
-        from imgl.control import default_image_path, run_shot
-
-        try:
-            text, code = run_shot(
-                args.prompt,
-                image=args.image or default_image_path(),
-                window=args.window,
-                dry_run=args.dry_run,
-                use_llm=args.llm,
-                locale=args.locale,
-                output_format=_output_format(args),
-            )
-        except (CaptureError, BlankCaptureError, FileNotFoundError, RuntimeError) as exc:
-            print(str(exc), file=sys.stderr)
-            return 1
-        from imgl.terminal_md import print_report
-
-        print_report(text, _output_format(args))
-        return code
-
-    if args.command == "verify":
-        from imgl.control import default_image_path, verify_capture
-
-        image = args.image or default_image_path()
-        try:
-            path = verify_capture(image, before_mtime=args.before)
-        except (FileNotFoundError, RuntimeError) as exc:
-            print(f"ERROR: {exc}", file=sys.stderr)
-            return 1
-        print(f"OK: {path}")
-        return 0
-
-    if args.command == "install":
-        from imgl.installs import install_control, install_img2nl, install_vdisplay, install_vql
-
-        try:
-            if args.install_target == "img2nl":
-                install_img2nl()
-            elif args.install_target == "vdisplay":
-                install_vdisplay()
-            elif args.install_target == "vql":
-                install_vql()
-            elif args.install_target == "control":
-                install_control()
-            else:
-                print(f"Unknown install target: {args.install_target}", file=sys.stderr)
-                return 1
-        except Exception as exc:
-            print(str(exc), file=sys.stderr)
-            return 1
-        return 0
-
-    if args.command == "serve":
-        try:
-            import uvicorn
-        except ImportError:
-            print(
-                "Web server requires: pip install -e '.[web]'",
-                file=sys.stderr,
-            )
-            return 1
-        from imgl.web.app import create_app
-        from imgl.web.session import WebSettings
-
-        work_dir = args.work_dir or (Path.home() / ".imgl" / "web")
-        image_path = args.image
-        if image_path is None:
-            local_screen = Path.cwd() / "screen.png"
-            if local_screen.is_file():
-                image_path = local_screen
-
-        settings = WebSettings(
-            use_llm=args.llm,
-            execute=args.execute,
-            selected_window_id=args.window,
-        )
-        app = create_app(
-            work_dir=work_dir,
-            image_path=image_path,
-            settings=settings,
-            auto_select_window=not args.window,
-        )
-        session = app.state.manager.session
-        if args.capture_on_start:
-            try:
-                session.capture(interactive=True)
-                print(f"Captured: {session.image_path}", file=sys.stderr)
-            except (BlankCaptureError, CaptureError) as exc:
-                print(f"Capture skipped: {exc}", file=sys.stderr)
-                if Path(session.image_path).is_file():
-                    print(f"Using existing screenshot: {session.image_path}", file=sys.stderr)
-                    session.analyze(refresh=False)
-                else:
-                    print(
-                        "No screenshot yet — use 📷 Zrzut ekranu in UI or:\n"
-                        "  imgl capture --interactive -o screen.png\n"
-                        "  imgl serve --image screen.png",
-                        file=sys.stderr,
-                    )
-        elif image_path and Path(session.image_path).is_file():
-            print(f"Loaded screenshot: {session.image_path}", file=sys.stderr)
-
-        print(f"imgl web: http://{args.host}:{args.port}", file=sys.stderr)
-        uvicorn.run(app, host=args.host, port=args.port)
-        return 0
-
-    if args.command == "diagnose":
-        try:
-            image_path = resolve_image_path(args.image)
-        except FileNotFoundError as exc:
-            print(str(exc), file=sys.stderr)
-            return 1
-        diag = diagnose_content(image_path, locale=args.locale)
-        payload = {
-            "ok": diag.get("ok", False),
-            "path": str(image_path),
-            "worth_analyzing": worth_analyzing(diag) if diag.get("ok") else False,
-            "is_blank": diag.get("is_blank", False),
-            "scene_class": diag.get("scene_class", ""),
-            "recommendation": diag.get("recommendation", ""),
-            "summary": diag.get("text", ""),
-            "source": diag.get("source", ""),
-            "llm_hint": diag.get("llm_hint", {}),
-            "error": diag.get("error"),
-        }
-        _write_output(json.dumps(payload, indent=2, ensure_ascii=False), args.output)
-        return 0 if payload["ok"] else 1
-
-    if args.command == "interact":
-        try:
-            image_path = resolve_image_path(args.image)
-        except FileNotFoundError as exc:
-            print(str(exc), file=sys.stderr)
-            return 1
-        blank_exit = _check_blank_before_analyze(
-            image_path,
-            allow_blank=args.allow_blank,
-            locale=config.diagnose_locale,
-        )
-        if blank_exit is not None:
-            return blank_exit
-        config = _apply_config_overrides(config, args)
-        return run_interactive_shell(
-            image_path,
-            vql_file=args.output,
-            lang=args.lang,
-            config=config,
-            execute=args.execute,
-            use_llm=args.llm,
-            no_filter=args.no_filter,
-            annotate=args.annotate,
-            open_annotated=args.open,
-            annotated_output=args.annotated_output,
-            window=args.window,
-        )
-
-    if args.command == "windows":
-        try:
-            image_path = resolve_image_path(args.image)
-        except FileNotFoundError as exc:
-            print(str(exc), file=sys.stderr)
-            return 1
-        blank_exit = _check_blank_before_analyze(
-            image_path,
-            allow_blank=args.allow_blank,
-            locale=config.diagnose_locale,
-        )
-        if blank_exit is not None:
-            return blank_exit
-        scene = load_or_analyze(
-            image_path,
-            vql_file=Path("layout.vql.json"),
-            lang=args.lang,
-            config=config,
-        )
-        scene = apply_discovered_windows(scene)
-        summaries = summarize_windows(scene, image_path=str(image_path))
-        print(format_window_picker(summaries, scene=scene))
-        out_dir = args.output_dir or image_path.parent
-        paths: list[Path] = []
-        if args.export_crops:
-            for item in summaries:
-                path = export_window_crop(image_path, item.window, output_dir=out_dir)
-                paths.append(path)
-                print(f"crop: {path}", file=sys.stderr)
-        if args.annotate:
-            preview_paths = write_window_preview_images(
-                scene,
-                discover_windows(scene),
-                out_dir,
-                source_image=image_path,
-            )
-            paths.extend(preview_paths)
-            for path in preview_paths:
-                print(f"preview: {path}", file=sys.stderr)
-        if args.open:
-            for path in paths:
-                open_image(path)
-        payload = {
-            "window_count": len(summaries),
-            "windows": [
-                {
-                    "index": item.index,
-                    "id": item.window.id,
-                    "title": item.label,
-                    "bbox": item.bbox.to_dict(),
-                    "interactive_count": item.interactive_count,
-                    "element_count": item.element_count,
-                }
-                for item in summaries
-            ],
-        }
-        print(json.dumps(payload, indent=2, ensure_ascii=False))
-        return 0
-
-    if args.command == "capture":
-        from imgl.capture import last_capture_meta
-        from imgl.control import capture_interactive, smart_capture
-
-        out = args.output
-        before_mtime = out.stat().st_mtime if out and out.is_file() else 0.0
-        use_portal = args.portal or args.interactive
-        if args.interactive and not args.portal:
-            print(
-                "Note: --interactive opens GNOME portal; default is vdisplay mirror (no dialog). "
-                "Use: imgl capture -o screen.png --verify",
-                file=sys.stderr,
-            )
-        try:
-            if args.smart:
-                path = smart_capture(out, interactive=use_portal)
-            elif args.verify or not use_portal:
-                path = capture_interactive(out, verify=args.verify, portal=use_portal)
-            else:
-                path = capture_screen(
-                    args.output,
-                    monitor=args.monitor,
-                    interactive=use_portal,
-                    allow_blank=args.allow_blank,
-                    prefer_mirror=True,
-                )
-        except BlankCaptureError as exc:
-            print(str(exc), file=sys.stderr)
-            return 2
-        except CaptureError as exc:
-            print(f"Capture failed: {exc}", file=sys.stderr)
-            return 1
-        meta = last_capture_meta()
-        method = meta.get("method", "unknown")
-        print(f"Captured {path} (method={method})", file=sys.stderr)
-        if args.analyze:
-            from imgl.pipeline import analyze
-            from imgl.scene_cache import save_scene_cache
-
-            vql_out = args.vql_out or path.with_suffix(".vql.json")
-            scene = analyze(str(path.resolve()), lang=args.lang)
-            write_vql_program(scene, vql_out)
-            save_scene_cache(scene, vql_out)
-            print(f"Analyzed → {vql_out}", file=sys.stderr)
-        print(str(path.resolve()))
-        return 0
+    handler = _COMMAND_HANDLERS.get(args.command)
+    if handler is not None:
+        return handler(args, config)
 
     try:
         image_path = resolve_image_path(args.image)
@@ -837,6 +863,126 @@ def _apply_config_overrides(config: ImglConfig, args) -> ImglConfig:
     return config
 
 
+def _handle_analyze(args, image_path: Path, config: ImglConfig) -> int:
+    scene = analyze(image_path, lang=args.lang, config=config)
+    _write_output(scene_to_json(scene), args.output)
+    return 0
+
+
+def _handle_html(args, image_path: Path, config: ImglConfig) -> int:
+    scene = analyze(image_path, lang=args.lang, config=config)
+    html = scene_to_html(scene, embed_image=args.embed_image)
+    _write_output(html, args.output)
+    return 0
+
+
+def _handle_svg(args, image_path: Path, config: ImglConfig) -> int:
+    scene = analyze(image_path, lang=args.lang, config=config)
+    background = None
+    if args.mode == "overlay":
+        background = str(args.background or image_path)
+    svg = scene_to_svg(scene, mode=args.mode, background=background)
+    _write_output(svg, args.output)
+    return 0
+
+
+def _handle_vql(args, image_path: Path, config: ImglConfig) -> int:
+    scene = analyze(image_path, lang=args.lang, config=config)
+    if args.output:
+        write_vql_program(
+            scene,
+            args.output,
+            include_grid=args.with_grid,
+            grid=args.grid,
+        )
+        print(f"Wrote {args.output}", file=sys.stderr)
+    else:
+        _write_output(
+            scene_to_vql_json(scene, include_grid=args.with_grid, grid=args.grid),
+            None,
+        )
+    return 0
+
+
+def _handle_annotate(args, image_path: Path, config: ImglConfig) -> int:
+    vql_out = Path("layout.vql.json")
+    png_out = args.output or default_annotated_path(image_path)
+    scene = load_or_analyze(
+        image_path,
+        vql_file=vql_out,
+        lang=args.lang,
+        config=config,
+    )
+    write_vql_program(scene, vql_out)
+    save_scene_cache(scene, vql_out)
+    catalog = build_interactive_catalog(
+        scene,
+        image_path=str(image_path),
+        vql_file=str(vql_out),
+        lang=args.lang,
+    )
+    path = write_annotated_image(scene, catalog, png_out, source_image=image_path)
+    print(f"Wrote {path}", file=sys.stderr)
+    print(str(path))
+    if args.open:
+        if not open_image(path):
+            print("Could not open viewer (install xdg-open).", file=sys.stderr)
+    return 0
+
+
+def _handle_find(args, image_path: Path, config: ImglConfig) -> int:
+    scene = analyze(image_path, lang=args.lang, config=config)
+    finder = actions(scene)
+
+    if args.list:
+        payload = finder.list_actions()
+    elif args.click:
+        payload = finder.click(
+            args.element_type,
+            text=args.text,
+            label=args.label,
+            window=args.window,
+        )
+    elif args.type_into is not None:
+        payload = finder.type_into(
+            args.type_into,
+            label=args.label,
+            text=args.text,
+            window=args.window,
+        )
+    else:
+        matches = finder.find(
+            args.element_type,
+            text=args.text,
+            label=args.label,
+            window=args.window,
+        )
+        payload = [
+            {
+                "element_id": target.element.id,
+                "element_type": target.element.type,
+                "text": target.element.text,
+                "window_id": target.window.id if target.window else None,
+                "click_coords": list(target.click_coords()),
+                "bbox": target.element.bbox.to_dict(),
+            }
+            for target in matches
+        ]
+
+    _write_output(json.dumps(payload, indent=2, ensure_ascii=False), args.output)
+    return 0
+
+
+_IMAGE_COMMAND_HANDLERS = {
+    "analyze": _handle_analyze,
+    "html": _handle_html,
+    "svg": _handle_svg,
+    "vql": _handle_vql,
+    "annotate": _handle_annotate,
+    "find": _handle_find,
+}
+
+
 def _run_image_command(args, image_path: Path, config: ImglConfig) -> int:
     config = _apply_config_overrides(config, args)
     blank_exit = _check_blank_before_analyze(
@@ -847,110 +993,9 @@ def _run_image_command(args, image_path: Path, config: ImglConfig) -> int:
     if blank_exit is not None:
         return blank_exit
 
-    if args.command == "analyze":
-        scene = analyze(image_path, lang=args.lang, config=config)
-        _write_output(scene_to_json(scene), args.output)
-        return 0
-
-    if args.command == "html":
-        scene = analyze(image_path, lang=args.lang, config=config)
-        html = scene_to_html(scene, embed_image=args.embed_image)
-        _write_output(html, args.output)
-        return 0
-
-    if args.command == "svg":
-        scene = analyze(image_path, lang=args.lang, config=config)
-        background = None
-        if args.mode == "overlay":
-            background = str(args.background or image_path)
-        svg = scene_to_svg(scene, mode=args.mode, background=background)
-        _write_output(svg, args.output)
-        return 0
-
-    if args.command == "vql":
-        scene = analyze(image_path, lang=args.lang, config=config)
-        if args.output:
-            write_vql_program(
-                scene,
-                args.output,
-                include_grid=args.with_grid,
-                grid=args.grid,
-            )
-            print(f"Wrote {args.output}", file=sys.stderr)
-        else:
-            _write_output(
-                scene_to_vql_json(scene, include_grid=args.with_grid, grid=args.grid),
-                None,
-            )
-        return 0
-
-    if args.command == "annotate":
-        vql_out = Path("layout.vql.json")
-        png_out = args.output or default_annotated_path(image_path)
-        scene = load_or_analyze(
-            image_path,
-            vql_file=vql_out,
-            lang=args.lang,
-            config=config,
-        )
-        write_vql_program(scene, vql_out)
-        save_scene_cache(scene, vql_out)
-        catalog = build_interactive_catalog(
-            scene,
-            image_path=str(image_path),
-            vql_file=str(vql_out),
-            lang=args.lang,
-        )
-        path = write_annotated_image(scene, catalog, png_out, source_image=image_path)
-        print(f"Wrote {path}", file=sys.stderr)
-        print(str(path))
-        if args.open:
-            if not open_image(path):
-                print("Could not open viewer (install xdg-open).", file=sys.stderr)
-        return 0
-
-    if args.command == "find":
-        scene = analyze(image_path, lang=args.lang, config=config)
-        finder = actions(scene)
-
-        if args.list:
-            payload = finder.list_actions()
-        elif args.click:
-            payload = finder.click(
-                args.element_type,
-                text=args.text,
-                label=args.label,
-                window=args.window,
-            )
-        elif args.type_into is not None:
-            payload = finder.type_into(
-                args.type_into,
-                label=args.label,
-                text=args.text,
-                window=args.window,
-            )
-        else:
-            matches = finder.find(
-                args.element_type,
-                text=args.text,
-                label=args.label,
-                window=args.window,
-            )
-            payload = [
-                {
-                    "element_id": target.element.id,
-                    "element_type": target.element.type,
-                    "text": target.element.text,
-                    "window_id": target.window.id if target.window else None,
-                    "click_coords": list(target.click_coords()),
-                    "bbox": target.element.bbox.to_dict(),
-                }
-                for target in matches
-            ]
-
-        _write_output(json.dumps(payload, indent=2, ensure_ascii=False), args.output)
-        return 0
-
+    handler = _IMAGE_COMMAND_HANDLERS.get(args.command)
+    if handler is not None:
+        return handler(args, image_path, config)
     return 1
 
 

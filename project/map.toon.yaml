@@ -1,9 +1,9 @@
-# imgl | 126f 142115L | json:14,yaml:7,shell:7,toml:7,python:88,proto:2 | 2026-06-24
-# generated in 0.04s
-# stats: 529 func | 0 cls | 126 mod | CC̄=5.0 | critical:33 | cycles:0
-# alerts[5]: CC main=64; fan-out main=61; CC resolve_chat_target=47; fan-out create_app=45; CC scene_to_actuation_layers=33
-# hotspots[5]: main fan=61; create_app fan=45; _run_image_command fan=28; smart_capture fan=28; build_parser fan=25
-# evolution: CC̄ 4.8→5.0 (regressed +0.2)
+# imgl | 126f 142190L | json:14,yaml:7,shell:7,toml:7,python:88,proto:2 | 2026-06-24
+# generated in 0.02s
+# stats: 552 func | 0 cls | 126 mod | CC̄=4.8 | critical:30 | cycles:0
+# alerts[5]: fan-out create_app=45; CC scene_to_actuation_layers=33; CC _resolve_type=30; CC WebSession.act=29; CC prompt_to_imgl_uri=28
+# hotspots[5]: create_app fan=45; smart_capture fan=28; build_parser fan=25; prompt_to_imgl_uri fan=24; build_window_control_report fan=24
+# evolution: CC̄ 5.0→4.8 (improved -0.2)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
 M[126]:
   Makefile,148
@@ -12,11 +12,11 @@ M[126]:
   examples/scripts/demo-github.sh,22
   examples/scripts/demo-nlp2uri.py,79
   examples/scripts/demo-windows.sh,23
-  goal.yaml,511
+  goal.yaml,527
   imgl/__init__.py,86
   imgl/__main__.py,6
   imgl/actions.py,271
-  imgl/autodiag.py,530
+  imgl/autodiag.py,543
   imgl/capture.py,559
   imgl/capture_provenance.py,114
   imgl/catalog.py,91
@@ -25,7 +25,7 @@ M[126]:
   imgl/catalog_types.py,46
   imgl/classify/__init__.py,5
   imgl/classify/gui_heuristics.py,261
-  imgl/cli.py,958
+  imgl/cli.py,1003
   imgl/config.py,23
   imgl/control.py,357
   imgl/coords.py,70
@@ -58,7 +58,7 @@ M[126]:
   imgl/pipeline.py,119
   imgl/preprocess.py,63
   imgl/scene_cache.py,63
-  imgl/targets.py,261
+  imgl/targets.py,262
   imgl/terminal_md.py,210
   imgl/types.py,170
   imgl/uri.py,118
@@ -133,28 +133,6 @@ M[126]:
   testql-scenarios/generated-from-pytests.testql.toon.yaml,14
   tree.sh,1
 D:
-  imgl/cli.py:
-    e: _add_output_format_flags,_output_format,_add_common_args,build_parser,_write_output,main,_check_blank_before_analyze,_apply_config_overrides,_run_image_command
-    _add_output_format_flags(parser)
-    _output_format(args)
-    _add_common_args(parser)
-    build_parser()
-    _write_output(content;output)
-    main(argv)
-    _check_blank_before_analyze(image_path)
-    _apply_config_overrides(config;args)
-    _run_image_command(args;image_path;config)
-  imgl/targets.py:
-    e: _has_chat_token,_bbox_center_x,_bbox_center_y,normalize_actuation_element,normalize_actuation_elements,_target_result,resolve_chat_target,resolve_editor_target,resolve_actuation_target
-    _has_chat_token(text)
-    _bbox_center_x(bounds)
-    _bbox_center_y(bounds)
-    normalize_actuation_element(layer)
-    normalize_actuation_elements(layers)
-    _target_result(element)
-    resolve_chat_target(layers)
-    resolve_editor_target(layers)
-    resolve_actuation_target(layers)
   imgl/export/actuation_layers.py:
     e: bbox_center,bbox_area,layer_from_bbox,scene_to_actuation_layers,imgl_result_to_actuation_layers
     bbox_center(bbox)
@@ -162,35 +140,6 @@ D:
     layer_from_bbox()
     scene_to_actuation_layers(scene)
     imgl_result_to_actuation_layers(imgl)
-  imgl/autodiag.py:
-    e: img2nl_root,img2nl_available,diagnose_capture,build_operation_step,_compact_result,build_execute_report,resolve_cli_output_format,pick_output_format,render_report,_flag_enabled,should_block_blank_capture,should_block_stale_capture,diagnostics_enabled,_yaml_codeblock,_shell_quote,_capture_next_cmd,_derive_current_next,_markdown_payload,_render_markdown,_overall_verdict,_actionable_hints,_compact_features,_scene_class,_parse_coords,_coords_from_action,_parse_typed_text,_parse_keys
-    img2nl_root()
-    img2nl_available()
-    diagnose_capture(image_path)
-    build_operation_step(result)
-    _compact_result(result)
-    build_execute_report()
-    resolve_cli_output_format()
-    pick_output_format(payload;requested)
-    render_report(payload;fmt)
-    _flag_enabled()
-    should_block_blank_capture(capture)
-    should_block_stale_capture(capture)
-    diagnostics_enabled()
-    _yaml_codeblock(data)
-    _shell_quote(value)
-    _capture_next_cmd(image)
-    _derive_current_next(report)
-    _markdown_payload(report)
-    _render_markdown(report)
-    _overall_verdict(capture;operation)
-    _actionable_hints(report)
-    _compact_features(features)
-    _scene_class(diag)
-    _parse_coords(message)
-    _coords_from_action(action)
-    _parse_typed_text(message)
-    _parse_keys(message)
   imgl/interact.py:
     e: InteractSession,_build_session_catalog,resolve_imgl_uri,_attach_image_path,_resolve_click,_resolve_type,_annotate_catalog,_select_window,_export_window_previews,_prepare_interactive_session,_show_initial_shell_views,_print_actions_phase_hints,_read_shell_prompt,_handle_resolved_shell_action,run_interactive_shell,describe_resolution,_print_catalog_banner,_handle_window_phase_prompt
     InteractSession:
@@ -310,6 +259,37 @@ D:
     _detect_panels_simple(im;w;h)
     _dedupe(elements)
     detect_ui_elements(image)
+  imgl/autodiag.py:
+    e: img2nl_root,img2nl_available,diagnose_capture,build_operation_step,_compact_result,build_execute_report,resolve_cli_output_format,pick_output_format,render_report,_flag_enabled,should_block_blank_capture,should_block_stale_capture,diagnostics_enabled,_yaml_codeblock,_shell_quote,_capture_next_cmd,_derive_stale,_derive_op_failed,_derive_current_next,_markdown_payload,_render_markdown,_overall_verdict,_actionable_hints,_compact_features,_scene_class,_parse_coords,_coords_from_action,_parse_typed_text,_parse_keys
+    img2nl_root()
+    img2nl_available()
+    diagnose_capture(image_path)
+    build_operation_step(result)
+    _compact_result(result)
+    build_execute_report()
+    resolve_cli_output_format()
+    pick_output_format(payload;requested)
+    render_report(payload;fmt)
+    _flag_enabled()
+    should_block_blank_capture(capture)
+    should_block_stale_capture(capture)
+    diagnostics_enabled()
+    _yaml_codeblock(data)
+    _shell_quote(value)
+    _capture_next_cmd(image)
+    _derive_stale(capture;image)
+    _derive_op_failed(operation)
+    _derive_current_next(report)
+    _markdown_payload(report)
+    _render_markdown(report)
+    _overall_verdict(capture;operation)
+    _actionable_hints(report)
+    _compact_features(features)
+    _scene_class(diag)
+    _parse_coords(message)
+    _coords_from_action(action)
+    _parse_typed_text(message)
+    _parse_keys(message)
   imgl/actions.py:
     e: ActionTarget,TypeAction,SceneActions,ElementNotFoundError,actions,_format_query,_text_matches,_iter_elements,_window_matches,_find_label_for_input
     ActionTarget: center(0),click_coords(0),to_click_action(0)  # A resolved UI element that can be clicked or typed into...
@@ -403,6 +383,21 @@ D:
     _shift_elements(elements;origin)
     _shift_ocr_boxes(boxes;origin)
     _safe_filename(value)
+  imgl/targets.py:
+    e: _has_chat_token,_bbox_center_x,_bbox_center_y,normalize_actuation_element,normalize_actuation_elements,_target_result,_find_ask_candidate,_find_chat_token_candidate,_find_panel_candidate,_find_input_candidate,resolve_chat_target,resolve_editor_target,resolve_actuation_target
+    _has_chat_token(text)
+    _bbox_center_x(bounds)
+    _bbox_center_y(bounds)
+    normalize_actuation_element(layer)
+    normalize_actuation_elements(layers)
+    _target_result(element)
+    _find_ask_candidate(els)
+    _find_chat_token_candidate(els)
+    _find_panel_candidate(els)
+    _find_input_candidate(els)
+    resolve_chat_target(layers)
+    resolve_editor_target(layers)
+    resolve_actuation_target(layers)
   packages/nlp2imgl/src/nlp2imgl/control.py:
     e: default_image_path,default_window,_result_to_dict,doctor_capture,apply_nl_with_diag
     default_image_path()
@@ -480,11 +475,34 @@ D:
     e: TesseractOcr,_level_name
     TesseractOcr: run(1)  # Extract word-level bounding boxes using pytesseract...
     _level_name(level)
-  imgl/pipeline.py:
-    e: analyze,_content_metadata,_count_roles
-    analyze(image)
-    _content_metadata(diag)
-    _count_roles(windows;orphan_elements)
+  imgl/cli.py:
+    e: _add_output_format_flags,_output_format,_add_common_args,build_parser,_write_output,_handle_doctor,_handle_map,_handle_execute,_handle_shot,_handle_verify,_handle_install,_handle_serve,_handle_diagnose,_handle_interact,_handle_windows,_handle_capture,main,_check_blank_before_analyze,_apply_config_overrides,_handle_analyze,_handle_html,_handle_svg,_handle_vql,_handle_annotate,_handle_find,_run_image_command
+    _add_output_format_flags(parser)
+    _output_format(args)
+    _add_common_args(parser)
+    build_parser()
+    _write_output(content;output)
+    _handle_doctor(args;config)
+    _handle_map(args;config)
+    _handle_execute(args;config)
+    _handle_shot(args;config)
+    _handle_verify(args;config)
+    _handle_install(args;config)
+    _handle_serve(args;config)
+    _handle_diagnose(args;config)
+    _handle_interact(args;config)
+    _handle_windows(args;config)
+    _handle_capture(args;config)
+    main(argv)
+    _check_blank_before_analyze(image_path)
+    _apply_config_overrides(config;args)
+    _handle_analyze(args;image_path;config)
+    _handle_html(args;image_path;config)
+    _handle_svg(args;image_path;config)
+    _handle_vql(args;image_path;config)
+    _handle_annotate(args;image_path;config)
+    _handle_find(args;image_path;config)
+    _run_image_command(args;image_path;config)
   imgl/vision_ops.py:
     e: TemplateMatchResult,MatchOverlayItem,template_available,_png_to_gray_array,_dedupe_matches,match_template_png,diff_png_bytes,_crop_png_region,_confidence_color,render_match_overlay_png
     TemplateMatchResult: to_dict(0)
@@ -497,6 +515,11 @@ D:
     _crop_png_region(png;region)
     _confidence_color(confidence)
     render_match_overlay_png(png;matches)
+  imgl/pipeline.py:
+    e: analyze,_content_metadata,_count_roles
+    analyze(image)
+    _content_metadata(diag)
+    _count_roles(windows;orphan_elements)
   packages/dsl2imgl/src/dsl2imgl/bus.py:
     e: _run_handler,dispatch,execute_dsl_line,execute_dsl,dispatch_json
     _run_handler(payload)
@@ -530,6 +553,11 @@ D:
     extract_window_titles(windows;detected;ocr_boxes)
     _best_titlebar_for_window(window_bbox;titlebars)
     _overlaps_top(window_bbox;bar_bbox)
+  imgl/vdisplay_context.py:
+    e: from_vdisplay_context,enrich_scene_from_vdisplay,_metadata_from_context
+    from_vdisplay_context(payload)
+    enrich_scene_from_vdisplay(scene;payload)
+    _metadata_from_context(payload)
   imgl/capture_provenance.py:
     e: capture_meta_path,save_capture_meta,load_capture_meta,enrich_scene_provenance,_correlate_os_windows
     capture_meta_path(image)
@@ -550,11 +578,6 @@ D:
     _scene_class(diag)
     _has_ui_signals(diag)
     _recommendation(diag)
-  imgl/vdisplay_context.py:
-    e: from_vdisplay_context,enrich_scene_from_vdisplay,_metadata_from_context
-    from_vdisplay_context(payload)
-    enrich_scene_from_vdisplay(scene;payload)
-    _metadata_from_context(payload)
   packages/dsl2imgl/src/dsl2imgl/cli.py:
     e: main
     main(argv)
@@ -798,7 +821,6 @@ D:
     create_app()
   screen.vql.imgl.json:
   layout.vql.imgl.json:
-  goal.yaml:
   planfile.yaml:
   Makefile:
   koru.yaml:
@@ -845,8 +867,9 @@ D:
     e: ImglConfig
     ImglConfig:
   imgl/__main__.py:
+  imgl/export/__init__.py:
   imgl/detect/__init__.py:
   imgl/classify/__init__.py:
+  goal.yaml:
   pyproject.toml:
   imgl/__init__.py:
-  imgl/export/__init__.py:

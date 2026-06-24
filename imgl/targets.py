@@ -79,16 +79,8 @@ def _target_result(
     }
 
 
-def resolve_chat_target(
-    layers: list[dict[str, Any]],
-    *,
-    source: str | None = None,
-    fallback_center: tuple[int, int] = (1024, 640),
-) -> dict[str, Any]:
-    """Locate chat/composer panel from photo VQL actuation layers (IDE-agnostic)."""
-    els = normalize_actuation_elements(layers)
-
-    ask_cands: list[tuple[dict[str, Any], float]] = []
+def _find_ask_candidate(els: list[dict[str, Any]]) -> dict[str, Any] | None:
+    cands: list[tuple[dict[str, Any], float]] = []
     for t in els:
         label = str(t.get("label") or "").lower()
         cc = t.get("click_center") or {}
@@ -96,30 +88,25 @@ def resolve_chat_target(
             continue
         cy = float(cc.get("y") or 0)
         if "ask anything" in label or ("ask" in label and "anything" in label):
-            ask_cands.append((t, 3000.0 - cy))
+            cands.append((t, 3000.0 - cy))
         elif re.search(r"\bask\b", label) and cy <= 350:
-            ask_cands.append((t, 2000.0 - cy))
-    if ask_cands:
-        ask_cands.sort(key=lambda item: -item[1])
-        t, _ = ask_cands[0]
-        return _target_result(
-            t,
-            note=f"top chat placeholder from photo VQL ({source})",
-            source=source,
-        )
+            cands.append((t, 2000.0 - cy))
+    if not cands:
+        return None
+    cands.sort(key=lambda item: -item[1])
+    return cands[0][0]
 
+
+def _find_chat_token_candidate(els: list[dict[str, Any]]) -> dict[str, Any] | None:
     for t in els:
         ident = str(t.get("id") or "").lower()
-        if _has_chat_token(ident):
-            cc = t.get("click_center") or {}
-            if cc:
-                return _target_result(
-                    t,
-                    note=f"explicit chat/composer token from photo VQL ({source})",
-                    source=source,
-                )
+        if _has_chat_token(ident) and t.get("click_center"):
+            return t
+    return None
 
-    panel_cands: list[tuple[dict[str, Any], dict[str, Any], float]] = []
+
+def _find_panel_candidate(els: list[dict[str, Any]]) -> dict[str, Any] | None:
+    cands: list[tuple[dict[str, Any], float]] = []
     for t in els:
         if t.get("role") != "panel":
             continue
@@ -127,20 +114,17 @@ def resolve_chat_target(
         cx = _bbox_center_x(b)
         area = bbox_area(b)
         loc = str((t.get("metadata") or {}).get("location") or t.get("location") or "").lower()
-        cc = t.get("click_center")
-        if cc and area > 10000:
+        if t.get("click_center") and area > 10000:
             score = (3 if "center" in loc else 0) + (2 if cx > 800 else 0) + (area / 100000.0)
-            panel_cands.append((t, cc, score))
-    if panel_cands:
-        panel_cands.sort(key=lambda p: -p[2])
-        t, _, _ = panel_cands[0]
-        return _target_result(
-            t,
-            note=f"panel candidate from photo VQL (center/right priority for chat; {source})",
-            source=source,
-        )
+            cands.append((t, score))
+    if not cands:
+        return None
+    cands.sort(key=lambda p: -p[1])
+    return cands[0][0]
 
-    input_cands: list[tuple[dict[str, Any], float]] = []
+
+def _find_input_candidate(els: list[dict[str, Any]]) -> dict[str, Any] | None:
+    cands: list[tuple[dict[str, Any], float]] = []
     for t in els:
         if t.get("role") != "input":
             continue
@@ -150,39 +134,56 @@ def resolve_chat_target(
         area = bbox_area(b)
         if not t.get("click_center"):
             continue
-        cy = _bbox_center_y(b)
         if area < 2000 and cy < 900:
             continue
         score = (2 if cx > 850 else 0) + (3 if cx > 1200 else 0) + (2 if cy > 700 else 0) + (4 if cy > 950 else 0)
-        input_cands.append((t, score))
-    if input_cands:
-        input_cands.sort(key=lambda p: (-p[1], -bbox_area(p[0].get("bounds"))))
-        t, _ = input_cands[0]
+        cands.append((t, score))
+    if not cands:
+        return None
+    cands.sort(key=lambda p: (-p[1], -bbox_area(p[0].get("bounds"))))
+    return cands[0][0]
+
+
+def resolve_chat_target(
+    layers: list[dict[str, Any]],
+    *,
+    source: str | None = None,
+    fallback_center: tuple[int, int] = (1024, 640),
+) -> dict[str, Any]:
+    """Locate chat/composer panel from photo VQL actuation layers (IDE-agnostic)."""
+    els = normalize_actuation_elements(layers)
+
+    t = _find_ask_candidate(els)
+    if t:
+        return _target_result(t, note=f"top chat placeholder from photo VQL ({source})", source=source)
+
+    t = _find_chat_token_candidate(els)
+    if t:
+        return _target_result(t, note=f"explicit chat/composer token from photo VQL ({source})", source=source)
+
+    t = _find_panel_candidate(els)
+    if t:
         return _target_result(
             t,
-            note=f"composer input from photo VQL (right/bottom priority; {source})",
+            note=f"panel candidate from photo VQL (center/right priority for chat; {source})",
             source=source,
         )
+
+    t = _find_input_candidate(els)
+    if t:
+        return _target_result(t, note=f"composer input from photo VQL (right/bottom priority; {source})", source=source)
 
     for t in els:
         if str(t.get("id", "")) == "window_0" and t.get("role") == "window":
             cc = t.get("click_center")
             if cc:
-                return _target_result(
-                    t,
-                    note="main window from screen photo VQL for chat/editor focus",
-                    source=source,
-                )
+                return _target_result(t, note="main window from screen photo VQL for chat/editor focus", source=source)
 
     for t in els:
         if t.get("role") == "canvas":
             cc = t.get("click_center")
             if cc:
-                return _target_result(
-                    t,
-                    note="canvas from screen photo VQL for chat/editor focus",
-                    source=source,
-                )
+                return _target_result(t, note="canvas from screen photo VQL for chat/editor focus", source=source)
 
     fx, fy = fallback_center
     return {
