@@ -136,6 +136,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Scene cache (`layout.imgl.json`) — `uri2vql` list/click/type skips re-OCR when cache matches
 - Diagnose vql-fallback returns a short summary instead of empty text
 
+## [0.7.14] - 2026-06-29
+
+### Docs
+- Update README.md
+
+### Other
+- Update project/planfile-tickets.yaml
+
 ## [0.7.13] - 2026-06-25
 
 ### Docs

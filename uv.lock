@@ -869,7 +869,7 @@ wheels = [
 
 [[package]]
 name = "imgl"
-version = "0.7.13"
+version = "0.7.14"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },
