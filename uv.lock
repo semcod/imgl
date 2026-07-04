@@ -869,11 +869,10 @@ wheels = [
 
 [[package]]
 name = "imgl"
-version = "0.7.14"
+version = "0.7.16"
 source = { editable = "." }
 dependencies = [
     { name = "pillow" },
-    { name = "pytesseract" },
     { name = "pyyaml" },
 ]
 
@@ -885,6 +884,7 @@ dev = [
     { name = "costs" },
     { name = "goal" },
     { name = "pfix" },
+    { name = "pytesseract" },
     { name = "pytest" },
 ]
 diagnose = [
@@ -902,6 +902,7 @@ full = [
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
     { name = "numpy", version = "2.5.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pfix" },
+    { name = "pytesseract" },
     { name = "pytest" },
     { name = "python-dotenv" },
     { name = "uvicorn", extra = ["standard"] },
@@ -909,6 +910,9 @@ full = [
 llm = [
     { name = "litellm" },
     { name = "python-dotenv" },
+]
+ocr = [
+    { name = "pytesseract" },
 ]
 web = [
     { name = "fastapi" },
@@ -920,19 +924,20 @@ requires-dist = [
     { name = "costs", marker = "extra == 'dev'", specifier = ">=0.1.20" },
     { name = "fastapi", marker = "extra == 'web'", specifier = ">=0.110" },
     { name = "goal", marker = "extra == 'dev'", specifier = ">=2.1.0" },
-    { name = "imgl", extras = ["capture", "diagnose", "dev", "llm", "web"], marker = "extra == 'full'" },
+    { name = "imgl", extras = ["capture", "diagnose", "dev", "llm", "ocr", "web"], marker = "extra == 'full'" },
+    { name = "imgl", extras = ["ocr"], marker = "extra == 'dev'" },
     { name = "litellm", marker = "extra == 'llm'", specifier = ">=1.30" },
     { name = "mss", marker = "extra == 'capture'", specifier = ">=9.0" },
     { name = "numpy", marker = "extra == 'diagnose'", specifier = ">=1.24" },
     { name = "pfix", marker = "extra == 'dev'", specifier = ">=0.1.60" },
     { name = "pillow", specifier = ">=10.0" },
-    { name = "pytesseract", specifier = ">=0.3.10" },
+    { name = "pytesseract", marker = "extra == 'ocr'", specifier = ">=0.3.10" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "python-dotenv", marker = "extra == 'llm'", specifier = ">=1.0" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'web'", specifier = ">=0.30" },
 ]
-provides-extras = ["capture", "diagnose", "llm", "web", "full", "dev"]
+provides-extras = ["capture", "ocr", "diagnose", "llm", "web", "full", "dev"]
 
 [[package]]
 name = "importlib-metadata"

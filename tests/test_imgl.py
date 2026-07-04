@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -150,8 +151,9 @@ def test_analyze_with_mocked_ocr(tmp_path):
 
 
 @pytest.mark.skipif(
-    not Path("/usr/bin/tesseract").exists() and not Path("/usr/local/bin/tesseract").exists(),
-    reason="tesseract not installed",
+    (not Path("/usr/bin/tesseract").exists() and not Path("/usr/local/bin/tesseract").exists())
+    or importlib.util.find_spec("pytesseract") is None,
+    reason="tesseract binary or pytesseract (imgl[ocr]) not installed",
 )
 def test_analyze_e2e_with_tesseract(tmp_path):
     image_path = _make_text_image(tmp_path / "save_button.png", "Save")

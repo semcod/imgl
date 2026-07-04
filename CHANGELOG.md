@@ -136,6 +136,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Scene cache (`layout.imgl.json`) — `uri2vql` list/click/type skips re-OCR when cache matches
 - Diagnose vql-fallback returns a short summary instead of empty text
 
+## [0.7.16] - 2026-07-04
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_imgl.py
+
+### Other
+- Update imgl/__init__.py
+- Update local.dev.txt
+- Update packages/cli2imgl/local.dev.txt
+- Update packages/dsl2imgl/local.dev.txt
+- Update packages/mcp2imgl/local.dev.txt
+- Update packages/nlp2imgl/local.dev.txt
+- Update packages/rest2imgl/local.dev.txt
+- Update packages/uri2imgl/local.dev.txt
+- Update project/planfile-tickets.yaml
+- Update uv.lock
+
 ## [0.7.14] - 2026-06-29
 
 ### Docs

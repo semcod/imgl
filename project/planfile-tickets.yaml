@@ -4259,5 +4259,68 @@ tickets:
   files:
   - tests/test_imgl.py
   dedupe_key: test-optimization:tests.test_imgl:test_preprocess_resize
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_export.test_cli_svg_command_writes_file'
+  description: 'Test `tests.test_export.test_cli_svg_command_writes_file` took 2.26s
+    to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_export.py
+  dedupe_key: test-optimization:tests.test_export:test_cli_svg_command_writes_file
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_diagnose.test_pipeline_includes_content_metadata'
+  description: 'Test `tests.test_diagnose.test_pipeline_includes_content_metadata`
+    took 1.29s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_diagnose.py
+  dedupe_key: test-optimization:tests.test_diagnose:test_pipeline_includes_content_metadata
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_layout_classify.test_detect_ui_elements_on_fixture'
+  description: 'Test `tests.test_layout_classify.test_detect_ui_elements_on_fixture`
+    took 1.15s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_layout_classify.py
+  dedupe_key: test-optimization:tests.test_layout_classify:test_detect_ui_elements_on_fixture
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_export.test_cli_html_command'
+  description: 'Test `tests.test_export.test_cli_html_command` took 1.12s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_export.py
+  dedupe_key: test-optimization:tests.test_export:test_cli_html_command
 applied: []
 skipped: []

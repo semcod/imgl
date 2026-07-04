@@ -1,0 +1,10 @@
+# local.dev.txt — locally developed dependencies of this project (generated 2026-07-04)
+# by ~/github/local.dev.sh — DO NOT EDIT; see ~/github/local.dev.md
+# project: cli2imgl 0.1.0 (python) at /home/tom/github/semcod/imgl/packages/cli2imgl
+# deps declared: 2 | with local source: 2
+
+## LOCAL DEPS  (dep | required | local source (version) | installed | status)
+dsl2imgl | >=0.1.0 | /home/tom/github/semcod/imgl/packages/dsl2imgl (0.1.0) | 0.1.0 editable | OK-EDITABLE  [pyproject.toml]
+nlp2imgl | >=0.1.0 | /home/tom/github/semcod/imgl/packages/nlp2imgl (0.1.0) | 0.1.0 editable | OK-EDITABLE  [pyproject.toml]
+
+## EXTERNAL DEPS (no local source, 0): -
