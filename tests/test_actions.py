@@ -137,3 +137,31 @@ def test_cli_find_command(tmp_path, capsys):
     assert result == 0
     data = json.loads(capsys.readouterr().out)
     assert isinstance(data, list)
+
+
+def test_cli_find_list_honours_text_filter(tmp_path, capsys):
+    """Regression: `find --list --text X` used to take the --list branch and return EVERY
+    action, silently ignoring the filter — downstream locate callers (kvm) clicked the
+    same arbitrary top element for any query. With a filter present, --list must go
+    through finder.find() and return only matching elements (here: none on a blank frame,
+    NOT the full action list)."""
+    from unittest.mock import MagicMock, patch
+
+    from PIL import Image
+
+    image_path = tmp_path / "screen.png"
+    Image.new("RGB", (100, 80), color=(255, 255, 255)).save(image_path)
+
+    mock_backend = MagicMock()
+    mock_backend.run.return_value = []
+
+    with patch("imgl.pipeline.get_ocr_backend", return_value=mock_backend):
+        from imgl.cli import main
+
+        assert main(["find", str(image_path), "--list", "--text", "Reconfigure"]) == 0
+        filtered = json.loads(capsys.readouterr().out)
+        assert main(["find", str(image_path), "--list"]) == 0
+        unfiltered_rc = json.loads(capsys.readouterr().out)
+
+    assert filtered == []                      # filter honoured: no bogus hits
+    assert isinstance(unfiltered_rc, list)     # bare --list still lists actions

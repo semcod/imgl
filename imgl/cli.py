@@ -934,7 +934,11 @@ def _handle_find(args, image_path: Path, config: ImglConfig) -> int:
     scene = analyze(image_path, lang=args.lang, config=config)
     finder = actions(scene)
 
-    if args.list:
+    # --list combined with a filter must honour the filter. Before this, --list won the
+    # branch and RETURNED EVERY ACTION, silently ignoring --text/--type/--label/--window —
+    # callers (e.g. the kvm locate backend) got the same arbitrary top element for any
+    # query (measured downstream: 20% hit-rate, 290px median error).
+    if args.list and not (args.text or args.label or args.element_type or args.window):
         payload = finder.list_actions()
     elif args.click:
         payload = finder.click(
