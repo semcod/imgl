@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imgl"
-version = "0.7.14"
+version = "0.7.15"
 description = "Image to Layout — screenshot OCR and semantic UI reconstruction"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -24,13 +24,17 @@ classifiers = [
 ]
 dependencies = [
     "pillow>=10.0",
-    "pytesseract>=0.3.10",
     "PyYAML>=6.0",
 ]
 
 [project.optional-dependencies]
 capture = [
     "mss>=9.0",
+]
+# OCR needs the system `tesseract` binary as well (apt install tesseract-ocr);
+# imgl.ocr.tesseract already degrades with a clear ImportError without it.
+ocr = [
+    "pytesseract>=0.3.10",
 ]
 # Local sibling repos (not on PyPI) — install separately:
 #   imgl install vdisplay   # ~/github/wronai/vdisplay[pillow]
@@ -49,7 +53,7 @@ web = [
     "uvicorn[standard]>=0.30",
 ]
 full = [
-    "imgl[capture,diagnose,dev,llm,web]",
+    "imgl[capture,diagnose,dev,llm,ocr,web]",
 ]
 dev = [
     "pytest>=8.0",

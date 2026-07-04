@@ -25,7 +25,8 @@ class TesseractOcr:
     ) -> list[OcrBox]:
         if pytesseract is None:
             raise ImportError(
-                "pytesseract is required for OCR. Install with: pip install pytesseract"
+                "pytesseract is required for OCR. Install with: pip install 'imgl[ocr]' "
+                "(plus the system tesseract binary, e.g. apt install tesseract-ocr)"
             )
 
         data = None
