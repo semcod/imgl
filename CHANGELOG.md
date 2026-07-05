@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- `pytest --collect-only` failed for the *entire* repo with
+  `ModuleNotFoundError: No module named 'dsl2imgl'` before collecting a
+  single test. `dsl2imgl` is an optional sub-package installed via
+  `imgl install control` (see `imgl/installs.py`), not part of the root
+  venv by default; its two test files did a bare top-level
+  `from dsl2imgl import ...`. Fixed with `pytest.importorskip("dsl2imgl")`
+  in both `packages/dsl2imgl/tests/test_dsl2imgl.py` and
+  `test_dsl2imgl_phase4.py`, so they skip cleanly instead of breaking
+  collection for every other test in the repo. Verified: root collection
+  now succeeds (158 tests, 0 errors); full suite passes (151 passed, 13
+  skipped). 2 new tests (`tests/test_pytest_collection_health.py`).
+
+## [0.7.17] - 2026-07-06
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+
+### Test
+- Update tests/test_pytest_collection_health.py
+
+### Other
+- Update .nlp2dsl/environment.doql.less
+- Update .nlp2dsl/registry/environment.doql.less
+- Update packages/dsl2imgl/tests/test_dsl2imgl.py
+- Update packages/dsl2imgl/tests/test_dsl2imgl_phase4.py
+
 ## [0.1.10] - 2026-06-09
 
 ### Fixed

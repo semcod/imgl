@@ -2,6 +2,14 @@
 
 from __future__ import annotations
 
+import pytest
+
+# dsl2imgl is an optional sub-package (`imgl install control`), not part of
+# the root imgl venv by default. A bare import here made the *entire* repo's
+# `pytest --collect-only` fail with ModuleNotFoundError before collecting a
+# single test. Skip cleanly when it's not installed instead.
+pytest.importorskip("dsl2imgl")
+
 from dsl2imgl import dispatch
 from dsl2imgl.grammar import parse_line, to_text
 
